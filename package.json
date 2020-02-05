@@ -6,8 +6,8 @@
   "scripts": {
     "wp-watch": "webpack --watch",
     "wp-build": "webpack",
-    "el-watch": "electron .",
-    "start": "run-p wp-watch el-watch"
+    "el-watch": "cross-env NODE_ENV=development electron .",
+    "dev": "run-p wp-watch el-watch"
   },
   "keywords": [],
   "author": "",

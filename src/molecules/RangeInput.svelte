@@ -4,66 +4,85 @@
   export let value = 0;
 
   let input,
+    timeout,
+    interval,
+    container,
     showControls = false;
 
   function increment() {
-    if (input) input.value += 1;
+    if (input) input.stepUp();
   }
 
   function decrement() {
-    if (input) input.value -= 1;
+    if (input) input.stepDown();
   }
 
-  function slideTransition(direction) {
-    return function(node, { duration }) {
-      const o = +getComputedStyle(node).opacity;
-      return {
-        duration,
-        css: t =>
-          `transform: translate(0, ${(direction == "top" ? -t : t) *
-            100}%); opacity: ${Math.abas(o - t)}`
-      };
-    };
+  function stickyCall(fn) {
+    fn();
+    timeout = setTimeout(() => {
+      fn();
+      interval = setInterval(fn, 100);
+    }, 500);
   }
 
-  const slideTop = slideTransition("top");
-  const slideBottom = slideTransition("bottom");
+  function pressIncrement() {
+    stickyCall(increment);
+  }
+
+  function pressDecrement() {
+    stickyCall(decrement);
+  }
+
+  function release() {
+    if (timeout) clearTimeout(timeout);
+    if (interval) clearInterval(interval);
+  }
 </script>
 
 <style>
   label {
-    display: block;
+    display: flex;
+    align-items: center;
+  }
+  .input-wrapper {
+    width: 16rem;
+    border-radius: 4px;
+    border: 1px solid var(--corporate-blue-darken);
+    height: 3.2rem;
+    line-height: 3.2rem;
+    display: flex;
   }
   input {
-    width: 5rem;
-    border-radius: 4px;
+    flex-grow: 1;
+    padding: 0 1rem;
+    border: none;
+    font-size: 2rem;
+    text-align: center;
+    border-left: 1px solid;
+    border-right: 1px solid;
     border-color: var(--corporate-blue-darken);
   }
-  .arrow {
-    position: absolute;
-    background-color: transparent;
+  input::-webkit-inner-spin-button,
+  input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+  }
+  button {
     border: none;
+    background-color: transparent;
+    width: 4rem;
+    font-size: 3.2rem;
+    line-height: 1;
+    font-weight: 300;
   }
 </style>
 
-<label>
+<label bind:this={container}>
   <span>
     <slot />
   </span>
-  <input
-    type="number"
-    bind:this={input}
-    {value}
-    {min}
-    {max}
-    on:change
-    on:focus={() => (showControls = true)}
-    on:blur={() => (showControls = false)} />
-  {#if showControls}
-    <button class="arrow icon-arrow-up" transition:slideTop on:click={increment} />
-    <button
-      class="arrow icon-arrow-down"
-      transition:slideBottom
-      on:click={decrement} />
-  {/if}
+  <span class="input-wrapper">
+    <button class="incrementer" on:pointerdown={pressDecrement} on:pointerup={release}>-</button>
+    <input type="number" bind:this={input} {value} {min} {max} on:change />
+    <button class="decrementer" on:pointerdown={pressIncrement} on:pointerup={release}>+</button>
+  </span>
 </label>

@@ -3,7 +3,7 @@ const EFFECTS_RESEARCH = 'effects';
 const CHARTS = 'charts';
 const INITIAL = '';
 
-exports = {
+module.exports = {
   TEMP_MEASURE,
   EFFECTS_RESEARCH,
   CHARTS,

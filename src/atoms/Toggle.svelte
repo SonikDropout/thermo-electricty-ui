@@ -16,14 +16,18 @@
     background-color: var(--corporate-grey);
     border-radius: 2rem;
     height: 2rem;
-    padding: 1px;
+    position: relative;
   }
   span::after {
     position: absolute;
+    top: 2px;
+    left: 2px;
     content: '';
     border-radius: 50%;
-    height: 100%;
-    width: 2rem;
+    height: calc(2rem - 4px);
+    width: calc(2rem - 4px);
+    background-color: var(--bg-color);
+    transition: .2s ease;
   }
   input:checked + label>span {
     background-color: var(--corporate-blue);
@@ -34,4 +38,4 @@
 </style>
 
 <input type="checkbox" id="{id}" on:change>
-<label for="{id}"><slot></slot><span></span></label>
+<label for="{id}"><slot></slot> <span></span></label>

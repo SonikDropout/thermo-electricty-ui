@@ -1,5 +1,6 @@
 <script>
   import PlateColumn from '../organisms/PlateColumn';
+  import Button from '../atoms/Button';
   export let goBack;
   export let goForward;
 
@@ -9,6 +10,18 @@
 <style>
   main {
     display: flex;
+    justify-content: stretch;
+  }
+  main :global(div)  {
+    flex-grow: 1;
+  }
+  footer {
+    padding: var(--gutter-width);
+    display: flex;
+    align-items: center;
+  }
+  footer :global(button:first-child) {
+    margin: auto;
   }
 </style>
 
@@ -20,7 +33,7 @@
     {/each}
   </main>
   <footer>
-    <button on:click={goForward}>Постоение графиков</button>
-    <button on:click={goBack}>Назад</button>
+    <Button on:click={goForward}>Постоение графиков</Button>
+    <Button on:click={goBack}>Назад</Button>
   </footer>
 </div>
