@@ -4,8 +4,8 @@
     niceTicks,
     findClosest,
     findClosestIndex
-  } from "../../utils/numagic";
-  import {getOffsetY, getOffsetX} from '../../utils/DOM';
+  } from "../utils/numagic";
+  import {getOffsetY, getOffsetX} from '../utils/DOM';
   export let yPoints = [];
   export let xPoints = []; // this array must be sorted!!
   export let xCaption;
