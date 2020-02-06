@@ -71,7 +71,7 @@
     background-color: transparent;
     width: 4rem;
     font-size: 3.2rem;
-    line-height: 1;
+    line-height: .8;
     font-weight: 300;
   }
 </style>

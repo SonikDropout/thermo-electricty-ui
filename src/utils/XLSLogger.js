@@ -1,5 +1,20 @@
 const xl = require('excel4node');
 const path = require('path');
+const { INTEGRATED_PELTIER_PARAMS } = require('../constants');
+
+const wsColumns = {
+  hot: ['temperature', 'thermistor', 'thermoresistor', 'thermocouple'],
+  cool: ['temperature', 'thermistor', 'thermoresistor', 'thermocouple'],
+  peltier: ['current', 'voltage', 'deltaTemp'],
+  seebeck: ['current', 'voltage', 'deltaTemp'],
+};
+
+const ADDITIONAL_PARAMS = {
+  deltaTemp: {
+    label: 'Разность температур',
+    units: '\u2103',
+  },
+};
 
 class XLSLogger {
   constructor() {
@@ -7,14 +22,12 @@ class XLSLogger {
     this.workbook = new xl.Workbook();
     this._addWorksheets();
     this._createStyles();
-    this._currentRow = 1;
     this._fillTablesHeads();
   }
 
   writeToWorksheet(wsName, values) {
     if (!this._validate(values)) return;
-    this._writeToWorksheet(this[wsName + 'WS'], values);
-    this._currentRow++;
+    this._writeToWorksheet(this.worksheets[wsName], values);
   }
 
   saveLogTo(dir) {
@@ -28,32 +41,23 @@ class XLSLogger {
   }
 
   _fillTablesHeads() {
-    this._currentRow++;
-  }
-
-  _fillFirstRow(worksheet, entries) {
-    worksheet
-      .cell(1, 1)
-      .string('Температура, \u2103')
-      .style(this.headerStyle);
-    let i = 2;
-    for (let key in entries) {
-      if (!entry.saveXLS) continue;
-      let { label, units } = entries[key];
-      let title = `${label}, ${units}`;
-      worksheet.column(i).setWidth(Math.max(title.length, 10) + 2);
-      worksheet
-        .cell(1, i)
-        .string(title)
-        .style(this.headerStyle);
-      i++;
+    for (let n in wsColumns) {
+      for (let i = 0; i < wsColumns[n].length; i++) {
+        const entry =
+          INTEGRATED_PELTIER_PARAMS[wsColumns[n][i]] ||
+          ADDITIONAL_PARAMS[wsColumns[n][i]];
+        this.worksheets[n]
+          .cell(1, i + 1)
+          .string(entry.label + ', ' + entry.units)
+          .style(this.headerStyle);
+      }
+      this.worksheets[n].row++;
     }
   }
 
-  _writeToWorksheet(worksheet, values) {
+  _writeToWorksheet(ws, values) {
     for (let i = 0; i < values.length; i++) {
-      worksheet
-        .cell(this._currentRow, i + 1)
+      ws.cell(ws.row, i + 1)
         .number(values[i])
         .style(this.dataStyle);
     }
@@ -65,10 +69,13 @@ class XLSLogger {
       ['hot', 'Нагревающаяся сторона'],
       ['peltier', 'Эффект Пелтье'],
       ['seebeck', 'Эффект Зеебека'],
-    ].reduce((ws, [key, label]) => {
-      ws[key] = this.workbook.addWorksheet(label);
-      return ws;
-    }, {});
+    ].reduce(
+      (ws, [key, label]) => {
+        ws[key] = this.workbook.addWorksheet(label);
+        return ws;
+      },
+      { row: 1 }
+    );
   }
 
   _validate(values) {

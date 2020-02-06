@@ -1,5 +1,5 @@
 <script>
-  import Chart from "../organisms/Chart";
+  import Chart from "../organisms/Chart/Chart";
   import Select from "../atoms/Select";
   import Button from "../atoms/Button";
   import xlsLogger from "../utils/XLSLogger";
@@ -55,18 +55,20 @@
   }
 </style>
 
-<header>Постоение графиков</header>
-<main>
-  <div class="selects">
-    <Select on:change={selectFace} options={faceOptions} />
-    <Select on:change={selectSensor} options={sensorsOptions} />
-    <Button on:click={startDrawing}>Старт</Button>
-  </div>
-  <Chart xCaption="T, &#x2103;" yCaption="R" {points} />
-</main>
-<footer>
-  <Button on:click={saveExcel} disabled={!MSPath}>
-    Сохранить данные на usb-устройство
-  </Button>
-  <Button on:click={goBack}>Назад</Button>
-</footer>
+<div class="layout">
+  <header>Постоение графиков</header>
+  <main>
+    <div class="selects">
+      <Select on:change={selectFace} options={faceOptions} />
+      <Select on:change={selectSensor} options={sensorsOptions} />
+      <Button on:click={startDrawing}>Старт</Button>
+    </div>
+    <Chart xCaption="T, &#x2103;" yCaption="R" {points} />
+  </main>
+  <footer>
+    <Button on:click={saveExcel} disabled={!MSPath}>
+      Сохранить данные на usb-устройство
+    </Button>
+    <Button on:click={goBack}>Назад</Button>
+  </footer>
+</div>

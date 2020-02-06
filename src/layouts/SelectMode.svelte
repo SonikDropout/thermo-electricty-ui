@@ -57,17 +57,19 @@
   }
 </style>
 
-<main>
-  <div class="area temp" transition:uniteLeft>
-    <label>
-      Измерение и контроль температуры
-      <input type="radio" name="appState" value={TEMP_MEASURE} on:change />
-    </label>
-  </div>
-  <div class="area effects" transition:uniteRight>
-    <label>
-      Измерение эффектов Пельтье и Зеебека
-      <input type="radio" name="appState" value={EFFECTS_RESEARCH} on:change />
-    </label>
-  </div>
-</main>
+<div class="layout">
+  <main>
+    <div class="area temp" transition:uniteLeft>
+      <label>
+        Измерение и контроль температуры
+        <input type="radio" name="appState" value={TEMP_MEASURE} on:change />
+      </label>
+    </div>
+    <div class="area effects" transition:uniteRight>
+      <label>
+        Измерение эффектов Пельтье и Зеебека
+        <input type="radio" name="appState" value={EFFECTS_RESEARCH} on:change />
+      </label>
+    </div>
+  </main>
+</div>

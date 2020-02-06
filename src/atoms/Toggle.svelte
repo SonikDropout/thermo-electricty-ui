@@ -1,6 +1,7 @@
 <script>
   import uuid from 'uuid';
   const id = uuid();
+  let checked;
 </script>
 
 <style>
@@ -12,11 +13,19 @@
   }
   span {
     display: inline-block;
-    width: 4rem;
+    width: 5rem;
     background-color: var(--corporate-grey);
     border-radius: 2rem;
     height: 2rem;
     position: relative;
+    color: var(--bg-color);
+    text-align: right;
+    font-size: 1rem;
+    line-height: 2rem;
+    padding: 0 .4rem;
+  }
+  span.checked {
+    text-align: left;
   }
   span::after {
     position: absolute;
@@ -33,9 +42,9 @@
     background-color: var(--corporate-blue);
   }
   input:checked + label>span::after {
-    transform: translateX(2rem);
+    transform: translateX(3rem);
   }
 </style>
 
-<input type="checkbox" id="{id}" on:change>
-<label for="{id}"><slot></slot> <span></span></label>
+<input type="checkbox" id="{id}" on:change bind:checked>
+<label for="{id}"><slot></slot> <span class:checked>{checked ? 'вкл' : 'выкл'}</span></label>

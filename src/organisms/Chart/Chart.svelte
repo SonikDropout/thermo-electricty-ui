@@ -4,8 +4,8 @@
     niceTicks,
     findClosest,
     findClosestIndex
-  } from "../utils/numagic";
-  import {getOffsetY, getOffsetX} from '../utils/DOM';
+  } from "./numagic";
+  import { getOffsetY, getOffsetX } from "./DOM";
   export let yPoints = [];
   export let xPoints = []; // this array must be sorted!!
   export let xCaption;
@@ -22,8 +22,8 @@
     isPanMode = false,
     panStart;
 
-  $: width = chart ? chart.clientWidth : 440;
-  $: height = chart ? chart.clientHeight : 240;
+  $: width = chart ? chart.clientWidth : 500;
+  $: height = chart ? chart.clientHeight : 300;
   $: chartX = chart ? getOffsetX(chart) : 0;
   $: chartY = chart ? getOffsetY(chart) : 0;
 
@@ -183,13 +183,19 @@
 <style>
   .chart {
     position: relative;
+    padding: var(--gutter-width);
   }
-  svg, .chart-inner {
+  svg,
+  .chart-inner {
     width: 100%;
     height: 100%;
   }
   svg.move {
     cursor: move;
+  }
+
+  .axis line {
+    stroke: var(--corporate-emerald);
   }
 
   .tick line {
@@ -249,13 +255,13 @@
 
 <div class="chart">
   <div class="chart-inner" bind:this={chart}>
-    {#if isInitialized}
-      <svg
-        class:move={isPanMode}
-        on:pointerleave={removePointTooltip}
-        on:pointerdown={handlePointerDown}
-        on:pointermove={handlePointerMove}
-        on:pointerup={handlePointerUp}>
+    <svg
+      class:move={isPanMode}
+      on:pointerleave={removePointTooltip}
+      on:pointerdown={handlePointerDown}
+      on:pointermove={handlePointerMove}
+      on:pointerup={handlePointerUp}>
+      {#if isInitialized}
         <!-- y axis -->
         <g class="axis y-axis">
           <text dominant-baseline="hanging">{yCaption}</text>
@@ -338,12 +344,28 @@
             {/each}
           {/if}
         </g>
-      </svg>
-    {/if}
+      {:else}
+        <!-- y axis -->
+        <g class="axis y-axis">
+          <text dominant-baseline="hanging">{yCaption}</text>
+          <line x1="{padding.left}" x2="{padding.left}" y1="{padding.top}" y2="{height - padding.bottom}" />
+        </g>
+
+        <!-- x axis -->
+        <g class="axis x-axis">
+          <line x1="0" x2="{width - padding.left}" y1="{height - padding.bottom}" y2="{height - padding.bottom}" />
+          <text x="100%" y="98%" text-anchor="end">{xCaption}</text>
+        </g>
+      {/if}
+    </svg>
 
     {#if zoomedArea}
       <div class="chart-controls">
-        <a on:click={revertZoom} href="#chart" class="fa fa-undo" title="revert">
+        <a
+          on:click={revertZoom}
+          href="#chart"
+          class="fa fa-undo"
+          title="revert">
           &#x2B6F;
         </a>
         <a on:click={setPanMode} href="#chart" class="fa fa-arrows" title="pan">

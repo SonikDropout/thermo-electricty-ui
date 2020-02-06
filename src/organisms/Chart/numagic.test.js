@@ -1,4 +1,4 @@
-const { scaleLinear } = require('../numagic');
+const { scaleLinear } = require('./numagic');
 
 test('scales correctly', () => {
   expect(scaleLinear([3, 10], [0, 14])(3)).toBe(0);

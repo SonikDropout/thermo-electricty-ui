@@ -1,16 +1,16 @@
-const { SEPARATORS, CAR_CHARACTERISTICS } = require('../constants');
-const DataGenerator = require('./DataGenerator');
-const EventEmitter = require('events');
+const { SEPARATORS, PELTIER_PARAMS } = require('../constants');
+const { clone } = require('./others');
 const os = require('os');
 
 class DataHandler {
   constructor(connection) {
     this.connection = connection;
-    this.values = JSON.parse(JSON.stringify(CAR_CHARACTERISTICS));
+    this._endianess = os.endianness();
+    this.values = clone(PELTIER_PARAMS);
   }
 
-  getHashMapFromBuffer(buffer) {
-    this._validateBuffer(buffer);
+  parse(buffer) {
+    if (!this._isValid(buffer)) return;
     for (let key in this.values) {
       this.values[key].value = this._getValueFromBuffer(
         buffer,
@@ -20,44 +20,21 @@ class DataHandler {
     return this.values;
   }
 
-  getArrayFromBuffer(buffer) {
-    this._validateBuffer(buffer);
-    return STORED_VALUES.map((name) =>
-      this._getValueFromBuffer(buffer, this.values[name])
-    );
-  }
-
   _getValueFromBuffer(buffer, options) {
-    let divider = options.divider || 1;
-    if (options.bytes > 1) {
-      let readMethod = `readUInt${Math.pow(2, 2 + options.bytes)}${os.endianness()}`;
-      return buffer[readMethod](options.offset) / divider;
-    } else if (options.type == 'textFlag')
-      return buffer[options.offset] ? options.posText : options.negText;
-    return buffer[options.offset] * divider;
+    const divider = options.divider || 1;
+    const readMethod = `read${options.signed ? '' : 'U'}Int16${
+      this._endianess
+    }`;
+    return buffer[readMethod](options.offset) / divider;
   }
 
-  _validateBuffer(buffer) {
+  _isValid(buffer) {
     for (let i = 0; i < SEPARATORS.length; i++) {
-      if (buffer[i] != SEPARATORS[i]) throw Error('Wrong data recieved');
+      if (buffer['readUInt16' + this._endianess](i * 2) != SEPARATORS[i])
+        return;
     }
+    return true;
   }
 }
 
-function testHandler() {
-  let emitter = new EventEmitter();
-  let dataHandler = new DataHandler();
-  let connection = {
-    write: (data) => emitter.emit('data', data),
-  };
-  emitter.on('data', (buffer) => {
-    console.log(dataHandler.convertBuffer(buffer));
-  });
-  new DataGenerator(connection).start();
-}
-
-
-module.exports = DataHandler
-// if (require.main === module) {
-//   testHandler
-// }
+module.exports = DataHandler;

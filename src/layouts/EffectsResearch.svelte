@@ -1,5 +1,5 @@
 <script>
-  import Chart from "../organisms/Chart";
+  import Chart from "../organisms/Chart/Chart";
   import RangeInput from "../molecules/RangeInput";
   import Select from "../atoms/Select";
   import Button from "../atoms/Button";
@@ -53,53 +53,55 @@
   }
 </style>
 
-<header>Исследование эффектов Пелтье и Зеебека</header>
-<main>
-  <div class="selects">
-    <Select on:change={selectEffect} options={effectsOptions} />
-    <div class="value">
-      <span class="label">Температура нагревающейся пластины:</span>
-      <strong class="value">{0}</strong>
-      <em class="units">{'\u2103'}</em>
+<div class="layout">
+  <header>Исследование эффектов Пелтье и Зеебека</header>
+  <main>
+    <div class="selects">
+      <Select on:change={selectEffect} options={effectsOptions} />
+      <div class="value">
+        <span class="label">Температура нагревающейся пластины:</span>
+        <strong class="value">{0}</strong>
+        <em class="units">{'\u2103'}</em>
+      </div>
+      <div class="value">
+        <span class="label">Температура охлаждающейся пластины:</span>
+        <strong class="value">{0}</strong>
+        <em class="units">{'\u2103'}</em>
+      </div>
+      {#if selectedEffect.value}
+        <RangeInput on:change={changePower}>
+          Мощьность модуля Пелтье, % от макс
+        </RangeInput>
+      {:else}
+        <RangeInput on:change={changeCurrent}>Установка тока, А</RangeInput>
+      {/if}
+      <h3>Результаты измерений</h3>
+      <div class="result">
+        <span class="label">U</span>
+        ,
+        <em class="units">B</em>
+        <strong class="value">{0}</strong>
+      </div>
+      <div class="result">
+        <span class="label">I</span>
+        ,
+        <em class="units">A</em>
+        <strong class="value">{0}</strong>
+      </div>
+      <div class="result">
+        <span class="label">U</span>
+        ,
+        <em class="units">{'\u2103'}</em>
+        <strong class="value">{0}</strong>
+      </div>
+      <Button on:click={startDrawing}>Старт</Button>
     </div>
-    <div class="value">
-      <span class="label">Температура охлаждающейся пластины:</span>
-      <strong class="value">{0}</strong>
-      <em class="units">{'\u2103'}</em>
-    </div>
-    {#if selectedEffect.value}
-      <RangeInput on:change={changePower}>
-        Мощьность модуля Пелтье, % от макс
-      </RangeInput>
-    {:else}
-      <RangeInput on:change={changeCurrent}>Установка тока, А</RangeInput>
-    {/if}
-    <h3>Результаты измерений</h3>
-    <div class="result">
-      <span class="label">U</span>
-      ,
-      <em class="units">B</em>
-      <strong class="value">{0}</strong>
-    </div>
-    <div class="result">
-      <span class="label">I</span>
-      ,
-      <em class="units">A</em>
-      <strong class="value">{0}</strong>
-    </div>
-    <div class="result">
-      <span class="label">U</span>
-      ,
-      <em class="units">{'\u2103'}</em>
-      <strong class="value">{0}</strong>
-    </div>
-    <Button on:click={startDrawing}>Старт</Button>
-  </div>
-  <Chart xCaption="T, &#x2103;" yCaption="R" {points} />
-</main>
-<footer>
-  <Button on:click={saveExcel} disabled={!MSPath}>
-    Сохранить данные на usb-устройство
-  </Button>
-  <Button on:click={goBack}>Назад</Button>
-</footer>
+    <Chart xCaption="T, &#x2103;" yCaption="R" {points} />
+  </main>
+  <footer>
+    <Button on:click={saveExcel} disabled={!MSPath}>
+      Сохранить данные на usb-устройство
+    </Button>
+    <Button on:click={goBack}>Назад</Button>
+  </footer>
+</div>
