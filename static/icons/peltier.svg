@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150.74 163">
+  <title>peltier</title>
+  <g>
+    <polygon points="133.47 132.3 133.47 149.82 17.27 149.82 17.27 132.3 27.19 132.3 27.19 142.23 41.21 142.23 41.21 132.3 48.22 132.3 48.22 142.23 62.23 142.23 62.23 132.3 68.65 132.3 68.65 142.23 82.08 142.23 82.08 132.3 88.51 132.3 88.51 142.23 102.52 142.23 102.52 132.3 109.53 132.3 109.53 142.23 123.54 142.23 123.54 132.3 133.47 132.3" fill="#fff" stroke="#333" stroke-width="3"/>
+    <rect x="88.51" y="132.3" width="14.01" height="9.93" fill="none" stroke="#333" stroke-width="3"/>
+    <rect x="109.53" y="132.3" width="14.01" height="9.93" fill="none" stroke="#333" stroke-width="3"/>
+    <path d="M149.24,127.63v17.52a4.67,4.67,0,0,1-4.67,4.67h-2.34V132.3h2.34A4.67,4.67,0,0,0,149.24,127.63Z" fill="#fff" stroke="#333" stroke-width="3"/>
+    <rect x="1.5" y="1.5" width="147.74" height="130.8" rx="4.67" ry="4.67" fill="#e9eaea" stroke="#333" stroke-width="3"/>
+    <rect x="88.51" y="132.3" width="14.01" height="9.93" fill="#969ba5" stroke="#333" stroke-width="3"/>
+    <rect x="109.53" y="132.3" width="14.01" height="9.93" fill="#969ba5" stroke="#333" stroke-width="3"/>
+    <rect x="133.47" y="132.3" width="8.76" height="20.44" fill="#d74141" stroke="#333" stroke-width="3"/>
+    <rect x="135.51" y="153.32" width="4.67" height="8.18" fill="#f07e0f" stroke="#333" stroke-width="3"/>
+    <rect x="68.65" y="132.3" width="13.43" height="9.93" fill="#969ba5" stroke="#333" stroke-width="3"/>
+    <rect x="48.22" y="132.3" width="14.01" height="9.93" fill="none" stroke="#333" stroke-width="3"/>
+    <rect x="27.19" y="132.3" width="14.01" height="9.93" fill="none" stroke="#333" stroke-width="3"/>
+    <path d="M8.51,132.3v17.52H6.17a4.67,4.67,0,0,1-4.67-4.67V127.63a4.67,4.67,0,0,0,4.67,4.67Z" fill="#fff" stroke="#333" stroke-width="3"/>
+    <rect x="48.22" y="132.3" width="14.01" height="9.93" fill="#969ba5" stroke="#333" stroke-width="3"/>
+    <rect x="27.19" y="132.3" width="14.01" height="9.93" fill="#969ba5" stroke="#333" stroke-width="3"/>
+    <rect x="8.51" y="132.3" width="8.76" height="20.44" fill="#222" stroke="#333" stroke-width="3"/>
+    <rect x="10.55" y="153.32" width="4.67" height="8.18" fill="#f07e0f" stroke="#333" stroke-width="3"/>
+  </g>
+</svg>

@@ -41,10 +41,12 @@ body {
 header {
   font-size: 3.2rem;
   text-align: center;
-  margin: 0.5rem 0;
+  margin: 0;
   padding: 0;
   height: 6.4rem;
   line-height: 6.4rem;
+  font-family: "Oswald", "Franklin Gothic Medium", "Arial Narrow", Arial,
+  sans-serif;
 }
 
 .layout {
@@ -61,8 +63,13 @@ header {
 }
 
 h1, h2, h3, h4, h5, h6 {
+  font-weight: normal;
+  font-family: "Oswald", "Franklin Gothic Medium", "Arial Narrow", Arial,
+  sans-serif;
+}
+
+h3, h4, h5, h6 {
   font-weight: 300;
-  font-family: 'Oswald', Arial, Helvetica, sans-serif;
 }
 
 footer {
@@ -71,4 +78,11 @@ footer {
 
 footer button:first-child {
   margin: auto;
+}
+
+.hidden {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  visibility: hidden;
 }

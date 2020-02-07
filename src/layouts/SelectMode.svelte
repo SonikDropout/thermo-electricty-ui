@@ -1,18 +1,8 @@
 <script>
   import { TEMP_MEASURE, EFFECTS_RESEARCH } from "../constants";
-  function unite(direction) {
-    return function(node, { duration = 300 }) {
-      return {
-        duration,
-        css: t => {
-          const shift = Math.abs(1 - t) * 100 * (direction == "right" ? 1 : -1);
-          return `transform: translate(${shift}%, ${shift}%)`;
-        }
-      };
-    };
-  }
-  const uniteLeft = unite("left");
-  const uniteRight = unite("right");
+  import { slide } from "../transitions";
+  const slideLeft = slide("left");
+  const slideRight = slide("right");
 </script>
 
 <style>
@@ -20,25 +10,8 @@
     width: 100vw;
     height: 100vh;
     display: flex;
-  }
-  div.area {
-    flex-grow: 1;
-    display: flex;
-    transform: scale(1.3);
-  }
-  div.temp {
-    background-color: var(--corporate-orange);
-    clip-path: polygon(0 0, 0 100%, 80% 100%, 80% 60%, 100% 40%, 100% 0);
-  }
-  div.effects {
-    background-color: var(--corporate-blue);
-    clip-path: polygon(100% 0, 100% 100%, 0 100%, 0 60%, 20% 40%, 20% 0);
-  }
-  .temp label {
-    margin: 30% auto;
-  }
-  .effects label {
-    margin: auto auto 30% auto;
+    justify-content: space-evenly;
+    align-items: center;
   }
   input {
     position: absolute;
@@ -47,29 +20,43 @@
     visibility: hidden;
   }
   label {
-    font-size: 3.2rem;
-    font-weight: bold;
+    font-size: 2.4rem;
+    font-family: "Oswald", "Franklin Gothic Medium", "Arial Narrow", Arial,
+      sans-serif;
     color: var(--bg-color);
-    max-width: 50%;
+    width: 40rem;
+    text-align: center;
+    border-radius: 12px;
+    padding: 3.2rem 8rem;
   }
-  label:hover {
-    text-shadow: 2px 2px var(--corporate-grey);
+  label img {
+    width: 60%;
+    display: block;
+    margin: 0 auto;
+  }
+  .temp {
+    background-color: var(--corporate-orange);
+  }
+  .temp img {
+    position: relative;
+    left: 10%;
+  }
+  .effects {
+    background-color: var(--corporate-blue);
   }
 </style>
 
 <div class="layout">
   <main>
-    <div class="area temp" transition:uniteLeft>
-      <label>
-        Измерение и контроль температуры
-        <input type="radio" name="appState" value={TEMP_MEASURE} on:change />
-      </label>
-    </div>
-    <div class="area effects" transition:uniteRight>
-      <label>
-        Измерение эффектов Пельтье и Зеебека
-        <input type="radio" name="appState" value={EFFECTS_RESEARCH} on:change />
-      </label>
-    </div>
+    <label class="area temp" transition:slideLeft>
+      <img src="../static/icons/temperature.svg" alt="temperature" />
+      <p>Измерение и контроль температуры</p>
+      <input type="radio" name="appState" value={TEMP_MEASURE} on:change />
+    </label>
+    <label class="area effects" transition:slideRight>
+      <img src="../static/icons/peltier.svg" alt="temperature" />
+      <p>Измерение эффектов Пельтье и Зеебека</p>
+      <input type="radio" name="appState" value={EFFECTS_RESEARCH} on:change />
+    </label>
   </main>
 </div>

@@ -1,10 +1,17 @@
 <script>
-  import PlateColumn from '../organisms/PlateColumn';
-  import Button from '../atoms/Button';
+  import PlateColumn from "../organisms/PlateColumn";
+  import Button from "../atoms/Button";
+  import { slide } from "../transitions";
   export let goBack;
   export let goForward;
 
-  const plateColumns = [{title: 'heating'}, {title: 'cooling'}]
+  const slideTop = slide("top");
+  const slideBottom = slide("bottom");
+
+  const plateColumns = [
+    { title: "Охлаждающая пластина", name: "Cool", pos: "left" },
+    { title: "Нагревающая пластина", name: "Hot", pos: "right" }
+  ];
 </script>
 
 <style>
@@ -12,7 +19,7 @@
     display: flex;
     justify-content: stretch;
   }
-  main :global(div)  {
+  main :global(div) {
     flex-grow: 1;
   }
   footer {
@@ -26,13 +33,13 @@
 </style>
 
 <div class="layout">
-  <header>Измерение и контроль температуры</header>
+  <header transition:slideTop>Измерение и контроль температуры</header>
   <main>
     {#each plateColumns as column}
       <PlateColumn {...column} />
     {/each}
   </main>
-  <footer>
+  <footer transition:slideBottom>
     <Button on:click={goForward}>Постоение графиков</Button>
     <Button on:click={goBack}>Назад</Button>
   </footer>

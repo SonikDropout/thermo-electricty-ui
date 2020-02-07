@@ -1,4 +1,4 @@
-const { concat, clone } = require('./utils/others');
+const { concat } = require('./utils/others');
 
 const TEMP_MEASURE = 'temp';
 const EFFECTS_RESEARCH = 'effects';
@@ -82,7 +82,7 @@ const PROBE_PELTIER_PARAMS = {
 
 const PELTIER_PARAMS = concat(
   [INTEGRATED_PELTIER_PARAMS, PROBE_PELTIER_PARAMS, INTEGRATED_PELTIER_PARAMS],
-  ['Hot', 'Probe', 'Cold']
+  ['Hot', 'Probe', 'Cool']
 );
 
 
@@ -97,10 +97,10 @@ const COMMANDS = {
   turnOffProbePeltier: 120,
   constanstTempProbePeltier: 124,
   constanstPowerProbePeltier: 128,
-  turnOnColdPeltier: 132,
-  turnOffColdPeltier: 136,
-  constanstTempColdPeltier: 140,
-  constanstPowerColdPeltier: 144,
+  turnOnCoolPeltier: 132,
+  turnOffCoolPeltier: 136,
+  constanstTempCoolPeltier: 140,
+  constanstPowerCoolPeltier: 144,
 };
 
 module.exports = {
