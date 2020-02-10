@@ -1,5 +1,5 @@
 <script>
-  import Chart from "../organisms/Chart/Chart";
+  import Chart from "../organisms/Chart/index";
   import Select from "../atoms/Select";
   import Button from "../atoms/Button";
   import xlsLogger from "../utils/XLSLogger";

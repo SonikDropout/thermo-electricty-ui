@@ -6,11 +6,11 @@
     findClosestIndex
   } from "./numagic";
   import { getOffsetY, getOffsetX } from "./DOM";
-  export let yPoints = [];
-  export let xPoints = []; // this array must be sorted!!
+  export let yPoints;
+  export let xPoints; // this array must be sorted!!
   export let xCaption;
   export let yCaption;
-  export let type = "line";
+  export let padding;
 
   let cursorX,
     cursorY,
@@ -26,10 +26,6 @@
   $: height = chart ? chart.clientHeight : 300;
   $: chartX = chart ? getOffsetX(chart) : 0;
   $: chartY = chart ? getOffsetY(chart) : 0;
-
-  const padding = { top: 20, right: 25, bottom: 40, left: 40 };
-
-  $: isInitialized = xPoints.length > 1 && yPoints.length > 1;
 
   $: minY = Math.min.apply(null, zoomedArea ? zoomedArea.y : yPoints);
   $: maxY = Math.max.apply(null, zoomedArea ? zoomedArea.y : yPoints);
@@ -261,102 +257,88 @@
       on:pointerdown={handlePointerDown}
       on:pointermove={handlePointerMove}
       on:pointerup={handlePointerUp}>
-      {#if isInitialized}
-        <!-- y axis -->
-        <g class="axis y-axis">
-          <text dominant-baseline="hanging">{yCaption}</text>
-          {#each yTicks.slice(0, yTicks.length - 1) as tick, i}
-            <g class="tick tick-{i}" transform="translate(0, {yScale(tick)})">
-              <line x2="100%" />
-              <text y="-4">{tick}</text>
-            </g>
-          {/each}
-        </g>
+      <!-- y axis -->
+      <g class="axis y-axis">
+        <text dominant-baseline="hanging">{yCaption}</text>
+        {#each yTicks.slice(0, yTicks.length - 1) as tick, i}
+          <g class="tick tick-{i}" transform="translate(0, {yScale(tick)})">
+            <line x2="100%" />
+            <text y="-4">{tick}</text>
+          </g>
+        {/each}
+      </g>
 
-        <!-- x axis -->
-        <g class="axis x-axis">
-          {#each xTicks as tick, i}
-            <g
-              class="tick tick-{i}"
-              transform="translate({xScale(tick)},{height})">
-              <line
-                y2="-{height - padding.top}"
-                y1="-{padding.bottom}"
-                x1="0"
-                x2="0" />
-              <text y="-20">{tick}</text>
-            </g>
-          {/each}
-          <text x="100%" y="98%" text-anchor="end">{xCaption}</text>
-        </g>
-
-        <g class="zoom-preview">
-          {#if !isNaN(zoomStart)}
+      <!-- x axis -->
+      <g class="axis x-axis">
+        {#each xTicks as tick, i}
+          <g
+            class="tick tick-{i}"
+            transform="translate({xScale(tick)},{height})">
             <line
-              class="zoom-border"
-              y1="0"
-              y2={height - padding.bottom}
-              x1={zoomStart}
-              x2={zoomStart} />
-          {/if}
-          {#if !isNaN(zoomEnd)}
-            <line
-              class="zoom-border"
-              y1="0"
-              y2={height - padding.bottom}
-              x1={zoomEnd}
-              x2={zoomEnd} />
-            <path
-              class="zoom-area"
-              d="M{zoomStart} 0H{zoomEnd}V{height - padding.bottom}H{zoomStart}Z" />
-          {/if}
-        </g>
+              y2="-{height - padding.top}"
+              y1="-{padding.bottom}"
+              x1="0"
+              x2="0" />
+            <text y="-20">{tick}</text>
+          </g>
+        {/each}
+        <text x="100%" y="98%" text-anchor="end">{xCaption}</text>
+      </g>
 
-        <!-- data -->
-        <g class="data">
-          {#if type == 'line'}
-            <path
-              d={`M${xPoints
-                .map((p, i) => `${xScale(p)},${yScale(yPoints[i])}`)
-                .join('L')}`} />
-            {#if curPoint}
-              <circle cx={curPoint.x} cy={curPoint.y} r="2" />
-              <rect
-                x={curPoint.x - 25}
-                y={curPoint.y - 25}
-                fill="#fff"
-                width="100"
-                height="20"
-                stroke="#aaa" />
-              <text
-                x={curPoint.x + 25}
-                y={curPoint.y - 20}
-                text-anchor="middle"
-                alignment-baseline="hanging">
-                {xScale.invert(curPoint.x).toPrecision(3)} : {xScale
-                  .invert(curPoint.y)
-                  .toPrecision(3)}
-              </text>
-            {/if}
-          {:else}
-            {#each pathXPoints as x, i}
-              <circle cx={xScale(x)} cy={yScale(pathYPoints[i])} r="4" />
-            {/each}
-          {/if}
-        </g>
-      {:else}
-        <!-- y axis -->
-        <g class="axis y-axis">
-          <text dominant-baseline="hanging">{yCaption}</text>
-          <line x1="{padding.left}" x2="{padding.left}" y1="{padding.top}" y2="{height - padding.bottom}" />
-        </g>
+      <g class="zoom-preview">
+        {#if !isNaN(zoomStart)}
+          <line
+            class="zoom-border"
+            y1="0"
+            y2={height - padding.bottom}
+            x1={zoomStart}
+            x2={zoomStart} />
+        {/if}
+        {#if !isNaN(zoomEnd)}
+          <line
+            class="zoom-border"
+            y1="0"
+            y2={height - padding.bottom}
+            x1={zoomEnd}
+            x2={zoomEnd} />
+          <path
+            class="zoom-area"
+            d="M{zoomStart} 0H{zoomEnd}V{height - padding.bottom}H{zoomStart}Z" />
+        {/if}
+      </g>
 
-        <!-- x axis -->
-        <g class="axis x-axis">
-          <line x1="0" x2="{width - padding.left}" y1="{height - padding.bottom}" y2="{height - padding.bottom}" />
-          <text x="100%" y="98%" text-anchor="end">{xCaption}</text>
-        </g>
-      {/if}
+      <!-- data -->
+      <g class="data">
+        {#if type == 'line'}
+          <path
+            d={`M${xPoints
+              .map((p, i) => `${xScale(p)},${yScale(yPoints[i])}`)
+              .join('L')}`} />
+          {#if curPoint}
+            <circle cx={curPoint.x} cy={curPoint.y} r="2" />
+            <rect
+              x={curPoint.x - 25}
+              y={curPoint.y - 25}
+              fill="#fff"
+              width="100"
+              height="20"
+              stroke="#aaa" />
+            <text
+              x={curPoint.x + 25}
+              y={curPoint.y - 20}
+              text-anchor="middle"
+              alignment-baseline="hanging">
+              {xScale.invert(curPoint.x).toPrecision(3)} : {xScale
+                .invert(curPoint.y)
+                .toPrecision(3)}
+            </text>
+          {/if}
+        {:else}
+          {#each pathXPoints as x, i}
+            <circle cx={xScale(x)} cy={yScale(pathYPoints[i])} r="4" />
+          {/each}
+        {/if}
+      </g>
     </svg>
 
     {#if zoomedArea}
