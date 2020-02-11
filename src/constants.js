@@ -37,17 +37,17 @@ const INTEGRATED_PELTIER_PARAMS = {
     isFlag: true,
   },
   thermistor: {
-    label: 'Показания термистора',
+    label: 'Термистор',
     units: 'кОм',
     divider: 1000,
   },
   thermocouple: {
-    label: 'Показания термопары',
+    label: 'Термопара',
     units: 'мкВ',
     signed: true,
   },
   thermoresistor: {
-    label: 'Показания терморезистора',
+    label: 'Терморезистор',
     units: 'Ом',
     divider: 10,
   },

@@ -23,11 +23,12 @@
     flex-grow: 1;
   }
   footer {
-    padding: var(--gutter-width);
+    padding: var(--gutter-width) 7.5rem;
     display: flex;
     align-items: center;
+    justify-content: flex-start;
   }
-  footer :global(button:first-child) {
+  footer :global(button:last-of-type) {
     margin: auto;
   }
 </style>
@@ -40,7 +41,7 @@
     {/each}
   </main>
   <footer transition:slideBottom>
-    <Button on:click={goForward}>Постоение графиков</Button>
     <Button on:click={goBack}>Назад</Button>
+    <Button on:click={goForward}>Постоение графиков</Button>
   </footer>
 </div>

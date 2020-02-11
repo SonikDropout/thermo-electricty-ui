@@ -18,13 +18,13 @@
 
 <style>
   div {
-    flex: 1 1 40%;
-    max-width: 42%;
+    max-width: 40rem;
     display: grid;
     grid-template-columns: 1fr 1fr;
     background-size: contain;
     background-position: center center;
     background-repeat: no-repeat;
+    align-items: center;
   }
   div > * {
     grid-column-start: 2;
@@ -40,6 +40,10 @@
   }
   h2 {
     margin-top: 0;
+    font-size: 2.4rem;
+  }
+  h3 {
+    font-size: 2rem;
   }
 </style>
 

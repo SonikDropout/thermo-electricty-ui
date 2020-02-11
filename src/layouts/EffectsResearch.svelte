@@ -45,9 +45,11 @@
   main {
     display: flex;
     padding-top: var(--gutter-width);
+    justify-content: space-evenly;
   }
   .selects {
     flex: 1 1 40%;
+    max-width: 40rem;
     padding: 0 4.8rem;
     display: flex;
     flex-direction: column;
@@ -58,8 +60,13 @@
     margin-top: auto;
   }
   main :global(.chart) {
+    max-width: 50rem;
     flex: 1 1 60%;
     padding-right: 4.8rem;
+  }
+  .label {
+    display: inline-block;
+    width: 10px;
   }
 </style>
 
@@ -87,22 +94,16 @@
       {/if}
       <h3>Результаты измерений</h3>
       <div class="result">
-        <span class="label">U</span>
-        ,
-        <em class="units">B</em>
+        <span class="label">U ,<em class="units">B</em>: </span>
         <strong class="value">{0}</strong>
       </div>
       <div class="result">
-        <span class="label">I</span>
-        ,
-        <em class="units">A</em>
+        <span class="label">I ,<em class="units">A</em>: </span>
         <strong class="value">{0}</strong>
       </div>
       <div class="result">
-        <span class="label">U</span>
-        ,
-        <em class="units">{'\u2103'}</em>
-        <strong class="value">{0}</strong>
+        <span class="label">T ,<em class="units">{'\u2103'}</em>: </span>
+         <strong class="value">{0}</strong>
       </div>
       <Button on:click={startDrawing}>Старт</Button>
     </div>

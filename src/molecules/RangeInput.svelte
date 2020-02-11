@@ -51,7 +51,6 @@
     height: 3.2rem;
     line-height: 3.2rem;
     display: flex;
-    margin-left: var(--gutter-width);
   }
   input {
     flex-grow: 1;
