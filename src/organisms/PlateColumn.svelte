@@ -18,11 +18,10 @@
 
 <style>
   div {
-    padding: var(--gutter-width);
+    flex: 1 1 40%;
+    max-width: 42%;
     display: grid;
     grid-template-columns: 1fr 1fr;
-  }
-  div {
     background-size: contain;
     background-position: center center;
     background-repeat: no-repeat;
@@ -44,12 +43,15 @@
   }
 </style>
 
-<div class="{name}" style="background-image:url(./icons/{name.toLowerCase()}.svg" transition:slideCol>
+<div
+  class={name}
+  style="background-image:url(./icons/{name.toLowerCase()}.svg"
+  transition:slideCol>
   <h2>{title}</h2>
   <span class="label">Состояние</span>
   <Toggle on:change={e => (plateOn = e.target.checked)} />
   <span class="label">Температура</span>
-  <Value value={0} />
+  <strong class="value">{0}</strong>
   <span class="label">Режим работы</span>
   <Select
     options={[{ label: 'по температуре', value: 'temp' }, { label: 'по мощности', value: 'power' }]} />

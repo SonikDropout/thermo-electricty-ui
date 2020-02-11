@@ -46,12 +46,20 @@
 <style>
   main {
     display: flex;
+    align-items: stretch;
+    justify-content: space-evenly;
   }
   .selects {
     flex: 1 1 40%;
+    padding: 0 4.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: flex-start;
   }
   main :global(.chart) {
     flex: 1 1 60%;
+    padding-right: 4.8rem;
   }
 </style>
 

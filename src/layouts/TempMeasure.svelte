@@ -17,7 +17,7 @@
 <style>
   main {
     display: flex;
-    justify-content: stretch;
+    justify-content: space-evenly;
   }
   main :global(div) {
     flex-grow: 1;

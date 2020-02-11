@@ -21,11 +21,12 @@
   .select-box {
     height: 3.2rem;
     line-height: 3.2rem;
+    width: 100%;
     display: flex;
   }
 
   .select-wrapper {
-    flex-grow:1;
+    flex-grow: 1;
     position: relative;
   }
 
@@ -42,7 +43,7 @@
   .curr-value {
     display: flex;
     align-items: center;
-   justify-content: space-between;
+    justify-content: space-between;
   }
 
   .curr-value::after {

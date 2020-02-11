@@ -51,6 +51,7 @@
     height: 3.2rem;
     line-height: 3.2rem;
     display: flex;
+    margin-left: var(--gutter-width);
   }
   input {
     flex-grow: 1;
@@ -71,7 +72,7 @@
     background-color: transparent;
     width: 4rem;
     font-size: 3.2rem;
-    line-height: .8;
+    line-height: 0.8;
     font-weight: 300;
   }
 </style>
@@ -81,8 +82,18 @@
     <slot />
   </span>
   <span class="input-wrapper">
-    <button class="incrementer" on:pointerdown={pressDecrement} on:pointerup={release}>-</button>
+    <button
+      class="incrementer"
+      on:pointerdown={pressDecrement}
+      on:pointerup={release}>
+      -
+    </button>
     <input type="number" bind:this={input} {value} {min} {max} on:change />
-    <button class="decrementer" on:pointerdown={pressIncrement} on:pointerup={release}>+</button>
+    <button
+      class="decrementer"
+      on:pointerdown={pressIncrement}
+      on:pointerup={release}>
+      +
+    </button>
   </span>
 </label>

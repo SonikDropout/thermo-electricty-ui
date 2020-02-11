@@ -44,12 +44,22 @@
 <style>
   main {
     display: flex;
+    padding-top: var(--gutter-width);
   }
   .selects {
     flex: 1 1 40%;
+    padding: 0 4.8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .selects :global(button) {
+    margin-top: auto;
   }
   main :global(.chart) {
     flex: 1 1 60%;
+    padding-right: 4.8rem;
   }
 </style>
 

@@ -11,6 +11,7 @@
   export let xCaption;
   export let yCaption;
   export let padding;
+  export let type;
 
   let cursorX,
     cursorY,

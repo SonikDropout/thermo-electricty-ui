@@ -6,6 +6,19 @@
     height = 300;
 </script>
 
+<style>
+  div {
+    width: 100%;
+    height: 100%;
+    padding: var(--gutter-width);
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
 <div bind:clientHeight={height} bind:clientWidth={width}>
   <svg>
     <g class="axis y-axis">
