@@ -32,22 +32,21 @@ const INTEGRATED_PELTIER_PARAMS = {
     label: 'Нагрузка',
     units: '%',
   },
-  mode: {
-    label: 'Режим работы',
-    isFlag: true,
-  },
   thermistor: {
     label: 'Термистор',
+    symbol: 'R',
     units: 'кОм',
     divider: 1000,
   },
   thermocouple: {
     label: 'Термопара',
+    symbol: 'U',
     units: 'мкВ',
     signed: true,
   },
   thermoresistor: {
     label: 'Терморезистор',
+    symbol: 'R',
     units: 'Ом',
     divider: 10,
   },
@@ -74,40 +73,66 @@ const PROBE_PELTIER_PARAMS = {
     label: 'Нагрузка',
     units: '%',
   },
+};
+
+const PELTIER_STATE = {
   mode: {
     label: 'Режим работы',
-    isFlag: true,
+  },
+  state: {
+    label: 'Состояние',
   },
 };
 
 const PELTIER_PARAMS = concat(
   [INTEGRATED_PELTIER_PARAMS, PROBE_PELTIER_PARAMS, INTEGRATED_PELTIER_PARAMS],
-  ['Hot', 'Probe', 'Cool']
+  ['Cool', 'Probe', 'Hot']
 );
 
+const PELTIER_STATES = concat(Array(2).fill(PELTIER_STATE), ['Cool', 'Hot']);
 
-const BUFFER_LENGTH = (SEPARATORS.length + Object.keys(PELTIER_PARAMS).length) * 2;
+const DATA_ENTRIES = {
+  ...PELTIER_PARAMS,
+  ...PELTIER_STATES,
+};
+
+const BUFFER_LENGTH =
+  (SEPARATORS.length + Object.keys(PELTIER_PARAMS).length) * 2;
 
 const COMMANDS = {
-  turnOnHotPeltier: 100,
-  turnOffHotPeltier: 104,
-  constanstTempHotPeltier: 108,
-  constanstPowerHotPeltier: 112,
+  turnOnCoolPeltier: 100,
+  turnOffCoolPeltier: 104,
+  constanstTempCoolPeltier: 108,
+  constanstPowerCoolPeltier: 112,
   turnOnProbePeltier: 116,
   turnOffProbePeltier: 120,
   constanstTempProbePeltier: 124,
   constanstPowerProbePeltier: 128,
-  turnOnCoolPeltier: 132,
-  turnOffCoolPeltier: 136,
-  constanstTempCoolPeltier: 140,
-  constanstPowerCoolPeltier: 144,
+  turnOnHotPeltier: 132,
+  turnOffHotPeltier: 136,
+  constanstTempHotPeltier: 140,
+  constanstPowerHotPeltier: 144,
+  setTempCoolPeltier: (v) => [200, 100 + v],
+  setTempHotPeltier: (v) => [208, v],
+  setCurentProbePeltier: (v) => [204, v * 10],
+  setPowerCoolPeltier: (v) => [212, v],
+  setPowerHotPeltier: (v) => [216, v],
+};
+
+const PELTIER_CONSTRAINTS = {
+  TempCool: [-5, 20],
+  TempHot: [20, 50],
+  CurrentProbe: [0.1, 2],
+  PowerCool: [0, 100],
+  PowerHot: [0, 100],
 };
 
 module.exports = {
   COMMANDS,
   PROBE_PELTIER_PARAMS,
   INTEGRATED_PELTIER_PARAMS,
-  PELTIER_PARAMS,
+  PELTIER_CONSTRAINTS,
+  DATA_ENTRIES,
   SEPARATORS,
   TEMP_MEASURE,
   EFFECTS_RESEARCH,

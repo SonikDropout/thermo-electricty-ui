@@ -10,4 +10,12 @@ const concat = (objects, names) => {
   return result;
 };
 
-module.exports = { clone, concat };
+const capitalize = (s) => s[0].toUpperCase() + s.slice(1);
+
+const getFileDate = () => {
+  const date = new Date();
+  return `${date.getDate()}-${date.getMonth() +
+    1}-${date.getFullYear()}_${date.getHours()}-${date.getMinutes()}`;
+};
+
+module.exports = { clone, concat, capitalize, getFileDate };

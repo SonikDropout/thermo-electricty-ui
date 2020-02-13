@@ -1,45 +1,84 @@
 <script>
   import Chart from "../organisms/Chart/index";
-  import Select from "../atoms/Select";
+  import Select from "../molecules/select";
   import Button from "../atoms/Button";
-  import xlsLogger from "../utils/XLSLogger";
-  import usbDetector from "../utils/USBDetector";
+  import RadioGroup from "../molecules/RadioGroup";
+  import { data } from "../stores";
+  import { ipcRenderer } from "electron";
+  import { getFileDate, capitalize } from "../utils/others";
   export let goBack;
 
-  let MSPath = usbDetector.storagePath,
-    points;
+  let saveActive, xPoints = [], yPoints = [], isDrawing;
 
-  usbDetector.on("connect", path => (MSPath = path));
-  usbDetector.on("remove", () => (MSPath = void 0));
+  ipcRenderer.on("usbConnect", () => (saveActive = true))
+    .on("usbDisconnect", () => (saveActive = false));
 
   const faceOptions = [
-    { label: "Охлаждающая сторона", value: 0 },
-    { label: "Нагревающая сторона", value: 1 }
+    { label: "Охлаждающая сторона", value: "Cool" },
+    { label: "Нагревающая сторона", value: "Hot" }
   ];
 
-  const sensorsOptions = [
-    { label: "Терморезистор", value: 0 },
-    { label: "Термистор", value: 1 },
-    { label: "Термопара", value: 2 }
-  ];
+  const sensorsOptions = {
+    name: "sensors",
+    elements: [
+      { label: "Терморезистор", value: "thermoresistor" },
+      { label: "Термистор", value: "thermistor" },
+      { label: "Термопара", value: "thermocouple" }
+    ]
+  };
 
-  let selectedFace = faceOptions[0];
-  let selectedSensor = sensorsOptions[0];
+  let selectedFace = faceOptions[0],
+    selectedSensor;
 
   function selectFace(e) {
-    selectedFace = faceOptions[+e.target.dataset.value];
+    const name = e.target.datset.value;
+    selectedFace = faceOptions[+(name == "Hot")];
   }
 
   function selectSensor(e) {
     selectedSensor = sensorsOptions[+e.target.dataset.value];
   }
 
+  function toggleDrawing() {
+    if (isDrawing) stopDrawing();
+    else startDrawing();
+  }
+
+  function stopDrawing() {
+    data.unsubscribe(sendExcelData);
+    data.unsubscribe(updateChartData);
+    xPoints = [];
+    yPoints = [];
+    isDrawing = false;
+  }
+
   function startDrawing() {
-    // pass
+    isDrawing = true;
+    ipcRenderer.send(
+      "startFileWrite",
+      `TE-${selectedFace.value}-${capitalize(selectedSensor)}_${getFileDate()}`,
+      "T, \u2103",
+      "R, Ом"
+    );
+    data.subscribe(saveExcelData);
+    data.subscribe(updateChartData);
+  }
+
+  function saveExcelData(data) {
+    ipcRenderer.send(
+      "excelRow",
+      data["temperature" + selectFace.value].value,
+      data[selectedSensor + selectFace.value].value
+    );
+  }
+
+  function updateChartData(data) {
+    xPoints = xPoints.concat(data['temperature' + selectFace.value].value);
+    yPoints = yPoints.concat(data[selectedSensor + selectFace.value].value);
   }
 
   function saveExcel() {
-    xlsLogger.saveLogTo(MSPath);
+    ipcRenderer.send("saveFile");
   }
 </script>
 
@@ -67,14 +106,17 @@
   <header>Постоение графиков</header>
   <main>
     <div class="selects">
-      <Select on:change={selectFace} options={faceOptions} />
-      <Select on:change={selectSensor} options={sensorsOptions} />
-      <Button on:click={startDrawing}>Старт</Button>
+      <Select
+        onChange={selectFace}
+        options={faceOptions}
+        selected={selectedFace} />
+      <RadioGroup group={sensorsOptions} />
+      <Button on:click={toggleDrawing}>{isDrawing ? 'Старт' : 'Стоп'}</Button>
     </div>
-    <Chart xCaption="T, &#x2103;" yCaption="R" {points} />
+    <Chart xCaption="T, &#x2103;" yCaption="R" {xPoints} {yPoints} />
   </main>
   <footer>
-    <Button on:click={saveExcel} disabled={!MSPath}>
+    <Button on:click={saveExcel} disabled={!saveActive}>
       Сохранить данные на usb-устройство
     </Button>
     <Button on:click={goBack}>Назад</Button>

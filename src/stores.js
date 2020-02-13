@@ -1,7 +1,7 @@
 const { writable } = require('svelte/store');
 const { clone } = require('./utils/others');
-const { PELTIER_PARAMS } = require('./constants');
+const { DATA_ENTRIES } = require('./constants');
 
-const data = writable(clone(PELTIER_PARAMS));
+const data = writable(clone(DATA_ENTRIES));
 
 module.exports = { data };

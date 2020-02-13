@@ -2,10 +2,12 @@
   export let selected = { label: "-- не выбран --" };
   export let onChange;
   export let options;
+  export let disabled;
 
   let optionsVisible = false;
 
   function toggleOptions() {
+    if (disabled) return;
     optionsVisible = !optionsVisible;
   }
 
@@ -14,6 +16,11 @@
       duration,
       css: t => `max-height: ${t * 100}vh`
     };
+  }
+
+  function selectOption(e) {
+    optionsVisible = false;
+    onChange(e);
   }
 </script>
 
@@ -38,6 +45,10 @@
     border: 1px solid var(--corporate-blue-darken);
     border-radius: 4px;
     background-color: var(--bg-color);
+  }
+
+  .select.disabled {
+    opacity: 0.8;
   }
 
   .curr-value {
@@ -76,12 +87,12 @@
     <slot />
   </span>
   <div class="select-wrapper">
-    <div class="select">
+    <div class="select" class:disabled>
       <div class="curr-value" on:click={toggleOptions}>{selected.label}</div>
       {#if optionsVisible}
         <ul transition:drop>
           {#each options as { icon, label, value }}
-            <li data-value={value} on:click={onChange}>
+            <li data-value={value} on:click={selectOption}>
               {#if icon}
                 <i class="icon icon-{icon}" />
               {/if}

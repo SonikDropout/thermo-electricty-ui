@@ -1,10 +1,16 @@
 <script>
   import Toggle from "../atoms/Toggle";
-  import Select from "../atoms/Select";
+  import Select from "../molecules/select";
   import RangeInput from "../molecules/RangeInput";
   import Value from "../atoms/Value";
   import { slide } from "../transitions";
   import { data } from "../stores";
+  import {
+    INTERGRATED_PELTIER_PARAMS,
+    COMMANDS,
+    PELTIER_CONSTRAINTS
+  } from "../constants";
+  import { ipcRenderer } from "electron";
   export let pos;
   export let name;
   export let title;
@@ -13,7 +19,42 @@
 
   const slideCol = slide(pos);
 
-  let plateOn = false;
+  let isActive = !!$data[`state${name}`].value;
+  let mode = 'Temp';
+
+  const modeOptions = [
+    { label: "по температуре", value: "Temp", inputLabel: "Задание T, \u2103" },
+    {
+      label: "по мощности",
+      value: "Power",
+      inputLabel: "Задание Мощности, % от макс"
+    }
+  ];
+
+  function togglePeltier(e) {
+    const { name, checked } = e.target;
+    ipcRenderer.send(
+      "serialCommand",
+      COMMANDS[`turn${checked ? "On" : "Off"}${name}Peltier`]
+    );
+    isActive = checked;
+  }
+
+  function switchPeltierMode(e) {
+    const newMode = e.target.dataset.value;
+    ipcRenderer.send(
+      "serialCommand",
+      COMMANDS[`constanst${newMode}${name}Peltier`]
+    );
+    mode = newMode;
+  }
+
+  function changeVariableParam(e) {
+    ipcRenderer.send(
+      "serialCommand",
+      ...COMMANDS[`set${mode}${name}Peltier`](e.target.value)
+    );
+  }
 </script>
 
 <style>
@@ -53,14 +94,20 @@
   transition:slideCol>
   <h2>{title}</h2>
   <span class="label">Состояние</span>
-  <Toggle on:change={e => (plateOn = e.target.checked)} />
+  <Toggle on:change={togglePeltier} checked={isActive} />
   <span class="label">Температура</span>
-  <strong class="value">{0}</strong>
+  <strong class="value">{$data['temperature' + name].value}</strong>
   <span class="label">Режим работы</span>
   <Select
-    options={[{ label: 'по температуре', value: 'temp' }, { label: 'по мощности', value: 'power' }]} />
-  <span class="label">Задание T, {'\u2103'}</span>
-  <RangeInput />
+    onChange={switchPeltierMode}
+    disabled={isActive}
+    selected={modeOptions[0]}
+    options={modeOptions} />
+  <span class="label">{modeOptions[Number(mode === 'Power')].inputLabel}</span>
+  <RangeInput
+    on:change={changeVariableParam}
+    disabled={isActive}
+    range={PELTIER_CONSTRAINTS[mode + name]} />
   <h3>Характеристики</h3>
   {#each ['voltage', 'current'] as param}
     <span class="label">

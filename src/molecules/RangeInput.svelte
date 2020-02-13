@@ -1,7 +1,15 @@
 <script>
-  export let max = 100;
-  export let min = 0;
-  export let value = 0;
+  export let range = [0, 100];
+  export let value = range[0];
+
+  let step = 1;
+
+  $: diff = range[1] - range[0];
+
+  $: {
+    if (diff < 1) step = 0.01;
+    if (diff < 10) step = 0.1;
+  }
 
   let input,
     timeout,
@@ -21,7 +29,7 @@
     fn();
     timeout = setTimeout(() => {
       fn();
-      interval = setInterval(fn, 100);
+      interval = setInterval(fn, 50);
     }, 500);
   }
 
@@ -87,7 +95,7 @@
       on:pointerup={release}>
       -
     </button>
-    <input type="number" bind:this={input} {value} {min} {max} on:change />
+    <input type="number" bind:this={input} {value} min={range[0]} max={range[1]} on:change {step} />
     <button
       class="decrementer"
       on:pointerdown={pressIncrement}
