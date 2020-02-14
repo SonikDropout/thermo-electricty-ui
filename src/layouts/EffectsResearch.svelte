@@ -24,6 +24,12 @@
     { label: "Эффект Зеебека", value: 1 }
   ];
 
+  const I = 'I, A';
+  const deltaT = '\u0394T, \u02daC'
+
+  $: xCaption = selectedEffect.value ? deltaT : I;
+  $: yCaption = selectedEffect.value ? I : deltaT;
+
   let selectedEffect = effectsOptions[0];
 
   function selectEffect(e) {
@@ -193,7 +199,7 @@
       </div>
       <Button on:click={toggleDrawing}>{isDrawing ? 'Стор' : 'Старт'}</Button>
     </div>
-    <Chart xCaption="T, &#x2103;" yCaption="R" {xPoints} {yPoints} />
+    <Chart {xCaption} {yCaption} {xPoints} {yPoints} />
   </main>
   <footer>
     <Button on:click={saveExcel} disabled={saveActive}>

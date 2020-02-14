@@ -11,6 +11,7 @@
   let saveActive,
     xPoints = [],
     yPoints = [],
+    yCaption,
     isDrawing;
 
   ipcRenderer
@@ -25,14 +26,17 @@
   const sensorsOptions = {
     name: "sensors",
     elements: [
-      { label: "Терморезистор", value: "thermoresistor", icon: "thermistor" },
-      { label: "Термопара", value: "thermocouple", icon: "thermocouple" },
-      { label: "Термистор", value: "thermistor", icon: "thermistor" },
+      { value: 0, label: "Терморезистор", name: "thermoresistor", icon: "thermistor" },
+      { value: 1, label: "Термопара", name: "thermocouple", icon: "thermocouple" },
+      { value: 2, label: "Термистор", name: "thermistor", icon: "thermistor" }
     ]
   };
 
   let selectedFace = faceOptions[0],
-    selectedSensor;
+    selectedSensor = sensorsOptions.elements[0];
+
+  $: sensorEntry = selectedSensor.name + selectedFace.value;
+  $: yCaption = $data[sensorEntry].symbol + ', ' + $data[sensorEntry].units;
 
   function selectFace(e) {
     const name = e.target.dataset.value;
@@ -40,7 +44,7 @@
   }
 
   function selectSensor(e) {
-    selectedSensor = sensorsOptions[+e.target.dataset.value];
+    selectedSensor = sensorsOptions.elements[e.target.value];
   }
 
   function toggleDrawing() {
@@ -72,13 +76,13 @@
     ipcRenderer.send(
       "excelRow",
       data["temperature" + selectFace.value].value,
-      data[selectedSensor + selectFace.value].value
+      data[selectedSensor.name + selectFace.value].value
     );
   }
 
   function updateChartData(data) {
     xPoints = xPoints.concat(data["temperature" + selectFace.value].value);
-    yPoints = yPoints.concat(data[selectedSensor + selectFace.value].value);
+    yPoints = yPoints.concat(data[selectedSensor.name + selectFace.value].value);
   }
 
   function saveExcel() {
@@ -122,11 +126,18 @@
   <header>Постоение графиков</header>
   <main>
     <div class="selects">
-      <Select onChange={selectFace} options={faceOptions} selected={selectedFace} />
-      <RadioGroup group={sensorsOptions} />
+      <Select
+        onChange={selectFace}
+        options={faceOptions}
+        selected={selectedFace} />
+      <RadioGroup group={sensorsOptions} onChange={selectSensor} />
       <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
     </div>
-    <Chart xCaption="T, &#x2103;" yCaption="R" {xPoints} {yPoints} />
+    <Chart
+      xCaption="T, {$data.temperatureCool.units}"
+      {yCaption}
+      {xPoints}
+      {yPoints} />
   </main>
   <footer>
     <Button on:click={saveExcel} disabled={!saveActive}>

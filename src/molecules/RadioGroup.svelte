@@ -2,6 +2,7 @@
   export let group;
   export let type;
   export let value;
+  export let onChange;
 </script>
 
 <style>
@@ -41,7 +42,7 @@
         class="hidden"
         type="radio"
         name={group.name}
-        bind:group={value}
+        on:change={onChange}
         value={element.value}
         disabled={element.disabled} />
       <span>
