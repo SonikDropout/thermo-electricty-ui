@@ -18,4 +18,10 @@ const getFileDate = () => {
     1}-${date.getFullYear()}_${date.getHours()}-${date.getMinutes()}`;
 };
 
-module.exports = { clone, concat, capitalize, getFileDate };
+const countKeys = (obj) => {
+  let n = 0;
+  for (let key in obj) n++;
+  return n;
+};
+
+module.exports = { clone, concat, capitalize, getFileDate, countKeys };

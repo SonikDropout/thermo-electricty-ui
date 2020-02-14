@@ -2,13 +2,14 @@
   "name": "thermo-electricity",
   "version": "1.0.0",
   "description": "GUI interface for thermoelectricity stand",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "wp-watch": "webpack --watch",
     "wp-build": "webpack",
     "el-watch": "cross-env NODE_ENV=development electron .",
     "dev": "run-p wp-watch el-watch",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",

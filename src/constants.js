@@ -1,4 +1,4 @@
-const { concat } = require('./utils/others');
+const { concat, countKeys } = require('./utils/others');
 
 const TEMP_MEASURE = 'temp';
 const EFFECTS_RESEARCH = 'effects';
@@ -20,12 +20,12 @@ const INTEGRATED_PELTIER_PARAMS = {
   },
   temperature: {
     label: 'Температура',
-    units: '\u2103',
+    units: '\u02daC',
     divider: 10,
   },
   setTemperature: {
     label: 'Установленная температура',
-    units: '\u2103',
+    units: '\u02daC',
     divider: 10,
   },
   load: {
@@ -97,7 +97,7 @@ const DATA_ENTRIES = {
 };
 
 const BUFFER_LENGTH =
-  (SEPARATORS.length + Object.keys(PELTIER_PARAMS).length) * 2;
+  (SEPARATORS.length + countKeys(PELTIER_PARAMS)) * 2 + countKeys(PELTIER_STATE);
 
 const COMMANDS = {
   turnOnCoolPeltier: 100,
@@ -114,23 +114,31 @@ const COMMANDS = {
   constanstPowerHotPeltier: 144,
   setTempCoolPeltier: (v) => [200, 100 + v],
   setTempHotPeltier: (v) => [208, v],
-  setCurentProbePeltier: (v) => [204, v * 10],
+  setCurrentProbePeltier: (v) => [204, v * 10],
   setPowerCoolPeltier: (v) => [212, v],
   setPowerHotPeltier: (v) => [216, v],
 };
 
 const PELTIER_CONSTRAINTS = {
-  TempCool: [-5, 20],
+  TempCool: [20, -5],
   TempHot: [20, 50],
   CurrentProbe: [0.1, 2],
   PowerCool: [0, 100],
   PowerHot: [0, 100],
 };
 
+const PORT = {
+  name: 'dev/ttyAMA0',
+  baudRate: 115200
+}
+
+const IS_PRI = process.platform === 'linux' && process.arch === 'arm';
+
 module.exports = {
+  IS_PRI,
   COMMANDS,
-  PROBE_PELTIER_PARAMS,
-  INTEGRATED_PELTIER_PARAMS,
+  PELTIER_PARAMS,
+  PELTIER_STATE,
   PELTIER_CONSTRAINTS,
   DATA_ENTRIES,
   SEPARATORS,
@@ -139,4 +147,5 @@ module.exports = {
   CHARTS,
   INITIAL,
   BUFFER_LENGTH,
+  PORT
 };
