@@ -5,6 +5,9 @@
   export let disabled;
 
   let optionsVisible = false;
+  const h = 100 * options.length;
+
+  $: active = selected.value !== void 0;
 
   function toggleOptions() {
     if (disabled) return;
@@ -14,7 +17,7 @@
   function drop(node, { duration }) {
     return {
       duration,
-      css: t => `max-height: ${t * 100}vh`
+      css: t => `max-height: ${t * h}%`
     };
   }
 
@@ -45,10 +48,15 @@
     border: 1px solid var(--corporate-blue-darken);
     border-radius: 4px;
     background-color: var(--bg-color);
+    z-index: 9999;
   }
 
   .select.disabled {
     opacity: 0.8;
+  }
+  .select.active {
+    background-color: var(--corporate-blue);
+    color: var(--bg-color);
   }
 
   .curr-value {
@@ -61,7 +69,16 @@
     content: "";
     display: block;
     border: 5px solid transparent;
+    position: relative;
+    top: 3px;
     border-top-color: var(--corporate-blue);
+    transition: 0.3s ease;
+  }
+  .select.active .curr-value::after {
+    border-top-color: var(--corporate-blue-darken);
+  }
+  .select.expand .curr-value::after {
+    transform: rotate(180deg) translateY(5px);
   }
 
   .curr-value,
@@ -87,7 +104,11 @@
     <slot />
   </span>
   <div class="select-wrapper">
-    <div class="select" class:disabled>
+    <div
+      class="select"
+      class:disabled
+      class:active
+      class:expand={optionsVisible}>
       <div class="curr-value" on:click={toggleOptions}>{selected.label}</div>
       {#if optionsVisible}
         <ul transition:drop>

@@ -15,12 +15,9 @@
   export let name;
   export let title;
 
-  console.log($data);
-
   const slideCol = slide(pos);
 
   let isActive = !!$data[`state${name}`].value;
-  let mode = 'Temp';
 
   const modeOptions = [
     { label: "по температуре", value: "Temp", inputLabel: "Задание T, \u2103" },
@@ -30,6 +27,8 @@
       inputLabel: "Задание Мощности, % от макс"
     }
   ];
+
+  let selectedMode = modeOptions[0];
 
   function togglePeltier(e) {
     const { name, checked } = e.target;
@@ -41,18 +40,18 @@
   }
 
   function switchPeltierMode(e) {
-    const newMode = e.target.dataset.value;
+    const mode = e.target.dataset.value;
     ipcRenderer.send(
       "serialCommand",
-      COMMANDS[`constanst${newMode}${name}Peltier`]
+      COMMANDS[`constanst${mode}${name}Peltier`]
     );
-    mode = newMode;
+    selectedMode = modeOptions[+(mode == "Power")];
   }
 
-  function changeVariableParam(e) {
+  function changeVariableParam(v) {
     ipcRenderer.send(
       "serialCommand",
-      ...COMMANDS[`set${mode}${name}Peltier`](e.target.value)
+      ...COMMANDS[`set${selectedMode.value}${name}Peltier`](v)
     );
   }
 </script>
@@ -100,14 +99,14 @@
   <span class="label">Режим работы</span>
   <Select
     onChange={switchPeltierMode}
-    disabled={isActive}
-    selected={modeOptions[0]}
+    disabled={!isActive}
+    selected={selectedMode}
     options={modeOptions} />
-  <span class="label">{modeOptions[Number(mode === 'Power')].inputLabel}</span>
+  <span class="label">{modeOptions[Number(selectedMode.value === 'Power')].inputLabel}</span>
   <RangeInput
-    on:change={changeVariableParam}
-    disabled={isActive}
-    range={PELTIER_CONSTRAINTS[mode + name]} />
+    onChange={changeVariableParam}
+    disabled={!isActive}
+    range={PELTIER_CONSTRAINTS[selectedMode.value + name]} />
   <h3>Характеристики</h3>
   {#each ['voltage', 'current'] as param}
     <span class="label">

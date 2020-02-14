@@ -10,12 +10,15 @@
   div {
     width: 100%;
     height: 100%;
-    padding: var(--gutter-width);
   }
 
   svg {
     width: 100%;
     height: 100%;
+  }
+
+  line {
+    stroke: var(--corporate-emerald);
   }
 </style>
 

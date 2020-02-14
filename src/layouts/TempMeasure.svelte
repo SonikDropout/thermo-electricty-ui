@@ -24,12 +24,6 @@
   }
   footer {
     padding: var(--gutter-width) 7.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  }
-  footer :global(button:last-of-type) {
-    margin: auto;
   }
 </style>
 

@@ -1,7 +1,7 @@
 <script>
   import uuid from 'uuid';
+  export let checked;
   const id = uuid();
-  let checked;
 </script>
 
 <style>

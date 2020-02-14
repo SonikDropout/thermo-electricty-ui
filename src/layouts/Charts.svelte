@@ -8,9 +8,13 @@
   import { getFileDate, capitalize } from "../utils/others";
   export let goBack;
 
-  let saveActive, xPoints = [], yPoints = [], isDrawing;
+  let saveActive,
+    xPoints = [],
+    yPoints = [],
+    isDrawing;
 
-  ipcRenderer.on("usbConnect", () => (saveActive = true))
+  ipcRenderer
+    .on("usbConnect", () => (saveActive = true))
     .on("usbDisconnect", () => (saveActive = false));
 
   const faceOptions = [
@@ -21,9 +25,9 @@
   const sensorsOptions = {
     name: "sensors",
     elements: [
-      { label: "Терморезистор", value: "thermoresistor" },
-      { label: "Термистор", value: "thermistor" },
-      { label: "Термопара", value: "thermocouple" }
+      { label: "Терморезистор", value: "thermoresistor", icon: "thermistor" },
+      { label: "Термопара", value: "thermocouple", icon: "thermocouple" },
+      { label: "Термистор", value: "thermistor", icon: "thermistor" },
     ]
   };
 
@@ -31,7 +35,7 @@
     selectedSensor;
 
   function selectFace(e) {
-    const name = e.target.datset.value;
+    const name = e.target.dataset.value;
     selectedFace = faceOptions[+(name == "Hot")];
   }
 
@@ -73,7 +77,7 @@
   }
 
   function updateChartData(data) {
-    xPoints = xPoints.concat(data['temperature' + selectFace.value].value);
+    xPoints = xPoints.concat(data["temperature" + selectFace.value].value);
     yPoints = yPoints.concat(data[selectedSensor + selectFace.value].value);
   }
 
@@ -87,18 +91,30 @@
     display: flex;
     align-items: stretch;
     justify-content: space-evenly;
+    padding-top: 2rem;
   }
   .selects {
     flex: 1 1 40%;
-    padding: 0 4.8rem;
+    padding: 0 4rem;
+    max-width: 40rem;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     align-items: flex-start;
+  }
+  .selects :global(button) {
+    margin-top: auto;
+  }
+  .selects :global(.radio-group) {
+    margin-top: 2rem;
   }
   main :global(.chart) {
     flex: 1 1 60%;
+    max-width: 50rem;
     padding-right: 4.8rem;
+  }
+  footer {
+    padding: var(--gutter-width) 8rem;
   }
 </style>
 
@@ -106,12 +122,9 @@
   <header>Постоение графиков</header>
   <main>
     <div class="selects">
-      <Select
-        onChange={selectFace}
-        options={faceOptions}
-        selected={selectedFace} />
+      <Select onChange={selectFace} options={faceOptions} selected={selectedFace} />
       <RadioGroup group={sensorsOptions} />
-      <Button on:click={toggleDrawing}>{isDrawing ? 'Старт' : 'Стоп'}</Button>
+      <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
     </div>
     <Chart xCaption="T, &#x2103;" yCaption="R" {xPoints} {yPoints} />
   </main>

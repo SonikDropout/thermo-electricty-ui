@@ -41,8 +41,8 @@ header {
   text-align: center;
   margin: 0;
   padding: 0;
-  height: 6.4rem;
-  line-height: 6.4rem;
+  height: 8rem;
+  line-height: 8rem;
   font-family: 'Oswald', 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
@@ -82,10 +82,8 @@ h6 {
 
 footer {
   display: flex;
-}
-
-footer button:first-child {
-  margin: auto;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .hidden {

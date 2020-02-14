@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 20.78">
+  <title>thermistor_1</title>
+  <g>
+    <rect x="6.67" y="6.94" width="16.67" height="6.67" fill="none" stroke="#000" stroke-miterlimit="10"/>
+    <line x1="30" y1="10.09" x2="23.33" y2="10.09" fill="none" stroke="#000" stroke-miterlimit="10"/>
+    <line x1="6.67" y1="10.09" y2="10.09" fill="none" stroke="#000" stroke-miterlimit="10"/>
+    <polyline points="3.33 20.28 10 20.28 23.33 0.28" fill="none" stroke="#000"/>
+  </g>
+</svg>

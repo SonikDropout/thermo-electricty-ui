@@ -30,15 +30,13 @@
     selectedEffect = effectsOptions[+e.target.dataset.value];
   }
 
-  function changePower(e) {
-    const P = e.target.value;
-    ipcRenderer.send("serialCommand", COMMANDS.setPowerCoolPeltier(P));
-    ipcRenderer.send("serialCommand", COMMANDS.setPowerHotPeltier(P));
+  function changePower(P) {
+    ipcRenderer.send("serialCommand", ...COMMANDS.setPowerCoolPeltier(P));
+    ipcRenderer.send("serialCommand", ...COMMANDS.setPowerHotPeltier(P));
   }
 
-  function changeCurrent(e) {
-    const I = e.traget.value;
-    ipcRenderer.send("serialCommand", COMMANDS.setCurrentProbePeltier(I));
+  function changeCurrent(I) {
+    ipcRenderer.send("serialCommand", ...COMMANDS.setCurrentProbePeltier(I));
   }
 
   function toggleDrawing() {
@@ -90,16 +88,16 @@
     padding-top: var(--gutter-width);
     justify-content: space-evenly;
   }
-  .selects {
+  .controls {
     flex: 1 1 40%;
     max-width: 40rem;
-    padding: 0 4.8rem;
+    padding: 0 4rem;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
   }
 
-  .selects :global(button) {
+  .controls :global(button) {
     margin-top: auto;
   }
   main :global(.chart) {
@@ -111,53 +109,89 @@
     display: inline-block;
     width: 5rem;
   }
+
+  .temp-value {
+    color: var(--bg-color);
+    padding: 1rem;
+    border-radius: 4px;
+    display: inline-block;
+    white-space: nowrap;
+    min-width: 8rem;
+    text-align: center;
+  }
+  .temp-value.hot {
+    background-color: var(--corporate-orange);
+  }
+  .temp-value.cool {
+    background-color: var(--corporate-blue);
+  }
+  .param-temp, .range {
+    margin: 1rem 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .result {
+    margin-bottom: .8rem;
+  }
+  footer {
+    padding: var(--gutter-width) 8rem;
+  }
+  h3 {
+    text-align: center;
+    font-size: 2rem;
+  }
 </style>
 
 <div class="layout">
   <header>Исследование эффектов Пельтье и Зеебека</header>
   <main>
-    <div class="selects">
+    <div class="controls">
       <Select
         onChange={selectEffect}
         options={effectsOptions}
         selected={selectedEffect} />
-      <div class="value">
-        <span class="label">Температура нагревающейся пластины:</span>
-        <strong class="value">{$data.temperatureHot.value}</strong>
-        <em class="units">{'\u2103'}</em>
+      <div class="param-temp">
+        <span class="temp-label">Температура нагревающейся пластины:</span>
+        <strong class="temp-value hot">{$data.temperatureHot.value}{$data.temperatureHot.units}</strong>
       </div>
-      <div class="value">
-        <span class="label">Температура охлаждающейся пластины:</span>
-        <strong class="value">{$data.temperatureCool.value}</strong>
-        <em class="units">{'\u2103'}</em>
+      <div class="param-temp">
+        <span class="temp-label">Температура охлаждающейся пластины:</span>
+        <strong class="temp-value cool">{$data.temperatureCool.value}{$data.temperatureCool.units}</strong>
       </div>
       {#if selectedEffect.value}
-        <RangeInput
-          on:change={changePower}
-          range={PELTIER_CONSTRAINTS.PowerHot}>
-          Мощьность модуля Пелтье, % от макс
-        </RangeInput>
+        <div class="range">
+          <span class="range-label">
+            Мощность модуля Пелтье, % от макс
+          </span>
+          <RangeInput
+            onChange={changePower}
+            range={PELTIER_CONSTRAINTS.PowerHot} />
+        </div>
       {:else}
-        <RangeInput
-          on:change={changeCurrent}
-          range={PELTIER_CONSTRAINTS.CurrentProbe}>
-          Установка тока, А
-        </RangeInput>
+        <div class="range">
+          <span class="range-label">
+            Установка тока, {$data.currentProbe.units}
+          </span>
+          <RangeInput
+            onChange={changeCurrent}
+            range={PELTIER_CONSTRAINTS.CurrentProbe} />
+        </div>
       {/if}
       <h3>Результаты измерений</h3>
       <div class="result">
-        <span class="symbol">U,<em class="units"> B</em>:</span>
+        <span class="symbol">U, <em class="units"> {$data.voltageProbe.units}</em>:</span>
         <strong class="value">{0}</strong>
       </div>
       <div class="result">
-        <span class="symbol">I,<em class="units"> A</em>:</span>
+        <span class="symbol">I, <em class="units"> {$data.currentProbe.units}</em>:</span>
         <strong class="value">{0}</strong>
       </div>
       <div class="result">
-        <span class="symbol">T,<em class="units"> {'\u2103'}</em>:</span>
+        <span class="symbol">T, <em class="units"> {$data.temperatureCool.units}</em>:</span>
         <strong class="value">{0}</strong>
       </div>
-      <Button on:click={toggleDrawing}>{isDrawing ? 'Старт' : 'Стоп'}</Button>
+      <Button on:click={toggleDrawing}>{isDrawing ? 'Стор' : 'Старт'}</Button>
     </div>
     <Chart xCaption="T, &#x2103;" yCaption="R" {xPoints} {yPoints} />
   </main>

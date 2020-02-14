@@ -180,7 +180,6 @@
 <style>
   .chart {
     position: relative;
-    padding: var(--gutter-width);
   }
   svg,
   .chart-inner {
