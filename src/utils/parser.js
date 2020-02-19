@@ -1,4 +1,4 @@
-const { PELTIER_STATE, PELTIER_PARAMS, SEPARATORS } = require('../constants');
+const { PELTIER_STATES, PELTIER_PARAMS, SEPARATORS } = require('../constants');
 const { clone } = require('./others');
 
 function validate(buf) {
@@ -11,7 +11,7 @@ function validate(buf) {
 module.exports = function parse(buf) {
   validate(buf);
   const pp = clone(PELTIER_PARAMS);
-  const ps = clone(PELTIER_STATE);
+  const ps = clone(PELTIER_STATES);
   let i = SEPARATORS.length * 2;
   for (const key in pp) {
     pp[key].value = buf[pp[key].singed ? 'readUInt16LE' : 'readInt16LE'](i);

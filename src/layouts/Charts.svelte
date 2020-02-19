@@ -32,15 +32,14 @@
     ]
   };
 
-  let selectedFace = faceOptions[0],
+  let selectedFace = "Cool",
     selectedSensor = sensorsOptions.elements[0];
 
-  $: sensorEntry = selectedSensor.name + selectedFace.value;
+  $: sensorEntry = selectedSensor.name + selectedFace;
   $: yCaption = $data[sensorEntry].symbol + ', ' + $data[sensorEntry].units;
 
-  function selectFace(e) {
-    const name = e.target.dataset.value;
-    selectedFace = faceOptions[+(name == "Hot")];
+  function selectFace(f) {
+    selectedFace = f;
   }
 
   function selectSensor(e) {
@@ -64,7 +63,7 @@
     isDrawing = true;
     ipcRenderer.send(
       "startFileWrite",
-      `TE-${selectedFace.value}-${capitalize(selectedSensor)}_${getFileDate()}`,
+      `TE-${selectedFace}-${capitalize(selectedSensor.name)}_${getFileDate()}`,
       "T, \u2103",
       "R, Ом"
     );
@@ -75,14 +74,14 @@
   function saveExcelData(data) {
     ipcRenderer.send(
       "excelRow",
-      data["temperature" + selectFace.value].value,
-      data[selectedSensor.name + selectFace.value].value
+      data["temperature" + selectedFace].value,
+      data[selectedSensor.name + selectedFace].value
     );
   }
 
   function updateChartData(data) {
-    xPoints = xPoints.concat(data["temperature" + selectFace.value].value);
-    yPoints = yPoints.concat(data[selectedSensor.name + selectFace.value].value);
+    xPoints = xPoints.concat(data["temperature" + selectedFace].value);
+    yPoints = yPoints.concat(data[selectedSensor.name + selectedFace].value);
   }
 
   function saveExcel() {
@@ -129,7 +128,7 @@
       <Select
         onChange={selectFace}
         options={faceOptions}
-        selected={selectedFace} />
+        defaultValue={selectedFace} />
       <RadioGroup group={sensorsOptions} onChange={selectSensor} />
       <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
     </div>

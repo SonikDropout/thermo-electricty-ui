@@ -24,8 +24,8 @@
     { label: "Эффект Зеебека", value: 1 }
   ];
 
-  const I = 'I, A';
-  const deltaT = '\u0394T, \u02daC'
+  const I = "I, A";
+  const deltaT = "\u0394T, \u02daC";
 
   $: xCaption = selectedEffect.value ? deltaT : I;
   $: yCaption = selectedEffect.value ? I : deltaT;
@@ -33,7 +33,14 @@
   let selectedEffect = effectsOptions[0];
 
   function selectEffect(e) {
-    selectedEffect = effectsOptions[+e.target.dataset.value];
+    selectedEffect = effectsOptions[e];
+    ipcRenderer.send("serialCommand", COMMANDS.turnOffAllPeltier);
+    if (e) {
+      ipcRenderer.send("serialCommand", COMMANDS.turnOnCoolPeltier);
+      ipcRenderer.send("serialCommand", COMMANDS.turnOnHotPeltier);
+    } else {
+      ipcRenderer.send("serialCommand", COMMANDS.turnOnProbePeltier);
+    }
   }
 
   function changePower(P) {
@@ -105,6 +112,7 @@
 
   .controls :global(button) {
     margin-top: auto;
+    align-self: flex-start;
   }
   main :global(.chart) {
     max-width: 50rem;
@@ -131,14 +139,15 @@
   .temp-value.cool {
     background-color: var(--corporate-blue);
   }
-  .param-temp, .range {
+  .param-temp,
+  .range {
     margin: 1rem 0 0;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
   .result {
-    margin-bottom: .8rem;
+    margin-bottom: 0.8rem;
   }
   footer {
     padding: var(--gutter-width) 8rem;
@@ -153,23 +162,22 @@
   <header>Исследование эффектов Пельтье и Зеебека</header>
   <main>
     <div class="controls">
-      <Select
-        onChange={selectEffect}
-        options={effectsOptions}
-        selected={selectedEffect} />
+      <Select onChange={selectEffect} options={effectsOptions} />
       <div class="param-temp">
         <span class="temp-label">Температура нагревающейся пластины:</span>
-        <strong class="temp-value hot">{$data.temperatureHot.value}{$data.temperatureHot.units}</strong>
+        <strong class="temp-value hot">
+          {$data.temperatureHot.value}{$data.temperatureHot.units}
+        </strong>
       </div>
       <div class="param-temp">
         <span class="temp-label">Температура охлаждающейся пластины:</span>
-        <strong class="temp-value cool">{$data.temperatureCool.value}{$data.temperatureCool.units}</strong>
+        <strong class="temp-value cool">
+          {$data.temperatureCool.value}{$data.temperatureCool.units}
+        </strong>
       </div>
       {#if selectedEffect.value}
         <div class="range">
-          <span class="range-label">
-            Мощность модуля Пелтье, % от макс
-          </span>
+          <span class="range-label">Мощность модуля Пелтье, % от макс</span>
           <RangeInput
             onChange={changePower}
             range={PELTIER_CONSTRAINTS.PowerHot} />
@@ -186,15 +194,27 @@
       {/if}
       <h3>Результаты измерений</h3>
       <div class="result">
-        <span class="symbol">U, <em class="units"> {$data.voltageProbe.units}</em>:</span>
+        <span class="symbol">
+          U,
+          <em class="units">{$data.voltageProbe.units}</em>
+          :
+        </span>
         <strong class="value">{0}</strong>
       </div>
       <div class="result">
-        <span class="symbol">I, <em class="units"> {$data.currentProbe.units}</em>:</span>
+        <span class="symbol">
+          I,
+          <em class="units">{$data.currentProbe.units}</em>
+          :
+        </span>
         <strong class="value">{0}</strong>
       </div>
       <div class="result">
-        <span class="symbol">T, <em class="units"> {$data.temperatureCool.units}</em>:</span>
+        <span class="symbol">
+          T,
+          <em class="units">{$data.temperatureCool.units}</em>
+          :
+        </span>
         <strong class="value">{0}</strong>
       </div>
       <Button on:click={toggleDrawing}>{isDrawing ? 'Стор' : 'Старт'}</Button>
@@ -202,9 +222,9 @@
     <Chart {xCaption} {yCaption} {xPoints} {yPoints} />
   </main>
   <footer>
+    <Button on:click={goBack}>Назад</Button>
     <Button on:click={saveExcel} disabled={saveActive}>
       Сохранить данные на usb-устройство
     </Button>
-    <Button on:click={goBack}>Назад</Button>
   </footer>
 </div>

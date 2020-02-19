@@ -1,8 +1,12 @@
 <script>
-  export let selected = { label: "-- не выбран --" };
   export let onChange;
   export let options;
   export let disabled;
+  export let defaultValue;
+
+  let selected = options.find(o => o.value === defaultValue) || {
+    label: "-- не выбран --"
+  };
 
   let optionsVisible = false;
   const h = 100 * options.length;
@@ -23,21 +27,18 @@
 
   function selectOption(e) {
     optionsVisible = false;
-    onChange(e);
+    const v = e.target.dataset.value;
+    selected = options.find(o => o.value == v);
+    onChange(v);
   }
 </script>
 
 <style>
-  .select-box {
+  .select-wrapper {
+    position: relative;
     height: 3.2rem;
     line-height: 3.2rem;
     width: 100%;
-    display: flex;
-  }
-
-  .select-wrapper {
-    flex-grow: 1;
-    position: relative;
   }
 
   .select {
@@ -63,6 +64,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .curr-value::after {
@@ -99,29 +103,20 @@
   }
 </style>
 
-<div class="select-box">
-  <span>
-    <slot />
-  </span>
-  <div class="select-wrapper">
-    <div
-      class="select"
-      class:disabled
-      class:active
-      class:expand={optionsVisible}>
-      <div class="curr-value" on:click={toggleOptions}>{selected.label}</div>
-      {#if optionsVisible}
-        <ul transition:drop>
-          {#each options as { icon, label, value }}
-            <li data-value={value} on:click={selectOption}>
-              {#if icon}
-                <i class="icon icon-{icon}" />
-              {/if}
-              {label}
-            </li>
-          {/each}
-        </ul>
-      {/if}
-    </div>
+<div class="select-wrapper">
+  <div class="select" class:disabled class:active class:expand={optionsVisible}>
+    <div class="curr-value" on:click={toggleOptions}>{selected.label}</div>
+    {#if optionsVisible}
+      <ul transition:drop>
+        {#each options as { icon, label, value }}
+          <li data-value={value} on:click={selectOption}>
+            {#if icon}
+              <i class="icon icon-{icon}" />
+            {/if}
+            {label}
+          </li>
+        {/each}
+      </ul>
+    {/if}
   </div>
 </div>

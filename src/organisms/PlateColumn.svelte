@@ -8,7 +8,8 @@
   import {
     INTERGRATED_PELTIER_PARAMS,
     COMMANDS,
-    PELTIER_CONSTRAINTS
+    PELTIER_CONSTRAINTS,
+    MODES
   } from "../constants";
   import { ipcRenderer } from "electron";
   export let pos;
@@ -20,18 +21,20 @@
   let isActive = !!$data[`state${name}`].value;
 
   const modeOptions = [
-    { label: "по температуре", value: "Temp", inputLabel: "Задание T, \u2103" },
     {
       label: "по мощности",
-      value: "Power",
+      value: 0,
       inputLabel: "Задание Мощности, % от макс"
-    }
+    },
+    { label: "по температуре", value: 1, inputLabel: "Задание T, \u2103" },
   ];
 
-  let selectedMode = modeOptions[0];
+  let selectedMode = $data[`mode${name}`].value;
+
+  $: console.log(selectedMode);
 
   function togglePeltier(e) {
-    const { name, checked } = e.target;
+    const { checked } = e.target;
     ipcRenderer.send(
       "serialCommand",
       COMMANDS[`turn${checked ? "On" : "Off"}${name}Peltier`]
@@ -39,19 +42,18 @@
     isActive = checked;
   }
 
-  function switchPeltierMode(e) {
-    const mode = e.target.dataset.value;
+  function switchPeltierMode(mode) {
+    selectedMode = mode;
     ipcRenderer.send(
       "serialCommand",
-      COMMANDS[`constanst${mode}${name}Peltier`]
+      COMMANDS[`constant${MODES[selectedMode]}${name}Peltier`]
     );
-    selectedMode = modeOptions[+(mode == "Power")];
   }
 
   function changeVariableParam(v) {
     ipcRenderer.send(
       "serialCommand",
-      ...COMMANDS[`set${selectedMode.value}${name}Peltier`](v)
+      ...COMMANDS[`set${MODES[selectedMode]}${name}Peltier`](v)
     );
   }
 </script>
@@ -100,13 +102,15 @@
   <Select
     onChange={switchPeltierMode}
     disabled={!isActive}
-    selected={selectedMode}
+    defaultValue={selectedMode}
     options={modeOptions} />
-  <span class="label">{modeOptions[Number(selectedMode.value === 'Power')].inputLabel}</span>
+  <span class="label">
+    {modeOptions[selectedMode].inputLabel}
+  </span>
   <RangeInput
     onChange={changeVariableParam}
     disabled={!isActive}
-    range={PELTIER_CONSTRAINTS[selectedMode.value + name]} />
+    range={PELTIER_CONSTRAINTS[MODES[selectedMode] + name]} />
   <h3>Характеристики</h3>
   {#each ['voltage', 'current'] as param}
     <span class="label">

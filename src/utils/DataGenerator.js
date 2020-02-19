@@ -23,8 +23,8 @@ class DataGenerator {
     this.cbPoll.push(fn);
   }
 
-  sendCommand() {
-    // no reaction
+  sendCommand(byte1, byte2 = 0) {
+    console.log('Sending command to serial port:', [byte1, byte2]);
   }
 
   start() {

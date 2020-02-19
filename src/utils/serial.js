@@ -1,5 +1,5 @@
 const Serial = require('serialport');
-const { PORT, PELTIER_STATE, PELTIER_PARAMS } = require('../constants');
+const { PORT, SEPARATORS } = require('../constants');
 const { clone } = require('./others');
 const parse = require('./parser');
 
@@ -15,8 +15,25 @@ function subscribe(fn) {
   });
 }
 
+const bufQueue = [];
+let channelBusy;
+
 function sendCommand(byte1, byte2 = 0) {
-  serial.write(Buffer.from([10, byte1, byte2, byte1 + byte2 + 10]));
+  bufQueue.push(Buffer.from([10, byte1, byte2, byte1 + byte2 + 10]));
+  if (!channelBusy) writeToSerial();
+}
+
+function writeToSerial(cmd) {
+  channelBusy = true;
+  if (!cmd && !bufQueue.length) {
+    channelBusy = false;
+    return;
+  } else if (!cmd) cmd = bufQueue.shift();
+  serial.write(cmd);
+  serial.once('data', (buf) => {
+    if (buf[0] != 231) writeToSerial(cmd);
+    else writeToSerial();
+  });
 }
 
 module.exports = {

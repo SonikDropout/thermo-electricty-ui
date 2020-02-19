@@ -1,7 +1,6 @@
 <script>
   export let group;
   export let type;
-  export let value;
   export let onChange;
 </script>
 

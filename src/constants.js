@@ -89,7 +89,7 @@ const PELTIER_PARAMS = concat(
   ['Cool', 'Probe', 'Hot']
 );
 
-const PELTIER_STATES = concat(Array(2).fill(PELTIER_STATE), ['Cool', 'Hot']);
+const PELTIER_STATES = concat(Array(3).fill(PELTIER_STATE), ['Cool', 'Probe', 'Hot']);
 
 const DATA_ENTRIES = {
   ...PELTIER_PARAMS,
@@ -102,16 +102,17 @@ const BUFFER_LENGTH =
 const COMMANDS = {
   turnOnCoolPeltier: 100,
   turnOffCoolPeltier: 104,
-  constanstTempCoolPeltier: 108,
-  constanstPowerCoolPeltier: 112,
+  constantTempCoolPeltier: 108,
+  constantPowerCoolPeltier: 112,
   turnOnProbePeltier: 116,
   turnOffProbePeltier: 120,
-  constanstTempProbePeltier: 124,
-  constanstPowerProbePeltier: 128,
+  constantTempProbePeltier: 124,
+  constantPowerProbePeltier: 128,
   turnOnHotPeltier: 132,
   turnOffHotPeltier: 136,
-  constanstTempHotPeltier: 140,
-  constanstPowerHotPeltier: 144,
+  constantTempHotPeltier: 140,
+  constantPowerHotPeltier: 144,
+  turnOffAllPeltier: 148,
   setTempCoolPeltier: (v) => [200, 100 + v],
   setTempHotPeltier: (v) => [208, v],
   setCurrentProbePeltier: (v) => [204, v * 10],
@@ -132,13 +133,15 @@ const PORT = {
   baudRate: 115200
 }
 
+const MODES = ['Power', 'Temp']
+
 const IS_PRI = process.platform === 'linux' && process.arch === 'arm';
 
 module.exports = {
   IS_PRI,
   COMMANDS,
   PELTIER_PARAMS,
-  PELTIER_STATE,
+  PELTIER_STATES,
   PELTIER_CONSTRAINTS,
   DATA_ENTRIES,
   SEPARATORS,
@@ -147,5 +150,6 @@ module.exports = {
   CHARTS,
   INITIAL,
   BUFFER_LENGTH,
-  PORT
+  PORT,
+  MODES
 };
