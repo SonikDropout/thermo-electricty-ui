@@ -5,7 +5,9 @@ const EFFECTS_RESEARCH = 'effects';
 const CHARTS = 'charts';
 const INITIAL = '';
 
-const SEPARATORS = [25978, 42105];
+const SEPARATORS = Buffer.alloc(4);
+SEPARATORS.writeUInt16BE(25978);
+SEPARATORS.writeUInt16BE(42105, 2);
 
 const INTEGRATED_PELTIER_PARAMS = {
   voltage: {
@@ -97,7 +99,7 @@ const DATA_ENTRIES = {
 };
 
 const BUFFER_LENGTH =
-  (SEPARATORS.length + countKeys(PELTIER_PARAMS)) * 2 + countKeys(PELTIER_STATE);
+  SEPARATORS.length + countKeys(PELTIER_PARAMS) * 2 + countKeys(PELTIER_STATE);
 
 const COMMANDS = {
   turnOnCoolPeltier: 100,

@@ -2,10 +2,7 @@ const { PELTIER_STATES, PELTIER_PARAMS, SEPARATORS } = require('../constants');
 const { clone } = require('./others');
 
 function validate(buf) {
-  for (let i = 0; i < SEPARATORS.length; i++) {
-    if (buf.readUInt16LE(i * 2) != SEPARATORS[i])
-      throw new Error('Invalid buffer');
-  }
+  if (buf.indexOf(SEPARATORS) != 0) throw new Error('No separators in buffer');
 }
 
 module.exports = function parse(buf) {
@@ -14,7 +11,7 @@ module.exports = function parse(buf) {
   const ps = clone(PELTIER_STATES);
   let i = SEPARATORS.length * 2;
   for (const key in pp) {
-    pp[key].value = buf[pp[key].singed ? 'readUInt16LE' : 'readInt16LE'](i);
+    pp[key].value = buf[pp[key].singed ? 'readUInt16BE' : 'readInt16BE'](i);
     i += 2;
   }
   for (const key in ps) {
