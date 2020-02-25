@@ -31,8 +31,6 @@
 
   let selectedMode = $data[`mode${name}`].value;
 
-  $: console.log(selectedMode);
-
   function togglePeltier(e) {
     const { checked } = e.target;
     ipcRenderer.send(

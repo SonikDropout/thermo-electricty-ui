@@ -125,14 +125,15 @@ const PELTIER_CONSTRAINTS = {
   PowerHot: [0, 100],
 };
 
+const IS_RPI = process.platform === 'linux' && process.arch === 'arm';
+
 const PORT = {
-  name: '/dev/ttyS0',
+  name: IS_RPI ? '/dev/ttyS0' : 'COM5',
   baudRate: 300000
 }
 
 const MODES = ['Power', 'Temp']
 
-const IS_RPI = process.platform === 'linux' && process.arch === 'arm';
 
 module.exports = {
   IS_RPI,

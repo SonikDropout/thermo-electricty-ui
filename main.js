@@ -19,14 +19,13 @@ function reloadOnChange(win) {
 
   watcher.on('change', () => {
     win.reload();
-    win.minimize();
   });
 
   return watcher;
 }
 
 function initPeripherals(win) {
-  const serial = require(`./src/utils/${isPi ? 'serial' : 'dataGenerator'}`);
+  const serial = require(`./src/utils/serial`);
   usbPort.on('add', (path) => {
     usbPath = path;
     win.webContents.send('usbConnected', usbPath);
@@ -58,7 +57,6 @@ function launch() {
       nodeIntegration: true,
     },
   });
-  win.minimize();
 
   win.loadURL(
     url.format({

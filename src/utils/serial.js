@@ -1,25 +1,26 @@
 const Serial = require('serialport');
-const { PORT, SEPARATOR, BUFFER_LENGTH } = require('../constants');
+const { PORT, SEPARATOR } = require('../constants');
 const parse = require('./parser');
 
 const serial = new Serial(PORT.name, { baudRate: PORT.baudRate });
+
+serial.on('error', (e) => {
+  throw e;
+});
 
 function subscribe(fn) {
   serial.on('data', handleBuffer.bind(null, fn));
 }
 
-
-let offset = 0;
 let buffer = '';
 function handleBuffer(cb, buf) {
   let data = buf.toString('ascii');
   if (data.startsWith(SEPARATOR)) {
-	  try {
-    cb(parse(buffer.split(' ')));
-	  }
-	  catch(e) {
-		  console.error(e);
-	  }
+    try {
+      cb(parse(buffer.split(' ')));
+    } catch (e) {
+      console.error(e);
+    }
     buffer = data;
   } else buffer += data;
 }
