@@ -22,7 +22,7 @@ function handleBuffer(cb, buf) {
       console.error(e);
     }
     buffer = data;
-  } else buffer += data;
+  } else if (buf.toString('ascii') != 'ok') buffer += data;
 }
 
 const bufQueue = [];
@@ -41,7 +41,7 @@ function writeToSerial(cmd) {
   } else if (!cmd) cmd = bufQueue.shift();
   serial.write(cmd);
   serial.once('data', (buf) => {
-    if (buf[0] != 231) writeToSerial(cmd);
+    if (buf.toString('ascii') != 'ok') writeToSerial(cmd);
     else writeToSerial();
   });
 }
