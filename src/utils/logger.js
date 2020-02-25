@@ -5,7 +5,7 @@ let wb, ws, fileName, headerStyle, dataStyle;
 
 function createFile(fileName, headers) {
   fileName = fileName;
-  wb = new xl.wb();
+  wb = new xl.Workbook();
   ws = wb.addWorksheet("Результаты");
   if (!headerStyle) createStyles();
   for (let i = 0; i < headers.length; i++) {
@@ -42,7 +42,7 @@ function createStyles() {
       horizontal: "right"
     }
   });
-  dataStyle.border = _generateBorders();
+  dataStyle.border = generateBorders();
 }
 
 function generateBorders() {
