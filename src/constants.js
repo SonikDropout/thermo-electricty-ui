@@ -11,16 +11,19 @@ const INTEGRATED_PELTIER_PARAMS = {
   voltage: {
     label: 'Напряжение',
     units: 'В',
+    symbol: 'U',
     divider: 1000,
   },
   current: {
     label: 'Ток',
     units: 'А',
+    symbol: 'I',
     divider: 1000,
   },
   temperature: {
     label: 'Температура',
     units: '\u02daC',
+    symbol: 'T',
     divider: 10,
   },
   setTemperature: {
@@ -56,15 +59,18 @@ const PROBE_PELTIER_PARAMS = {
   voltage: {
     label: 'Напряжение',
     units: 'В',
+    symbol: 'U',
     divider: 1000,
   },
   current: {
     label: 'Ток',
+    symbol: 'I',
     units: 'А',
     divider: 1000,
     signed: true,
   },
   setCurrent: {
+    symbol: 'I',
     label: 'Установленный ток',
     units: 'А',
     divider: 1000,

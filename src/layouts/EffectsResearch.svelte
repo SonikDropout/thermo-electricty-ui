@@ -193,7 +193,7 @@
         </div>
       {/if}
       <h3>Результаты измерений</h3>
-      {#each ['voltageProbe', 'currentProbe', 'temperatureProbe'] as param}
+      {#each ['voltageProbe', 'currentProbe', 'deltaTemp'] as param}
         <div class="result">
           <span class="symbol">
             {$data[param].symbol},

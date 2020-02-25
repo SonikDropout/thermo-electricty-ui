@@ -5,10 +5,17 @@ const { ipcRenderer } = require('electron');
 
 const initialData = clone(DATA_ENTRIES);
 for (let key in initialData) initialData[key].value = 0;
+setTempDelta(initialData);
 
 const data = writable(initialData);
 
-ipcRenderer.on('serialData', (_, d) => data.set(d));
-data.subscribe(console.log);
+ipcRenderer.on('serialData', (_, d) => data.set(setTempDelta(d)));
+
+function setTempDelta(data) {
+  data.deltaTemp = clone(data.temperatureCool);
+  data.deltaTemp.value = data.temperatureHot.value - data.temperatureCool.value;
+  return data;
+}
+
 
 module.exports = { data };
