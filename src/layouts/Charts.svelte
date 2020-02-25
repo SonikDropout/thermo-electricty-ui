@@ -1,6 +1,6 @@
 <script>
   import Chart from "../organisms/Chart/index";
-  import Select from "../molecules/select";
+  import Select from "../molecules/Select";
   import Button from "../atoms/Button";
   import RadioGroup from "../molecules/RadioGroup";
   import { data } from "../stores";

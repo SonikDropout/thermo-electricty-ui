@@ -1,6 +1,6 @@
 <script>
   import Toggle from "../atoms/Toggle";
-  import Select from "../molecules/select";
+  import Select from "../molecules/Select";
   import RangeInput from "../molecules/RangeInput";
   import Value from "../atoms/Value";
   import { slide } from "../transitions";

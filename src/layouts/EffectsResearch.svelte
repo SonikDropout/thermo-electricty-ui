@@ -1,7 +1,7 @@
 <script>
   import Chart from "../organisms/Chart/index";
   import RangeInput from "../molecules/RangeInput";
-  import Select from "../molecules/select";
+  import Select from "../molecules/Select";
   import Button from "../atoms/Button";
   import { ipcRenderer } from "electron";
   import { COMMANDS, PELTIER_CONSTRAINTS } from "../constants";
