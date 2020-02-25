@@ -131,8 +131,8 @@ const PELTIER_CONSTRAINTS = {
 };
 
 const PORT = {
-  name: 'dev/ttyAMA0',
-  baudRate: 115200
+  name: 'dev/ttyS0',
+  baudRate: 300000
 }
 
 const MODES = ['Power', 'Temp']

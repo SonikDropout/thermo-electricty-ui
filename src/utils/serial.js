@@ -1,6 +1,5 @@
 const Serial = require('serialport');
 const { PORT, SEPARATORS, BUFFER_LENGTH } = require('../constants');
-const { clone } = require('./others');
 const parse = require('./parser');
 
 const serial = new Serial(PORT.name, { baudRate: PORT.baudRate });
