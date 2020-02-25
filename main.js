@@ -3,7 +3,7 @@ const url = require('url');
 const electron = require('electron');
 const logger = require('./src/utils/logger');
 const usbPort = require('./src/utils/usbPort');
-const { IS_PI: isPi } = require('./src/constants');
+const { IS_RPI: isPi } = require('./src/constants');
 const { app, BrowserWindow, ipcMain } = electron;
 
 let win, usbPath;

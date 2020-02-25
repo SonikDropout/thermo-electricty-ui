@@ -137,10 +137,10 @@ const PORT = {
 
 const MODES = ['Power', 'Temp']
 
-const IS_PRI = process.platform === 'linux' && process.arch === 'arm';
+const IS_RPI = process.platform === 'linux' && process.arch === 'arm';
 
 module.exports = {
-  IS_PRI,
+  IS_RPI,
   COMMANDS,
   PELTIER_PARAMS,
   PELTIER_STATES,
