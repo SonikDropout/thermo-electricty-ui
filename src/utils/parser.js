@@ -16,7 +16,7 @@ module.exports = function parse(buf) {
     pp[key].value = +buf[i++] / divider;
   }
   for (const key in ps) {
-    ps[key].value = +buf[i++];
+    ps[key].value = +Boolean(+buf[i++]);
   }
   console.log(pp, ps);
   return { ...pp, ...ps };
