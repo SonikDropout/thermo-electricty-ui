@@ -193,30 +193,16 @@
         </div>
       {/if}
       <h3>Результаты измерений</h3>
-      <div class="result">
-        <span class="symbol">
-          U,
-          <em class="units">{$data.voltageProbe.units}</em>
-          :
-        </span>
-        <strong class="value">{0}</strong>
-      </div>
-      <div class="result">
-        <span class="symbol">
-          I,
-          <em class="units">{$data.currentProbe.units}</em>
-          :
-        </span>
-        <strong class="value">{0}</strong>
-      </div>
-      <div class="result">
-        <span class="symbol">
-          T,
-          <em class="units">{$data.temperatureCool.units}</em>
-          :
-        </span>
-        <strong class="value">{0}</strong>
-      </div>
+      {#each ['voltageProbe', 'currentProbe', 'temperatureProbe'] as param}
+        <div class="result">
+          <span class="symbol">
+            {$data[param].symbol},
+            <em class="units">{$data[param].units}</em>
+            :
+          </span>
+          <strong class="value">{$data[param].value}</strong>
+        </div>
+      {/each}
       <Button on:click={toggleDrawing}>{isDrawing ? 'Стор' : 'Старт'}</Button>
     </div>
     <Chart {xCaption} {yCaption} {xPoints} {yPoints} />

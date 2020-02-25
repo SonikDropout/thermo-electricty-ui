@@ -106,6 +106,7 @@
     {modeOptions[selectedMode].inputLabel}
   </span>
   <RangeInput
+    defaultValue={$data[(selectedMode ? 'setTemperature' : 'load') + name].value}
     onChange={changeVariableParam}
     disabled={!isActive}
     range={PELTIER_CONSTRAINTS[MODES[selectedMode] + name]} />

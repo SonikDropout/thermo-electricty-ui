@@ -5,7 +5,7 @@ const EFFECTS_RESEARCH = 'effects';
 const CHARTS = 'charts';
 const INITIAL = '';
 
-const SEPARATOR = Buffer.from('STRT');
+const SEPARATOR = 'STRT';
 
 const INTEGRATED_PELTIER_PARAMS = {
   voltage: {

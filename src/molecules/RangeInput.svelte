@@ -3,13 +3,14 @@
   export let disabled;
   export let onChange;
   export let name;
+  export let defaultValue;
 
   let step = 1;
 
   $: min = Math.min.apply(null, range);
   $: max = Math.max.apply(null, range);
   $: diff = max - min;
-  $: value = range[0];
+  $: value = defaultValue === void 0 ? range[0] : defaultValue;
 
   $: {
     if (diff < 1) step = 0.01;

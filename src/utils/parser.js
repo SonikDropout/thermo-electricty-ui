@@ -6,18 +6,16 @@ function validate(buf) {
 }
 
 module.exports = function parse(buf) {
-  console.log(buf);
   validate(buf);
   const pp = clone(PELTIER_PARAMS);
   const ps = clone(PELTIER_STATES);
   let i = 1;
   for (const key in pp) {
-    const divider = pp[key].divider || 0;
+    const divider = pp[key].divider || 1;
     pp[key].value = +buf[i++] / divider;
   }
   for (const key in ps) {
     ps[key].value = +Boolean(+buf[i++]);
   }
-  console.log(pp, ps);
   return { ...pp, ...ps };
 };
