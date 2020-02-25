@@ -1,5 +1,5 @@
 const Serial = require('serialport');
-const { PORT, SEPARATORS, BUFFER_LENGTH } = require('../constants');
+const { PORT, SEPARATOR, BUFFER_LENGTH } = require('../constants');
 const parse = require('./parser');
 
 const serial = new Serial(PORT.name, { baudRate: PORT.baudRate });
@@ -9,20 +9,19 @@ function subscribe(fn) {
 }
 
 
-const buffer = Buffer.alloc(BUFFER_LENGTH);
 let offset = 0;
+let buffer = '';
 function handleBuffer(cb, buf) {
-  const sepIdx = buf.indexOf(SEPARATORS);
-  if (sepIdx >= 0) {
-    buf.copy(buffer, offset, 0, sepIdx);
-    try {cb(parse(buffer));}
-    catch (e) {console.error(e.message);}
-    offset = 0;
-    buf.copy(buffer, offset, sepIdx);
-  } else {
-    buf.copy(buffer, offset);
-    offset += buf.length;
-  }
+  let data = buf.toString('ascii');
+  if (data.startsWith(SEPARATOR)) {
+	  try {
+    cb(parse(buffer.split(' ')));
+	  }
+	  catch(e) {
+		  console.error(e);
+	  }
+    buffer = data;
+  } else buffer += data;
 }
 
 const bufQueue = [];

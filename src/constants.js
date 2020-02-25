@@ -5,9 +5,7 @@ const EFFECTS_RESEARCH = 'effects';
 const CHARTS = 'charts';
 const INITIAL = '';
 
-const SEPARATORS = Buffer.alloc(4);
-SEPARATORS.writeUInt16BE(25978);
-SEPARATORS.writeUInt16BE(42105, 2);
+const SEPARATOR = Buffer.from('STRT');
 
 const INTEGRATED_PELTIER_PARAMS = {
   voltage: {
@@ -98,9 +96,6 @@ const DATA_ENTRIES = {
   ...PELTIER_STATES,
 };
 
-const BUFFER_LENGTH =
-  SEPARATORS.length + countKeys(PELTIER_PARAMS) * 2 + countKeys(PELTIER_STATE);
-
 const COMMANDS = {
   turnOnCoolPeltier: 100,
   turnOffCoolPeltier: 104,
@@ -131,7 +126,7 @@ const PELTIER_CONSTRAINTS = {
 };
 
 const PORT = {
-  name: 'dev/ttyS0',
+  name: '/dev/ttyS0',
   baudRate: 300000
 }
 
@@ -146,12 +141,11 @@ module.exports = {
   PELTIER_STATES,
   PELTIER_CONSTRAINTS,
   DATA_ENTRIES,
-  SEPARATORS,
+  SEPARATOR,
   TEMP_MEASURE,
   EFFECTS_RESEARCH,
   CHARTS,
   INITIAL,
-  BUFFER_LENGTH,
   PORT,
   MODES
 };

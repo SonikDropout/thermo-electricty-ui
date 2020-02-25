@@ -19,6 +19,7 @@ function reloadOnChange(win) {
 
   watcher.on('change', () => {
     win.reload();
+    win.minimize();
   });
 
   return watcher;
@@ -57,6 +58,7 @@ function launch() {
       nodeIntegration: true,
     },
   });
+  win.minimize();
 
   win.loadURL(
     url.format({

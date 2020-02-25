@@ -9,5 +9,6 @@ for (let key in initialData) initialData[key].value = 0;
 const data = writable(initialData);
 
 ipcRenderer.on('serialData', (_, d) => data.set(d));
+data.subscribe(console.log);
 
 module.exports = { data };
