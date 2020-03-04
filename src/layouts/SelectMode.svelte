@@ -1,5 +1,5 @@
 <script>
-  import { TEMP_MEASURE, EFFECTS_RESEARCH } from "../constants";
+  import { STATES } from "../constants";
   import { slide } from "../transitions";
   const slideLeft = slide("left");
   const slideRight = slide("right");
@@ -51,12 +51,12 @@
     <label class="area temp" transition:slideLeft>
       <img src="../static/icons/temperature.svg" alt="temperature" />
       <p>Измерение и контроль температуры</p>
-      <input type="radio" name="appState" value={TEMP_MEASURE} on:change />
+      <input type="radio" name="appState" value={STATES.temp} on:change />
     </label>
     <label class="area effects" transition:slideRight>
       <img src="../static/icons/peltier.svg" alt="temperature" />
       <p>Измерение эффектов Пельтье и Зеебека</p>
-      <input type="radio" name="appState" value={EFFECTS_RESEARCH} on:change />
+      <input type="radio" name="appState" value={STATES.effects} on:change />
     </label>
   </main>
 </div>

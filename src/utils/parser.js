@@ -2,20 +2,22 @@ const { PELTIER_STATES, PELTIER_PARAMS, SEPARATOR } = require('../constants');
 const { clone } = require('./others');
 
 function validate(buf) {
-  if (buf[0] != SEPARATOR) throw new Error('No separator in buffer');
+  if (!buf.indexOf(SEPARATOR) == 0) throw new Error('No separator in buffer');
 }
 
 module.exports = function parse(buf) {
   validate(buf);
   const pp = clone(PELTIER_PARAMS);
   const ps = clone(PELTIER_STATES);
-  let i = 1;
+  let i = SEPARATOR.length;
   for (const key in pp) {
-    const divider = pp[key].divider || 1;
-    pp[key].value = +buf[i++] / divider;
+    pp[key].value =
+      (pp[key].signed ? buf.readInt16BE(i) : buf.readUInt16BE(i)) /
+      (pp[key].divider || 1);
+    i += 2;
   }
   for (const key in ps) {
-    ps[key].value = +Boolean(+buf[i++]);
+    ps[key].value = buf[i++];
   }
   return { ...pp, ...ps };
 };

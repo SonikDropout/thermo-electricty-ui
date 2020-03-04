@@ -2,9 +2,9 @@
   import SelectMode from "./layouts/SelectMode.svelte";
   import TempMeasure from "./layouts/TempMeasure.svelte";
   import Charts from "./layouts/Charts.svelte";
-  import { TEMP_MEASURE, EFFECTS_RESEARCH, CHARTS, INITIAL } from "./constants";
+  import { STATES } from "./constants";
   import EffectsResearch from "./layouts/EffectsResearch.svelte";
-  let state = INITIAL;
+  let state = STATES.initial;
   const setState = newState => () => (state = newState);
   const changeState = e => {
     state = e.target.value;
@@ -21,12 +21,12 @@
 </style>
 
 <div class={state}>
-  {#if state == INITIAL}
+  {#if state == STATES.initial}
     <SelectMode on:change={changeState} />
-  {:else if state == EFFECTS_RESEARCH}
-    <EffectsResearch goBack={setState(INITIAL)} />
+  {:else if state == STATES.effects}
+    <EffectsResearch goBack={setState(STATES.initial)} />
   {:else}
-    <TempMeasure goBack={setState(INITIAL)} goForward={setState(CHARTS)} />
-    <Charts goBack={setState(TEMP_MEASURE)} />
+    <TempMeasure goBack={setState(STATES.initial)} goForward={setState(STATES.charts)} />
+    <Charts goBack={setState(STATES.temp)} />
   {/if}
 </div>
