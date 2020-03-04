@@ -1,11 +1,22 @@
 <script>
+  import { slide } from 'svelte/transition';
+  import { onMount, onDestroy } from 'svelte';
   export let onChange;
   export let options;
   export let disabled;
   export let defaultValue;
 
+  onMount(() => document.addEventListener('click', handleClickOutside));
+  onDestroy(() => document.removeEventListener('click', handleClickOutside));
+
+  let select;
+
+  function handleClickOutside(e) {
+    if (optionsVisible && !select.contains(e.target)) optionsVisible = false;
+  }
+
   let selected = options.find(o => o.value === defaultValue) || {
-    label: "-- не выбран --"
+    label: '-- не выбран --',
   };
 
   let optionsVisible = false;
@@ -18,13 +29,6 @@
     optionsVisible = !optionsVisible;
   }
 
-  function drop(node, { duration }) {
-    return {
-      duration,
-      css: t => `max-height: ${t * h}%`
-    };
-  }
-
   function selectOption(e) {
     optionsVisible = false;
     const v = e.target.dataset.value;
@@ -32,6 +36,29 @@
     onChange(v);
   }
 </script>
+
+<div class="select-wrapper">
+  <div
+    class="select"
+    bind:this={select}
+    class:disabled
+    class:active
+    class:expand={optionsVisible}>
+    <div class="curr-value" on:click={toggleOptions}>{selected.label}</div>
+    {#if optionsVisible}
+      <ul transition:slide>
+        {#each options as { icon, label, value }}
+          <li data-value={value} on:click={selectOption}>
+            {#if icon}
+              <i class="icon icon-{icon}" />
+            {/if}
+            {label}
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </div>
+</div>
 
 <style>
   .select-wrapper {
@@ -70,7 +97,7 @@
   }
 
   .curr-value::after {
-    content: "";
+    content: '';
     display: block;
     border: 5px solid transparent;
     position: relative;
@@ -102,21 +129,3 @@
     padding: 0 2rem;
   }
 </style>
-
-<div class="select-wrapper">
-  <div class="select" class:disabled class:active class:expand={optionsVisible}>
-    <div class="curr-value" on:click={toggleOptions}>{selected.label}</div>
-    {#if optionsVisible}
-      <ul transition:drop>
-        {#each options as { icon, label, value }}
-          <li data-value={value} on:click={selectOption}>
-            {#if icon}
-              <i class="icon icon-{icon}" />
-            {/if}
-            {label}
-          </li>
-        {/each}
-      </ul>
-    {/if}
-  </div>
-</div>

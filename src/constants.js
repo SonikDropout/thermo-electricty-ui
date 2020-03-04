@@ -135,7 +135,7 @@ const IS_RPI = process.platform === 'linux' && process.arch === 'arm';
 
 const PORT = {
   name: IS_RPI ? '/dev/ttyS0' : 'COM5',
-  baudRate: 300000
+  baudRate: 230400
 }
 
 const MODES = ['Power', 'Temp']
