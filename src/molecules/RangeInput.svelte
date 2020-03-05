@@ -3,22 +3,22 @@
   export let disabled;
   export let onChange;
   export let name;
-  export let defaultValue;
+  export let defaultValue = range[0];
 
-  let step = 1;
+  let step = 10;
 
   $: min = Math.min.apply(null, range);
   $: max = Math.max.apply(null, range);
   $: diff = max - min;
-  $: value = defaultValue === void 0 ? range[0] : defaultValue;
+  $: value = Math.min(Math.max(defaultValue, range[0]), range[1]);
 
   $: {
-    if (diff < 1) step = 0.01;
-    if (diff < 10) step = 0.1;
+    if (diff < 200) step = 1;
+    if (diff < 20) step = 0.1;
+    if (diff < 2) step = 0.01;
   }
 
-  let input = { value: range[0] },
-    timeout,
+  let timeout,
     interval,
     showControls = false;
 
@@ -42,20 +42,41 @@
     }, 500);
   }
 
-  function pressIncrement() {
+  function pressIncrement(e) {
     stickyCall(increment);
+    e.target.setPointerCapture(e.pointerId);
   }
 
-  function pressDecrement() {
+  function pressDecrement(e) {
     stickyCall(decrement);
+    e.target.setPointerCapture(e.pointerId);
   }
 
-  function release() {
+  function release(e) {
     if (timeout) clearTimeout(timeout);
     if (interval) clearInterval(interval);
+    e.target.releasePointerCapture(e.pointerId);
     onChange(value, name);
   }
 </script>
+
+<span class="input-wrapper" class:disabled>
+  <button
+    disabled={value <= min || disabled}
+    class="decrementer"
+    on:pointerdown={pressDecrement}
+    on:pointerup={release}>
+    <span>-</span>
+  </button>
+  <span class="input">{value}</span>
+  <button
+    disabled={value >= max || disabled}
+    class="incrementer"
+    on:pointerdown={pressIncrement}
+    on:pointerup={release}>
+    <span>+</span>
+  </button>
+</span>
 
 <style>
   .input-wrapper {
@@ -96,21 +117,3 @@
     opacity: 0.5;
   }
 </style>
-
-<span class="input-wrapper" class:disabled>
-  <button
-    disabled={value <= min || disabled}
-    class="decrementer"
-    on:pointerdown={pressDecrement}
-    on:pointerup={release}>
-    <span>-</span>
-  </button>
-  <span class="input">{value}</span>
-  <button
-    disabled={value >= max || disabled}
-    class="incrementer"
-    on:pointerdown={pressIncrement}
-    on:pointerup={release}>
-    <span>+</span>
-  </button>
-</span>

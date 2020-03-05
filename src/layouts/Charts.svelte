@@ -1,42 +1,72 @@
 <script>
-  import Chart from "../organisms/Chart/index";
-  import Select from "../molecules/Select";
-  import Button from "../atoms/Button";
-  import RadioGroup from "../molecules/RadioGroup";
-  import { data } from "../stores";
-  import { ipcRenderer } from "electron";
-  import { getFileDate, capitalize } from "../utils/others";
+  import Select from '../molecules/Select';
+  import Button from '../atoms/Button';
+  import RadioGroup from '../molecules/RadioGroup';
+  import { data } from '../stores';
+  import { ipcRenderer } from 'electron';
+  import { capitalize } from '../utils/others';
+  import { PELTIER_PARAMS } from '../constants';
+  import Chart from 'chart.js';
+  import Zoom from 'chartjs-plugin-zoom';
+  import { onMount } from 'svelte';
+  import configureChart from './chart.config';
   export let goBack;
 
+  const xCaption = 'T, ' + PELTIER_PARAMS.temperatureHot.units;
+
   let saveActive,
-    xPoints = [],
-    yPoints = [],
+    width = 500,
+    height = 350,
+    chart,
+    points = [],
+    unsubscribeData,
     yCaption,
     isDrawing;
 
+  onMount(createChart);
+
+  function createChart() {
+    chart = new Chart(
+      document.getElementById('chart').getContext('2d'),
+      configureChart(points, { x: xCaption, y: yCaption })
+    );
+    chart.options.onClick = chart.resetZoom();
+  }
+
   ipcRenderer
-    .on("usbConnect", () => (saveActive = true))
-    .on("usbDisconnect", () => (saveActive = false));
+    .on('usbConnect', () => (saveActive = true))
+    .on('usbDisconnect', () => (saveActive = false));
 
   const faceOptions = [
-    { label: "Охлаждающая сторона", value: "Cool" },
-    { label: "Нагревающая сторона", value: "Hot" }
+    { label: 'Охлаждающая сторона', value: 'Cool' },
+    { label: 'Нагревающая сторона', value: 'Hot' },
   ];
 
   const sensorsOptions = {
-    name: "sensors",
+    name: 'sensors',
     elements: [
-      { value: 0, label: "Терморезистор", name: "thermoresistor", icon: "thermistor" },
-      { value: 1, label: "Термопара", name: "thermocouple", icon: "thermocouple" },
-      { value: 2, label: "Термистор", name: "thermistor", icon: "thermistor" }
-    ]
+      {
+        value: 0,
+        label: 'Терморезистор',
+        name: 'thermoresistor',
+        icon: 'thermistor',
+      },
+      {
+        value: 1,
+        label: 'Термопара',
+        name: 'thermocouple',
+        icon: 'thermocouple',
+      },
+      { value: 2, label: 'Термистор', name: 'thermistor', icon: 'thermistor' },
+    ],
   };
 
-  let selectedFace = "Cool",
+  let selectedFace = 'Cool',
     selectedSensor = sensorsOptions.elements[0];
 
   $: sensorEntry = selectedSensor.name + selectedFace;
   $: yCaption = $data[sensorEntry].symbol + ', ' + $data[sensorEntry].units;
+  $: updateYAxis(yCaption);
 
   function selectFace(f) {
     selectedFace = f;
@@ -52,42 +82,73 @@
   }
 
   function stopDrawing() {
-    data.unsubscribe(sendExcelData);
-    data.unsubscribe(updateChartData);
-    xPoints = [];
-    yPoints = [];
+    unsubscribeData();
+    points = [];
     isDrawing = false;
+  }
+
+  function updateYAxis(caption) {
+    if (!chart) return;
+    chart.options.scales.yAxes[0].scaleLabel.labelString = caption;
+    chart.update();
   }
 
   function startDrawing() {
     isDrawing = true;
     ipcRenderer.send(
-      "startFileWrite",
-      `TE-${selectedFace}-${capitalize(selectedSensor.name)}_${getFileDate()}`,
-      "T, \u2103",
-      "R, Ом"
+      'createFile',
+      `TE-${selectedFace}-${capitalize(selectedSensor.name)}}`,
+      xCaption,
+      yCaption
     );
-    data.subscribe(saveExcelData);
-    data.subscribe(updateChartData);
+    unsubscribeData = data.subscribe(addPoint);
   }
 
-  function saveExcelData(data) {
-    ipcRenderer.send(
-      "excelRow",
-      data["temperature" + selectedFace].value,
-      data[selectedSensor.name + selectedFace].value
-    );
+  function addPoint(data) {
+    const point = {
+      x: data['temperature' + selectedFace].value,
+      y: data[selectedSensor.name + selectedFace].value,
+    };
+    writeExcel(point);
+    updateChartData(point);
   }
 
-  function updateChartData(data) {
-    xPoints = xPoints.concat(data["temperature" + selectedFace].value);
-    yPoints = yPoints.concat(data[selectedSensor.name + selectedFace].value);
+  function writeExcel(point) {
+    ipcRenderer.send('excelRow', [point.x, point.y]);
+  }
+
+  function updateChartData(point) {
+    points.push(point);
+    chart.update();
   }
 
   function saveExcel() {
-    ipcRenderer.send("saveFile");
+    ipcRenderer.send('saveFile');
   }
 </script>
+
+<div class="layout">
+  <header>Постоение графиков</header>
+  <main>
+    <div class="selects">
+      <Select
+        onChange={selectFace}
+        options={faceOptions}
+        defaultValue={selectedFace} />
+      <RadioGroup group={sensorsOptions} onChange={selectSensor} />
+      <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
+    </div>
+    <div class="chart">
+      <canvas id="chart" width="500" height="400" />
+    </div>
+  </main>
+  <footer>
+    <Button on:click={goBack}>Назад</Button>
+    <Button on:click={saveExcel} disabled={!saveActive}>
+      Сохранить данные на usb-устройство
+    </Button>
+  </footer>
+</div>
 
 <style>
   main {
@@ -111,37 +172,16 @@
   .selects :global(.radio-group) {
     margin-top: 2rem;
   }
-  main :global(.chart) {
+  .chart {
     flex: 1 1 60%;
     max-width: 50rem;
     padding-right: 4.8rem;
+  }
+  canvas {
+    width: 100%;
+    height: 100%;
   }
   footer {
     padding: var(--gutter-width) 8rem;
   }
 </style>
-
-<div class="layout">
-  <header>Постоение графиков</header>
-  <main>
-    <div class="selects">
-      <Select
-        onChange={selectFace}
-        options={faceOptions}
-        defaultValue={selectedFace} />
-      <RadioGroup group={sensorsOptions} onChange={selectSensor} />
-      <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
-    </div>
-    <Chart
-      xCaption="T, {$data.temperatureCool.units}"
-      {yCaption}
-      {xPoints}
-      {yPoints} />
-  </main>
-  <footer>
-    <Button on:click={saveExcel} disabled={!saveActive}>
-      Сохранить данные на usb-устройство
-    </Button>
-    <Button on:click={goBack}>Назад</Button>
-  </footer>
-</div>

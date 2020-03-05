@@ -6,7 +6,8 @@ const usbPort = new EventEmitter();
 let connectedDevice;
 
 usbDetect.startMonitoring();
-usbDetect.on('add', findDrive);
+findDrive();
+usbDetect.on('add', setTimeout.bind(null, findDrive, 1500));
 usbDetect.on('remove', handleRemove);
 
 function findDrive() {
