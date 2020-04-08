@@ -32,7 +32,8 @@ body {
 body {
   color: var(--text-color);
   margin: 0;
-  font-family: 'Montserrat', 'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  font-family: 'Montserrat', 'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
   font-size: 1.6rem;
 }
 
@@ -43,7 +44,8 @@ header {
   padding: 0;
   height: 8rem;
   line-height: 8rem;
-  font-family: 'Oswald', 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-family: 'Oswald', 'Franklin Gothic Medium', 'Arial Narrow', Arial,
+    sans-serif;
 }
 
 .layout {
@@ -70,7 +72,8 @@ h4,
 h5,
 h6 {
   font-weight: normal;
-  font-family: 'Oswald', 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-family: 'Oswald', 'Franklin Gothic Medium', 'Arial Narrow', Arial,
+    sans-serif;
 }
 
 h3,
@@ -91,4 +94,16 @@ footer {
   top: -9999px;
   left: -9999px;
   visibility: hidden;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes blink {
+  to {
+    opacity: 0;
+  }
 }

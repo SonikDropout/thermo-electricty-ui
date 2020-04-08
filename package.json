@@ -42,5 +42,10 @@
     "directories": {
       "output": "/opt/thermo-electricity"
     }
+  },
+  "prettier": {
+    "svelteSortOrder": "scripts-markup-styles",
+    "singleQuote": true,
+    "trailingComma": "es5"
   }
 }
