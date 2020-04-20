@@ -10,7 +10,7 @@
   $: max = Math.max.apply(null, range);
   $: diff = max - min;
   $: precision = Math.abs(Math.min(0, +step.toExponential().split('e')[1]));
-  $: value = Math.min(Math.max(defaultValue, min), max).toFixed(precision);
+  $: value = Math.min(Math.max(defaultValue, min), max);
 
   let timeout,
     interval,
@@ -18,7 +18,7 @@
 
   function increment() {
     if (value + step <= max) {
-      value = (value + step).toFixed(precision);
+      value = +(value + step).toFixed(precision);
     } else {
       clearTimers();
     }
@@ -26,7 +26,7 @@
 
   function decrement() {
     if (value - step >= min) {
-      value = (value - step).toFixed(precision);
+      value = +(value - step).toFixed(precision);
     } else {
       clearTimers();
     }
@@ -58,7 +58,7 @@
   function release(e) {
     clearTimers();
     e.target.releasePointerCapture(e.pointerId);
-    onChange(+value, name);
+    onChange(value, name);
   }
 </script>
 
@@ -67,14 +67,16 @@
     disabled={value <= min || disabled}
     class="decrementer"
     on:pointerdown={pressDecrement}
+    on:pointercancel={release}
     on:pointerup={release}>
     <span>-</span>
   </button>
-  <span class="input">{value}</span>
+  <span class="input">{value.toFixed(precision)}</span>
   <button
     disabled={value >= max || disabled}
     class="incrementer"
     on:pointerdown={pressIncrement}
+    on:pointercancel={release}
     on:pointerup={release}>
     <span>+</span>
   </button>

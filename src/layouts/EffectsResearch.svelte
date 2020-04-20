@@ -27,6 +27,7 @@
     startDisabled = true,
     chart,
     points = [],
+    setPower = 0,
     unsubscribeData,
     isDrawing;
 
@@ -58,6 +59,7 @@
 
   function selectEffect(e) {
     selectedEffect = effectsOptions[e];
+    setPower = 0;
   }
 
   function startPeltierResearch() {
@@ -74,6 +76,7 @@
   }
 
   function changePower(P) {
+    setPower = P;
     if (selectedEffect.value) {
       ipcRenderer.send('serialCommand', ...COMMANDS.setPowerHotPeltier(P));
       ipcRenderer.send('serialCommand', ...COMMANDS.setPowerCoolPeltier(P));
@@ -145,7 +148,11 @@
   <header>Исследование эффектов Пельтье и Зеебека</header>
   <main>
     <div class="controls">
-      <Select onChange={selectEffect} options={effectsOptions} />
+      <Select
+        onChange={selectEffect}
+        disabled={isDrawing}
+        options={effectsOptions}
+        defaultValue={selectedEffect.value} />
       <div class="param-temp">
         <span class="temp-label">Температура нагревающейся пластины:</span>
         <strong class="temp-value hot">
@@ -160,11 +167,12 @@
       </div>
       <div class="range">
         <span class="range-label">
-          Мощность {selectedEffect.value ? 'модулей' : 'модуля'} Пельтье, % от
+          Мощность {selectedEffect.value ? 'модулей' : 'модуля'} <br> Пельтье, % от
           макс
         </span>
         <RangeInput
           onChange={changePower}
+          defaultValue={setPower}
           range={PELTIER_CONSTRAINTS.PowerHot} />
       </div>
       {#if !selectedEffect.value}
@@ -177,8 +185,8 @@
             onChange={changeCurrent}
             range={PELTIER_CONSTRAINTS.CurrentProbe} />
         </div>
-        {:else}
-        <div class="range-spacer"></div>
+      {:else}
+        <div class="range-spacer" />
       {/if}
       <h3>Результаты измерений</h3>
       {#each ['voltageProbe', 'currentProbe', 'deltaTemp'] as param}
@@ -208,12 +216,12 @@
 <style>
   main {
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
+    padding: 0 8rem;
   }
   .controls {
     flex: 1 1 40%;
-    max-width: 40rem;
-    padding: 0 4rem;
+    max-width: 36rem;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -226,7 +234,6 @@
   main :global(.chart) {
     max-width: 50rem;
     flex: 1 1 60%;
-    padding-right: 4.8rem;
   }
   .symbol {
     display: inline-block;

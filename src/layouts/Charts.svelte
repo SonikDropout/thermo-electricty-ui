@@ -155,13 +155,12 @@
   main {
     display: flex;
     align-items: stretch;
-    justify-content: space-evenly;
-    padding-top: 2rem;
+    justify-content: space-between;
+    padding: 1rem 8rem 0 8rem;
   }
   .selects {
     flex: 1 1 40%;
-    padding: 0 4rem;
-    max-width: 40rem;
+    max-width: 36rem;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -176,7 +175,6 @@
   .chart {
     flex: 1 1 60%;
     max-width: 50rem;
-    padding-right: 4.8rem;
   }
   canvas {
     width: 100%;
