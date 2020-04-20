@@ -22,7 +22,6 @@
   }
 
   let saveDisabled=true,
-    startDisabled = true,
     chart,
     points = [],
     unsubscribeData,
@@ -54,23 +53,19 @@
     chart.update();
   }
 
-  let selectedEffect = effectsOptions[0];
+  let selectedEffect = effectsOptions[$data.modeProbe.value];
 
   function selectEffect(e) {
-    startDisabled = false;
     selectedEffect = effectsOptions[e];
-    ipcRenderer.send('serialCommand', COMMANDS.turnOffAllPeltier);
     if (e) {
-      ipcRenderer.send('serialCommand', COMMANDS.turnOnCoolPeltier);
-      ipcRenderer.send('serialCommand', COMMANDS.turnOnHotPeltier);
+      ipcRenderer.send('serialCommand', COMMANDS.turnOffProbePeltier);
     } else {
       ipcRenderer.send('serialCommand', COMMANDS.turnOnProbePeltier);
     }
   }
 
   function changePower(P) {
-    ipcRenderer.send('serialCommand', ...COMMANDS.setPowerCoolPeltier(P));
-    ipcRenderer.send('serialCommand', ...COMMANDS.setPowerHotPeltier(P));
+    ipcRenderer.send('serialCommand', ...COMMANDS.setPowerProbePeltier(P));
   }
 
   function changeCurrent(I) {
@@ -168,7 +163,7 @@
           <strong class="value">{$data[param].value}</strong>
         </div>
       {/each}
-      <Button on:click={toggleDrawing} disabled={startDisabled}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
+      <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
     </div>
     <div class="chart">
       <canvas id="chart" width="500" height="350" />

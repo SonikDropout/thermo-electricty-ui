@@ -129,6 +129,7 @@ const COMMANDS = {
   setCurrentProbePeltier: v => [204, v * 10],
   setPowerCoolPeltier: v => [212, v],
   setPowerHotPeltier: v => [216, v],
+  setPowerProbePeltier: v => [220, v],
 };
 
 const PELTIER_CONSTRAINTS = {
