@@ -13,10 +13,11 @@ ipcRenderer.on('serialData', (_, d) => data.set(setTempDelta(d)));
 
 function setTempDelta(data) {
   data.deltaTemp = clone(data.temperatureCool);
-  data.deltaTemp.units = '\u0394' + data.deltaTemp.units;
-  data.deltaTemp.value = data.temperatureHot.value - data.temperatureCool.value;
+  data.deltaTemp.symbol = '\u0394' + data.deltaTemp.symbol;
+  data.deltaTemp.value = +(
+    data.temperatureHot.value - data.temperatureCool.value
+  ).toFixed(1);
   return data;
 }
-
 
 module.exports = { data };

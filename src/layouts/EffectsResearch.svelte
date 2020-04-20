@@ -173,9 +173,12 @@
             Установка тока, {$data.currentProbe.units}
           </span>
           <RangeInput
+            step={0.1}
             onChange={changeCurrent}
             range={PELTIER_CONSTRAINTS.CurrentProbe} />
         </div>
+        {:else}
+        <div class="range-spacer"></div>
       {/if}
       <h3>Результаты измерений</h3>
       {#each ['voltageProbe', 'currentProbe', 'deltaTemp'] as param}
@@ -205,7 +208,6 @@
 <style>
   main {
     display: flex;
-    padding-top: var(--gutter-width);
     justify-content: space-evenly;
   }
   .controls {
@@ -228,7 +230,7 @@
   }
   .symbol {
     display: inline-block;
-    width: 5rem;
+    width: 8rem;
   }
 
   .temp-value {
@@ -252,6 +254,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+  }
+  .range-spacer {
+    margin-top: 1rem;
+    height: 3.2rem;
   }
   .result {
     margin-bottom: 0.8rem;

@@ -3,7 +3,7 @@
   export let disabled;
   export let onChange;
   export let name;
-  export let step;
+  export let step = 1;
   export let defaultValue = range[0];
 
   $: min = Math.min.apply(null, range);
