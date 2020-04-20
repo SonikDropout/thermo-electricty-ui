@@ -5,10 +5,11 @@ function validate(buf) {
   if (!buf.indexOf(SEPARATOR) == 0) throw new Error('No separator in buffer');
 }
 
+const pp = clone(PELTIER_PARAMS);
+const ps = clone(PELTIER_STATES);
+
 module.exports = function parse(buf) {
   validate(buf);
-  const pp = clone(PELTIER_PARAMS);
-  const ps = clone(PELTIER_STATES);
   let i = SEPARATOR.length;
   for (const key in pp) {
     pp[key].value =

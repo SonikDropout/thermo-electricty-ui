@@ -8,7 +8,7 @@
   import { PELTIER_PARAMS } from '../constants';
   import Chart from 'chart.js';
   import Zoom from 'chartjs-plugin-zoom';
-  import { onMount } from 'svelte';
+  import { onMount, onDestroy } from 'svelte';
   import configureChart from './chart.config';
   export let goBack;
 
@@ -24,6 +24,7 @@
     isDrawing;
 
   onMount(createChart);
+  onDestroy(() => chart && chart.destroy());
 
   function createChart() {
     chart = new Chart(
@@ -128,7 +129,7 @@
 </script>
 
 <div class="layout">
-  <header>Постоение графиков</header>
+  <header>Построение графиков</header>
   <main>
     <div class="selects">
       <Select
