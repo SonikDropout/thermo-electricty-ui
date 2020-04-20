@@ -64,11 +64,11 @@
 
   function startPeltierResearch() {
     ipcRenderer.send('serialCommand', COMMANDS.turnOnProbePeltier);
-    ipcRenderer.send('serialCommand', COMMANDS.constantPowerProbePeltier);
+    ipcRenderer.send('serialCommand', COMMANDS.constantTempProbePeltier);
   }
 
   function startSeebeckResearch() {
-    ipcRenderer.send('serialCommand', COMMANDS.constantTempProbePeltier);
+    ipcRenderer.send('serialCommand', COMMANDS.constantPowerProbePeltier);
     ipcRenderer.send('serialCommand', COMMANDS.turnOnHotPeltier);
     ipcRenderer.send('serialCommand', COMMANDS.turnOnCoolPeltier);
   }
