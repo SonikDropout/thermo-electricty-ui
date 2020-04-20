@@ -21,8 +21,7 @@
   let isActive;
 
   data.subscribe(d => {
-    isActive = !!d[`state${name}`].value;
-    console.log(isActive);
+    isActive = d[`state${name}`].value;
   });
 
   const modeOptions = [

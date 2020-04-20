@@ -2,7 +2,7 @@ const {
   SEPARATOR,
   BUFFER_LENGTH,
   PELTIER_PARAMS,
-  PELTIER_STATE,
+  PELTIER_STATES,
 } = require('../constants');
 const { countKeys } = require('./others');
 const parse = require('./parser');
@@ -47,7 +47,7 @@ class DataGenerator extends EventEmitter {
       for (; i < j + countKeys(PELTIER_PARAMS) * 2; i += 2)
         buf.writeUInt16LE(randomInt(10), i);
       j = i;
-      for (; i < j + countKeys(PELTIER_STATE); i++) buf[i] = randomInt(1);
+      for (; i < j + countKeys(PELTIER_STATES); i++) buf[i] = randomInt(1);
       yield buf;
     }
   }
