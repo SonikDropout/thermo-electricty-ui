@@ -1,29 +1,29 @@
 const Serial = require('serialport');
 const { PORT, SEPARATOR } = require('../constants');
 const parse = require('./parser');
+const EventEmitter = require('events');
 
+const emitter = new EventEmitter();
 const serial = new Serial(PORT.name, { baudRate: PORT.baudRate });
 
 serial.on('error', (e) => {
   throw e;
 });
 
-function subscribe(fn) {
-  serial.on('data', handleBuffer.bind(null, fn));
-}
-
 const buffer = Buffer.alloc(52);
 let offset = 0;
 
-function handleBuffer(cb, buf) {
+serial.on('data', handleBuffer);
+
+function handleBuffer(buf) {
   if (buf.toString('ascii').startsWith('ok')) buf = buf.slice(2);
   idx = buf.indexOf(SEPARATOR);
   if (idx != -1) {
     buf.copy(buffer, offset, 0, idx);
     try {
-      cb(parse(buffer.slice()));
+      emitter.emit('data', parse(buffer.slice()));
     } catch (e) {
-      console.error(e.message)
+      console.error(e.message);
     }
     offset = 0;
     buf.copy(buffer, offset, idx);
@@ -53,7 +53,7 @@ function writeCommandFromQueue() {
   const cmd = commandQueue.shift();
   console.log('Sending Command to COM', cmd);
   serial.write(cmd);
-  serial.once('data', buf => {
+  serial.once('data', (buf) => {
     console.log('Recived confirm:', buf.toString('ascii'));
     if (!buf.toString('ascii').startsWith('ok')) {
       commandQueue.unshift(cmd);
@@ -69,7 +69,7 @@ function writeCommandFromQueue() {
   // }
 }
 
-module.exports = {
-  subscribe,
-  sendCommand,
-};
+emitter.sendCommand = sendCommand;
+emitter.close = serial.close;
+
+module.exports = emitter;

@@ -29,6 +29,7 @@ const INTEGRATED_PELTIER_PARAMS = {
     units: '\u02daC',
     symbol: 'T',
     divider: 10,
+    signed: true,
   },
   setTemperature: {
     label: 'Установленная температура',
@@ -145,10 +146,13 @@ const IS_RPI = process.platform === 'linux' && process.arch === 'arm';
 
 const PORT = {
   name: IS_RPI ? '/dev/ttyS0' : 'COM5',
-  baudRate: 230400
-}
+  baudRate: 230400,
+};
 
 const MODES = ['Power', 'Temp'];
+
+const BUFFER_LENGTH =
+  countKeys(PELTIER_PARAMS) * 2 + countKeys(PELTIER_STATES) + SEPARATOR.length;
 
 module.exports = {
   IS_RPI,
@@ -162,4 +166,5 @@ module.exports = {
   PORT,
   MODES,
   CRITICAL_TEMP: 80,
+  BUFFER_LENGTH,
 };

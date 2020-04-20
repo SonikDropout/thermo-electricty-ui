@@ -18,7 +18,12 @@
 
   const slideCol = slide(pos);
 
-  $: isActive = $data[`state${name}`].value;
+  let isActive;
+
+  data.subscribe(d => {
+    isActive = !!d[`state${name}`].value;
+    console.log(isActive);
+  });
 
   const modeOptions = [
     {

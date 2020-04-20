@@ -64,9 +64,11 @@
 
   function startPeltierResearch() {
     ipcRenderer.send('serialCommand', COMMANDS.turnOnProbePeltier);
+    ipcRenderer.send('serialCommand', COMMANDS.constantPowerProbePeltier);
   }
 
   function startSeebeckResearch() {
+    ipcRenderer.send('serialCommand', COMMANDS.constantTempProbePeltier);
     ipcRenderer.send('serialCommand', COMMANDS.turnOnHotPeltier);
     ipcRenderer.send('serialCommand', COMMANDS.turnOnCoolPeltier);
   }
@@ -175,7 +177,7 @@
           defaultValue={setPower}
           range={PELTIER_CONSTRAINTS.PowerHot} />
       </div>
-      {#if !selectedEffect.value}
+      {#if selectedEffect.value}
         <div class="range">
           <span class="range-label">
             Установка тока, {$data.currentProbe.units}

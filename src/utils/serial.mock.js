@@ -1,26 +1,24 @@
 const {
-  SEPARATORS,
+  SEPARATOR,
   BUFFER_LENGTH,
   PELTIER_PARAMS,
   PELTIER_STATE,
 } = require('../constants');
 const { countKeys } = require('./others');
 const parse = require('./parser');
+const EventEmitter = require('events');
 
 function randomInt(min, max) {
   if (!max) return Math.round(Math.random() * min);
   return min + Math.round(Math.random() * (max - min));
 }
 
-class DataGenerator {
+class DataGenerator extends EventEmitter {
   constructor() {
+    super();
     this.intervalID = 0;
     this.generator = this.createGenerator();
-    this.cbPoll = [];
-  }
-
-  subscribe(fn) {
-    this.cbPoll.push(fn);
+    this.start();
   }
 
   sendCommand(byte1, byte2 = 0) {
@@ -28,26 +26,25 @@ class DataGenerator {
   }
 
   start() {
-    this.intervalID = setInterval(this._writeRow.bind(this), 100);
+    this.intervalID = setInterval(this._writeRow.bind(this), 1000);
   }
 
-  stop() {
+  close() {
     clearInterval(this.intervalID);
   }
 
   _writeRow() {
     const val = parse(this.generator.next().value);
-    this.cbPoll.forEach((fn) => fn(val));
+    this.emit('data', val);
   }
 
   *createGenerator() {
     while (1) {
       const buf = Buffer.alloc(BUFFER_LENGTH);
-      let i = 0;
-      for (; i < SEPARATORS.length * 2; i += 2)
-        buf.writeUInt16LE(SEPARATORS[i / 2], i);
+      SEPARATOR.copy(buf)
+      let i = SEPARATOR.length;
       let j = i;
-      for (; i < j + countKeys(PELTIER_PARAMS); i += 2)
+      for (; i < j + countKeys(PELTIER_PARAMS) * 2; i += 2)
         buf.writeUInt16LE(randomInt(10), i);
       j = i;
       for (; i < j + countKeys(PELTIER_STATE); i++) buf[i] = randomInt(1);
