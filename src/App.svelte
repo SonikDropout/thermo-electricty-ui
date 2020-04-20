@@ -1,9 +1,10 @@
 <script>
-  import SelectMode from "./layouts/SelectMode.svelte";
-  import TempMeasure from "./layouts/TempMeasure.svelte";
-  import Charts from "./layouts/Charts.svelte";
+  import SelectMode from "./layouts/SelectMode";
+  import TempMeasure from "./layouts/TempMeasure";
+  import Charts from "./layouts/Charts";
   import { STATES } from "./constants";
-  import EffectsResearch from "./layouts/EffectsResearch.svelte";
+  import EffectsResearch from "./layouts/EffectsResearch";
+  import OverheatWarning from "./organisms/OverheatWarning";
   let state = STATES.initial;
   const setState = newState => () => (state = newState);
   const changeState = e => {
@@ -20,13 +21,16 @@
   }
 </style>
 
+<OverheatWarning />
 <div class={state}>
   {#if state == STATES.initial}
     <SelectMode on:change={changeState} />
   {:else if state == STATES.effects}
     <EffectsResearch goBack={setState(STATES.initial)} />
   {:else}
-    <TempMeasure goBack={setState(STATES.initial)} goForward={setState(STATES.charts)} />
+    <TempMeasure
+      goBack={setState(STATES.initial)}
+      goForward={setState(STATES.charts)} />
     <Charts goBack={setState(STATES.temp)} />
   {/if}
 </div>

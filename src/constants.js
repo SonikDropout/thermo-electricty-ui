@@ -124,18 +124,19 @@ const COMMANDS = {
   constantTempHotPeltier: 140,
   constantPowerHotPeltier: 144,
   turnOffAllPeltier: 148,
-  setTempCoolPeltier: v => [200, 100 + v],
-  setTempHotPeltier: v => [208, v],
-  setCurrentProbePeltier: v => [204, v * 10],
-  setPowerCoolPeltier: v => [212, v],
-  setPowerHotPeltier: v => [216, v],
-  setPowerProbePeltier: v => [220, v],
+  setTempCoolPeltier: (v) => [200, 100 + v],
+  setTempHotPeltier: (v) => [208, v],
+  setCurrentProbePeltier: (v) => [204, v * 10],
+  setPowerCoolPeltier: (v) => [212, v],
+  setPowerHotPeltier: (v) => [216, v],
+  setPowerProbePeltier: (v) => [220, v],
 };
 
 const PELTIER_CONSTRAINTS = {
   TempCool: [20, -5],
   TempHot: [20, 50],
   CurrentProbe: [0.1, 2],
+  PowerProbe: [0, 30],
   PowerCool: [0, 100],
   PowerHot: [0, 100],
 };
@@ -160,4 +161,5 @@ module.exports = {
   SEPARATOR,
   PORT,
   MODES,
+  CRITICAL_TEMP: 80,
 };
