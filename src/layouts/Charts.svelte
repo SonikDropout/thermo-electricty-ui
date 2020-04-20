@@ -128,7 +128,7 @@
 </script>
 
 <div class="layout">
-  <header>Постоение графиков</header>
+  <header>Построение графиков</header>
   <main>
     <div class="selects">
       <Select

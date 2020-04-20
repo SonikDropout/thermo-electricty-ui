@@ -1,32 +1,32 @@
 <script>
-  import Toggle from "../atoms/Toggle";
-  import Select from "../molecules/Select";
-  import RangeInput from "../molecules/RangeInput";
-  import Value from "../atoms/Value";
-  import { slide } from "../transitions";
-  import { data } from "../stores";
+  import Toggle from '../atoms/Toggle';
+  import Select from '../molecules/Select';
+  import RangeInput from '../molecules/RangeInput';
+  import Value from '../atoms/Value';
+  import { slide } from '../transitions';
+  import { data } from '../stores';
   import {
     INTERGRATED_PELTIER_PARAMS,
     COMMANDS,
     PELTIER_CONSTRAINTS,
-    MODES
-  } from "../constants";
-  import { ipcRenderer } from "electron";
+    MODES,
+  } from '../constants';
+  import { ipcRenderer } from 'electron';
   export let pos;
   export let name;
   export let title;
 
   const slideCol = slide(pos);
 
-  let isActive = !!$data[`state${name}`].value;
+  $: isActive = $data[`state${name}`].value;
 
   const modeOptions = [
     {
-      label: "по мощности",
+      label: 'по мощности',
       value: 0,
-      inputLabel: "Задание Мощности, % от макс"
+      inputLabel: 'Задание Мощности, % от макс',
     },
-    { label: "по температуре", value: 1, inputLabel: "Задание T, \u2103" },
+    { label: 'по температуре', value: 1, inputLabel: 'Задание T, \u2103' },
   ];
 
   let selectedMode = $data[`mode${name}`].value;
@@ -34,8 +34,8 @@
   function togglePeltier(e) {
     const { checked } = e.target;
     ipcRenderer.send(
-      "serialCommand",
-      COMMANDS[`turn${checked ? "On" : "Off"}${name}Peltier`]
+      'serialCommand',
+      COMMANDS[`turn${checked ? 'On' : 'Off'}${name}Peltier`]
     );
     isActive = checked;
   }
@@ -43,18 +43,55 @@
   function switchPeltierMode(mode) {
     selectedMode = mode;
     ipcRenderer.send(
-      "serialCommand",
+      'serialCommand',
       COMMANDS[`constant${MODES[selectedMode]}${name}Peltier`]
     );
   }
 
   function changeVariableParam(v) {
     ipcRenderer.send(
-      "serialCommand",
+      'serialCommand',
       ...COMMANDS[`set${MODES[selectedMode]}${name}Peltier`](v)
     );
   }
 </script>
+
+<div
+  class={name}
+  style="background-image:url(./icons/{name.toLowerCase()}.svg"
+  transition:slideCol>
+  <h2>{title}</h2>
+  <span class="label">Состояние</span>
+  <Toggle on:change={togglePeltier} checked={isActive} />
+  <span class="label">Температура</span>
+  <strong class="value">{$data['temperature' + name].value}</strong>
+  <span class="label">Режим работы</span>
+  <Select
+    onChange={switchPeltierMode}
+    disabled={!isActive}
+    defaultValue={selectedMode}
+    options={modeOptions} />
+  <span class="label">{modeOptions[selectedMode].inputLabel}</span>
+  <RangeInput
+    defaultValue={$data[(selectedMode ? 'setTemperature' : 'load') + name].value}
+    onChange={changeVariableParam}
+    disabled={!isActive}
+    range={PELTIER_CONSTRAINTS[MODES[selectedMode] + name]} />
+  <h3>Характеристики</h3>
+  {#each ['voltage', 'current'] as param}
+    <span class="label">
+      {$data[param + name].label}, {$data[param + name].units}
+    </span>
+    <strong class="value">{$data[param + name].value || 0}</strong>
+  {/each}
+  <h3>Результаты измерений</h3>
+  {#each ['thermoresistor', 'thermocouple', 'thermistor'] as sensor}
+    <span class="label">
+      {$data[sensor + name].label}, {$data[sensor + name].units}
+    </span>
+    <strong class="value">{$data[sensor + name].value || 0}</strong>
+  {/each}
+</div>
 
 <style>
   div {
@@ -86,42 +123,3 @@
     font-size: 2rem;
   }
 </style>
-
-<div
-  class={name}
-  style="background-image:url(./icons/{name.toLowerCase()}.svg"
-  transition:slideCol>
-  <h2>{title}</h2>
-  <span class="label">Состояние</span>
-  <Toggle on:change={togglePeltier} checked={isActive} />
-  <span class="label">Температура</span>
-  <strong class="value">{$data['temperature' + name].value}</strong>
-  <span class="label">Режим работы</span>
-  <Select
-    onChange={switchPeltierMode}
-    disabled={!isActive}
-    defaultValue={selectedMode}
-    options={modeOptions} />
-  <span class="label">
-    {modeOptions[selectedMode].inputLabel}
-  </span>
-  <RangeInput
-    defaultValue={$data[(selectedMode ? 'setTemperature' : 'load') + name].value}
-    onChange={changeVariableParam}
-    disabled={!isActive}
-    range={PELTIER_CONSTRAINTS[MODES[selectedMode] + name]} />
-  <h3>Характеристики</h3>
-  {#each ['voltage', 'current'] as param}
-    <span class="label">
-      {$data[param + name].label}, {$data[param + name].units}
-    </span>
-    <strong class="value">{$data[param + name].value || 0}</strong>
-  {/each}
-  <h3>Результаты измерений</h3>
-  {#each ['thermistor', 'thermocouple', 'thermoresistor'] as sensor}
-    <span class="label">
-      {$data[sensor + name].label}, {$data[sensor + name].units}
-    </span>
-    <strong class="value">{$data[sensor + name].value || 0}</strong>
-  {/each}
-</div>
