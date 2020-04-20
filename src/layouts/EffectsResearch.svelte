@@ -1,15 +1,15 @@
 <script>
-  import RangeInput from "../molecules/RangeInput";
-  import Select from "../molecules/Select";
-  import Button from "../atoms/Button";
-  import SaveButton from "../organisms/SaveButton";
-  import { ipcRenderer } from "electron";
-  import { COMMANDS, PELTIER_CONSTRAINTS } from "../constants";
-  import { data } from "../stores";
-  import Chart from "chart.js";
-  import Zoom from "chartjs-plugin-zoom";
-  import configureChart from "./chart.config";
-  import { onMount, onDestroy } from "svelte";
+  import RangeInput from '../molecules/RangeInput';
+  import Select from '../molecules/Select';
+  import Button from '../atoms/Button';
+  import SaveButton from '../organisms/SaveButton';
+  import { ipcRenderer } from 'electron';
+  import { COMMANDS, PELTIER_CONSTRAINTS } from '../constants';
+  import { data } from '../stores';
+  import Chart from 'chart.js';
+  import Zoom from 'chartjs-plugin-zoom';
+  import configureChart from './chart.config';
+  import { onMount, onDestroy } from 'svelte';
   export let goBack;
 
   onMount(createChart);
@@ -17,7 +17,7 @@
 
   function createChart() {
     chart = new Chart(
-      document.getElementById("chart").getContext("2d"),
+      document.getElementById('chart').getContext('2d'),
       configureChart(points, { x: xCaption, y: yCaption })
     );
     chart.options.onClick = chart.resetZoom();
@@ -30,29 +30,27 @@
     unsubscribeData,
     isDrawing;
 
-  $: deltaTemp = $data.temperatureHot.value - $data.temperatureCool.value;
-
   ipcRenderer
-    .on("usbConnect", () => (saveDisabled = false))
-    .on("usbDisconnect", () => (saveDisabled = true));
+    .on('usbConnect', () => (saveDisabled = false))
+    .on('usbDisconnect', () => (saveDisabled = true));
 
   const effectsOptions = [
-    { label: "Эффект Пельтье", value: 0 },
-    { label: "Эффект Зеебека", value: 1 }
+    { label: 'Эффект Пельтье', value: 0 },
+    { label: 'Эффект Зеебека', value: 1 },
   ];
 
-  const I = "I, A";
-  const deltaT = "\u0394T, \u02daC";
+  const voltageCaption = 'U, B';
+  const deltaTCaption = '\u0394T, \u02daC';
 
-  $: xCaption = selectedEffect.value ? deltaT : I;
-  $: yCaption = selectedEffect.value ? I : deltaT;
+  $: xCaption = selectedEffect.value ? deltaTCaption : voltageCaption;
+  $: yCaption = selectedEffect.value ? voltageCaption : deltaTCaption;
 
-  $: updateAxis("x", xCaption);
-  $: updateAxis("y", yCaption);
+  $: updateAxis('x', xCaption);
+  $: updateAxis('y', yCaption);
 
   function updateAxis(axis, caption) {
     if (!chart) return;
-    chart.options.scales[axis + "Axes"][0].scaleLabel.labelString = caption;
+    chart.options.scales[axis + 'Axes'][0].scaleLabel.labelString = caption;
     chart.update();
   }
 
@@ -60,19 +58,32 @@
 
   function selectEffect(e) {
     selectedEffect = effectsOptions[e];
-    if (e) {
-      ipcRenderer.send('serialCommand', COMMANDS.turnOffProbePeltier);
-    } else {
-      ipcRenderer.send("serialCommand", COMMANDS.turnOnProbePeltier);
-    }
+  }
+
+  function startPeltierResearch() {
+    ipcRenderer.send('serialCommand', COMMANDS.turnOnProbePeltier);
+  }
+
+  function startSeebeckResearch() {
+    ipcRenderer.send('serialCommand', COMMANDS.turnOnHotPeltier);
+    ipcRenderer.send('serialCommand', COMMANDS.turnOnCoolPeltier);
+  }
+
+  function stopResearch() {
+    ipcRenderer.send('serialCommand', COMMANDS.turnOffAllPeltier);
   }
 
   function changePower(P) {
-    ipcRenderer.send('serialCommand', ...COMMANDS.setPowerProbePeltier(P));
+    if (selectedEffect.value) {
+      ipcRenderer.send('serialCommand', ...COMMANDS.setPowerHotPeltier(P));
+      ipcRenderer.send('serialCommand', ...COMMANDS.setPowerCoolPeltier(P));
+    } else {
+      ipcRenderer.send('serialCommand', ...COMMANDS.setPowerProbePeltier(P));
+    }
   }
 
   function changeCurrent(I) {
-    ipcRenderer.send("serialCommand", ...COMMANDS.setCurrentProbePeltier(I));
+    ipcRenderer.send('serialCommand', ...COMMANDS.setCurrentProbePeltier(I));
   }
 
   function toggleDrawing() {
@@ -81,6 +92,7 @@
   }
 
   function stopDrawing() {
+    stopResearch();
     unsubscribeData();
     points = [];
     isDrawing = false;
@@ -88,27 +100,35 @@
 
   function startDrawing() {
     isDrawing = true;
-    let headers = ["\u0394T, \u2103", "I, A"];
-    if (!selectedEffect.value) headers = headers.reverse();
-    ipcRenderer.send(
-      "createFile",
-      `TE-${selectedEffect.label.replace(" ", "-")}`,
-      headers
-    );
+    startLog();
+    if (selectedEffect.value) startSeebeckResearch();
+    else startPeltierResearch();
     unsubscribeData = data.subscribe(addPoint);
   }
 
+  function startLog() {
+    let headers = [deltaTCaption, voltageCaption];
+    if (!selectedEffect.value) headers = headers.reverse();
+    ipcRenderer.send(
+      'createFile',
+      `TE-${selectedEffect.label.replace(' ', '-')}`,
+      headers
+    );
+  }
+
   function addPoint(data) {
+    const voltage = data.voltageProbe.value;
+    const deltaTemp = data.deltaTemp.value;
     const point = {
-      x: selectedEffect.value ? deltaTemp : I,
-      y: !selectedEffect.value ? deltaTemp : I
+      x: selectedEffect.value ? deltaTemp : voltage,
+      y: !selectedEffect.value ? deltaTemp : voltage,
     };
     writeExcel(point);
     updateChart(point);
   }
 
   function writeExcel(point) {
-    ipcRenderer.send("excelRow", [point.x, point.y]);
+    ipcRenderer.send('excelRow', [point.x, point.y]);
   }
 
   function updateChart(point) {
@@ -117,7 +137,7 @@
   }
 
   function saveExcel() {
-    ipcRenderer.send("saveFile");
+    ipcRenderer.send('saveFile');
   }
 </script>
 
@@ -138,14 +158,16 @@
           {$data.temperatureCool.value}{$data.temperatureCool.units}
         </strong>
       </div>
-      {#if selectedEffect.value}
-        <div class="range">
-          <span class="range-label">Мощность модуля Пелтье, % от макс</span>
-          <RangeInput
-            onChange={changePower}
-            range={PELTIER_CONSTRAINTS.PowerHot} />
-        </div>
-      {:else}
+      <div class="range">
+        <span class="range-label">
+          Мощность {selectedEffect.value ? 'модулей' : 'модуля'} Пельтье, % от
+          макс
+        </span>
+        <RangeInput
+          onChange={changePower}
+          range={PELTIER_CONSTRAINTS.PowerHot} />
+      </div>
+      {#if !selectedEffect.value}
         <div class="range">
           <span class="range-label">
             Установка тока, {$data.currentProbe.units}

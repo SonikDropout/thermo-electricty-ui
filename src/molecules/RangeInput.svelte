@@ -3,20 +3,14 @@
   export let disabled;
   export let onChange;
   export let name;
+  export let step;
   export let defaultValue = range[0];
-
-  let step = 10;
 
   $: min = Math.min.apply(null, range);
   $: max = Math.max.apply(null, range);
   $: diff = max - min;
-  $: value = Math.min(Math.max(defaultValue, range[0]), range[1]);
-
-  $: {
-    if (diff < 200) step = 1;
-    if (diff < 20) step = 0.1;
-    if (diff < 2) step = 0.01;
-  }
+  $: precision = Math.abs(Math.min(0, +step.toExponential().split('e')[1]));
+  $: value = Math.min(Math.max(defaultValue, min), max).toFixed(precision);
 
   let timeout,
     interval,
@@ -24,13 +18,17 @@
 
   function increment() {
     if (value + step <= max) {
-      value = +(value + step).toPrecision(3);
+      value = (value + step).toFixed(precision);
+    } else {
+      clearTimers();
     }
   }
 
   function decrement() {
     if (value - step >= min) {
-      value = +(value - step).toPrecision(3);
+      value = (value - step).toFixed(precision);
+    } else {
+      clearTimers();
     }
   }
 
@@ -40,6 +38,11 @@
       fn();
       interval = setInterval(fn, 50);
     }, 500);
+  }
+
+  function clearTimers() {
+    clearTimeout(timeout);
+    clearInterval(interval);
   }
 
   function pressIncrement(e) {
@@ -53,10 +56,9 @@
   }
 
   function release(e) {
-    if (timeout) clearTimeout(timeout);
-    if (interval) clearInterval(interval);
+    clearTimers();
     e.target.releasePointerCapture(e.pointerId);
-    onChange(value, name);
+    onChange(+value, name);
   }
 </script>
 
