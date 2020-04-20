@@ -87,11 +87,11 @@ const PROBE_PELTIER_PARAMS = {
 };
 
 const PELTIER_STATE = {
-  mode: {
-    label: 'Режим работы',
-  },
   state: {
     label: 'Состояние',
+  },
+  mode: {
+    label: 'Режим работы',
   },
 };
 

@@ -42,7 +42,7 @@
       'serialCommand',
       COMMANDS[`turn${checked ? 'On' : 'Off'}${name}Peltier`]
     );
-    isActive = checked;
+    isActive = checked;  
   }
 
   function switchPeltierMode(mode) {
