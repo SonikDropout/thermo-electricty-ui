@@ -35,10 +35,10 @@ function initPeripherals(win) {
     usbPath = void 0;
   });
   serial.subscribe((d) => win.webContents.send('serialData', d));
-  ipcMain.on('createFile', (_, ...args) => logger.createFile(...args));
-  ipcMain.on('excelRow', (_, ...args) => logger.writeRow(...args));
+  // ipcMain.on('createFile', (_, ...args) => logger.createFile(...args));
+  // ipcMain.on('excelRow', (_, ...args) => logger.writeRow(...args));
   ipcMain.on('serialCommand', (_, ...args) => serial.sendCommand(...args));
-  ipcMain.on('saveFile', (_, ...args) => logger.saveFile(...args));
+  // ipcMain.on('saveFile', (_, ...args) => logger.saveFile(...args));
   return {
     removeAllListeners() {
       usbPort.removeAllListeners();
