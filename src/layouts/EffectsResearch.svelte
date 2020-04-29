@@ -23,7 +23,7 @@
     chart.options.onClick = chart.resetZoom();
   }
 
-  let saveDisabled = true,
+  let logCreated,
     startDisabled = true,
     chart,
     points = [],
@@ -119,6 +119,7 @@
       `TE-${selectedEffect.label.replace(' ', '-')}`,
       headers
     );
+    logCreated = true;
   }
 
   function addPoint(data) {
@@ -139,10 +140,6 @@
   function updateChart(point) {
     points.push(point);
     chart.update();
-  }
-
-  function saveExcel() {
-    ipcRenderer.send('saveFile');
   }
 </script>
 
@@ -209,9 +206,7 @@
   </main>
   <footer>
     <Button on:click={goBack}>Назад</Button>
-    <Button on:click={saveExcel} disabled={saveDisabled}>
-      Сохранить данные на usb-устройство
-    </Button>
+    <SaveButton disabled={!logCreated} />
   </footer>
 </div>
 

@@ -1,22 +1,27 @@
 <script>
-  import Button from "../atoms/Button";
-  export let onSave;
+  import Button from '../atoms/Button';
   export let disabled;
-  import { ipcRenderer } from "electron";
-  import { fly } from "svelte/transition";
-  let isSaving, isSaveFailed, saveMessage;
+  import { ipcRenderer } from 'electron';
+  import { fly } from 'svelte/transition';
+  
+  let isSaving, isSaveFailed, saveMessage, isActive = ipcRenderer.sendSync('usbStatusRequest');
+
+  ipcRenderer
+    .on('usbConnected', () => (isActive = true))
+    .on('usbDisconnected', () => (isActive = false));
+    
   function handleClick() {
     disabled = true;
     isSaving = true;
-    onSave();
-    ipcRenderer.on("fileSaved", handleSaved);
+    ipcRenderer.send('saveFile');
+    ipcRenderer.on('fileSaved', handleSaved);
   }
   function handleSaved(e, err) {
     if (err) {
-      saveMessage = "Не удалось сохранить файл";
+      saveMessage = 'Не удалось сохранить файл';
       isSaveFailed = true;
     } else {
-      saveMessage = "Файл успешно сохранен";
+      saveMessage = 'Файл успешно сохранен';
     }
     disabled = false;
     isSaving = false;
@@ -26,9 +31,23 @@
     isSaveFailed = false;
   }
   function ejectUSB() {
-    ipcRenderer.send("ejectUSB", closePopup);
+    ipcRenderer.send('ejectUSB', closePopup);
   }
 </script>
+
+<Button on:click={handleClick} disabled={disabled || !isActive}>
+  {#if isSaving}
+    <span class="spinner" />
+  {/if}
+  Сохранить данные на usb-устройство
+</Button>
+{#if saveMessage}
+  <div class="popup" transition:fly={{ y: -200 }}>
+    <span class="popup-close">x</span>
+    <p>{saveMessage}</p>
+    <Button on:click={ejectUSB} size="sm">извлечь</Button>
+  </div>
+{/if}
 
 <style>
   .spinner {
@@ -37,6 +56,7 @@
     height: 2rem;
     border: 2px solid var(--bg-color);
     clip-path: polygon(0 0, 50% 0, 50% 50%, 100% 50%, 100% 100%, 0 100%);
+    border-radius: 50%;
     animation: spin 1s linear infinite;
   }
   .popup {
@@ -55,17 +75,3 @@
     color: var(--coporate-grey-darken);
   }
 </style>
-
-<Button on:click={handleClick} {disabled}>
-  {#if isSaving}
-    <span class="spinner" />
-  {/if}
-  Сохранить данные на usb-устройство
-</Button>
-{#if saveMessage}
-  <div class="popup" transition:fly={{ y: -200 }}>
-    <span class="popup-close">x</span>
-    <p>{saveMessage}</p>
-    <Button on:click={ejectUSB} size="sm">извлечь</Button>
-  </div>
-{/if}

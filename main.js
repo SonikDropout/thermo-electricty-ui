@@ -28,7 +28,8 @@ function reloadOnChange(win) {
 }
 
 function initPeripherals(win) {
-  const serial = require(`./src/utils/serial${isPi ? '' : ''}`);
+  const serial = require(`./src/utils/serial${isPi ? '' : '.mock'}`);
+  usbPort.init();
   usbPort.on('add', (path) => {
     usbPath = path;
     win.webContents.send('usbConnected', usbPath);
@@ -37,11 +38,18 @@ function initPeripherals(win) {
     win.webContents.send('usbDisconnected');
     usbPath = void 0;
   });
+  ipcMain.on('usbStatusRequest', (e) => {
+    e.returnValue = !!usbPath;
+  });
   serial.on('data', (d) => win.webContents.send('serialData', d));
-  // ipcMain.on('createFile', (_, ...args) => logger.createFile(...args));
-  // ipcMain.on('excelRow', (_, ...args) => logger.writeRow(...args));
+  ipcMain.on('createFile', (_, ...args) => logger.createFile(...args));
+  ipcMain.on('excelRow', (_, ...args) => logger.writeRow(...args));
   ipcMain.on('serialCommand', (_, ...args) => serial.sendCommand(...args));
-  // ipcMain.on('saveFile', (_, ...args) => logger.saveFile(...args));
+  ipcMain.on('saveFile', () => {
+    logger.saveFile(usbPath, (...args) =>
+      win.webContents.send('fileSaved', ...args)
+    );
+  });
   return {
     removeAllListeners() {
       serial.close();
@@ -73,7 +81,7 @@ function launch() {
   const watcher = reloadOnChange(win);
   const peripherals = initPeripherals(win);
 
-  win.on('closed', function() {
+  win.on('closed', function () {
     peripherals.removeAllListeners();
     win = null;
     watcher.close();

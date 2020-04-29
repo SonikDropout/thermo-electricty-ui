@@ -24,4 +24,12 @@ const countKeys = (obj) => {
   return n;
 };
 
-module.exports = { clone, concat, capitalize, getFileDate, countKeys };
+function debounce(fn, ms) {
+  let timeout;
+  return function() {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => fn.apply(this, arguments), ms);
+  };
+}
+
+module.exports = { clone, concat, capitalize, getFileDate, countKeys, debounce };

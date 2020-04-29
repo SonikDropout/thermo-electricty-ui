@@ -9,8 +9,8 @@ let wb,
   dataStyle,
   row = 2;
 
-function createFile(fileName, headers) {
-  fileName = fileName + '_';
+function createFile(fn, headers) {
+  fileName = fn + '_';
   wb = new Workbook();
   ws = wb.addWorksheet('Результаты');
   if (!headerStyle) createStyles();
@@ -19,6 +19,7 @@ function createFile(fileName, headers) {
       .string(headers[i])
       .style(headerStyle);
   }
+  row = 2;
 }
 
 function writeRow(entries) {
@@ -30,10 +31,8 @@ function writeRow(entries) {
   row++;
 }
 
-function saveFile(dir) {
-  wb.write(path.join(dir, fileName + getFileDate()));
-  wb = ws = fileName = void 0;
-  row = 2;
+function saveFile(dir, cb) {
+  wb.write(path.join(dir, fileName + getFileDate()) + '.xlsx', cb);
 }
 
 function createStyles() {

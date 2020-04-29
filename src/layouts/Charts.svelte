@@ -2,6 +2,7 @@
   import Select from '../molecules/Select';
   import Button from '../atoms/Button';
   import RadioGroup from '../molecules/RadioGroup';
+  import SaveButton from '../organisms/SaveButton';
   import { data } from '../stores';
   import { ipcRenderer } from 'electron';
   import { capitalize } from '../utils/others';
@@ -14,7 +15,7 @@
 
   const xCaption = 'T, ' + PELTIER_PARAMS.temperatureHot.units;
 
-  let saveActive,
+  let logCreated,
     width = 500,
     height = 350,
     chart,
@@ -33,10 +34,6 @@
     );
     chart.options.onClick = chart.resetZoom;
   }
-
-  ipcRenderer
-    .on('usbConnect', () => (saveActive = true))
-    .on('usbDisconnect', () => (saveActive = false));
 
   const faceOptions = {
     name: 'face',
@@ -100,9 +97,9 @@
     ipcRenderer.send(
       'createFile',
       `TE-${selectedFace}-${capitalize(selectedSensor.name)}}`,
-      xCaption,
-      yCaption
+      [xCaption, yCaption]
     );
+    logCreated = true;
     unsubscribeData = data.subscribe(addPoint);
   }
 
@@ -123,17 +120,16 @@
     points.push(point);
     chart.update();
   }
-
-  function saveExcel() {
-    ipcRenderer.send('saveFile');
-  }
 </script>
 
 <div class="layout">
   <header>Построение графиков</header>
   <main>
     <div class="selects">
-      <RadioGroup group={faceOptions} on:change={selectFace} type="horizontal" />
+      <RadioGroup
+        group={faceOptions}
+        on:change={selectFace}
+        type="horizontal" />
       <RadioGroup
         group={sensorsOptions}
         on:change={selectSensor}
@@ -145,9 +141,7 @@
   </main>
   <footer>
     <Button on:click={goBack}>Назад</Button>
-    <Button on:click={saveExcel} disabled={!saveActive}>
-      Сохранить данные на usb-устройство
-    </Button>
+    <SaveButton disabled={!logCreated} />
     <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
   </footer>
 </div>
