@@ -17,7 +17,7 @@
 
   function createChart() {
     chart = new Chart(
-      document.getElementById('chart').getContext('2d'),
+      document.getElementById('effects-chart').getContext('2d'),
       configureChart(points, { x: xCaption, y: yCaption })
     );
     chart.options.onClick = chart.resetZoom();
@@ -36,8 +36,8 @@
     .on('usbDisconnect', () => (saveDisabled = true));
 
   const effectsOptions = [
-    { label: 'Эффект Пельтье', value: 0 },
-    { label: 'Эффект Зеебека', value: 1 },
+    { label: 'Эффект Зеебека', value: 0 },
+    { label: 'Эффект Пельтье', value: 1 },
   ];
 
   const voltageCaption = 'U, B';
@@ -204,7 +204,7 @@
       <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
     </div>
     <div class="chart">
-      <canvas id="chart" width="500" height="350" />
+      <canvas id="effects-chart" width="500" height="350" />
     </div>
   </main>
   <footer>

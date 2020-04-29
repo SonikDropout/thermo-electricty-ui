@@ -74,15 +74,15 @@ const PROBE_PELTIER_PARAMS = {
     divider: 1000,
     signed: true,
   },
+  load: {
+    label: 'Нагрузка',
+    units: '%',
+  },
   setCurrent: {
     symbol: 'I',
     label: 'Установленный ток',
     units: 'А',
     divider: 1000,
-  },
-  load: {
-    label: 'Нагрузка',
-    units: '%',
   },
 };
 
@@ -99,6 +99,14 @@ const PELTIER_PARAMS = concat(
   [INTEGRATED_PELTIER_PARAMS, PROBE_PELTIER_PARAMS, INTEGRATED_PELTIER_PARAMS],
   ['Cool', 'Probe', 'Hot']
 );
+
+PELTIER_PARAMS.flipSideTemp = {
+  label: 'Температура',
+  units: '\u02daC',
+  symbol: 'T',
+  divider: 10,
+  signed: true,
+}
 
 const PELTIER_STATES = concat(Array(3).fill(PELTIER_STATE), [
   'Cool',

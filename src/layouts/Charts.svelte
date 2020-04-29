@@ -28,20 +28,23 @@
 
   function createChart() {
     chart = new Chart(
-      document.getElementById('chart').getContext('2d'),
+      document.getElementById('measures-chart').getContext('2d'),
       configureChart(points, { x: xCaption, y: yCaption })
     );
-    chart.options.onClick = chart.resetZoom();
+    chart.options.onClick = chart.resetZoom;
   }
 
   ipcRenderer
     .on('usbConnect', () => (saveActive = true))
     .on('usbDisconnect', () => (saveActive = false));
 
-  const faceOptions = [
-    { label: 'Охлаждающая сторона', value: 'Cool' },
-    { label: 'Нагревающая сторона', value: 'Hot' },
-  ];
+  const faceOptions = {
+    name: 'face',
+    elements: [
+      { label: '', value: 'Cool', icon: 'cool' },
+      { label: '', value: 'Hot', icon: 'hot' },
+    ],
+  };
 
   const sensorsOptions = {
     name: 'sensors',
@@ -50,15 +53,13 @@
         value: 0,
         label: 'Терморезистор',
         name: 'thermoresistor',
-        icon: 'thermistor',
       },
       {
         value: 1,
         label: 'Термопара',
         name: 'thermocouple',
-        icon: 'thermocouple',
       },
-      { value: 2, label: 'Термистор', name: 'thermistor', icon: 'thermistor' },
+      { value: 2, label: 'Термистор', name: 'thermistor' },
     ],
   };
 
@@ -69,8 +70,8 @@
   $: yCaption = $data[sensorEntry].symbol + ', ' + $data[sensorEntry].units;
   $: updateYAxis(yCaption);
 
-  function selectFace(f) {
-    selectedFace = f;
+  function selectFace(e) {
+    selectedFace = e.target.value;
   }
 
   function selectSensor(e) {
@@ -132,15 +133,14 @@
   <header>Построение графиков</header>
   <main>
     <div class="selects">
-      <Select
-        onChange={selectFace}
-        options={faceOptions}
-        defaultValue={selectedFace} />
-      <RadioGroup group={sensorsOptions} onChange={selectSensor} />
-      <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
+      <RadioGroup group={faceOptions} on:change={selectFace} type="horizontal" />
+      <RadioGroup
+        group={sensorsOptions}
+        on:change={selectSensor}
+        type="horizontal" />
     </div>
     <div class="chart">
-      <canvas id="chart" width="500" height="400" />
+      <canvas id="measures-chart" height="130" />
     </div>
   </main>
   <footer>
@@ -148,39 +148,25 @@
     <Button on:click={saveExcel} disabled={!saveActive}>
       Сохранить данные на usb-устройство
     </Button>
+    <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
   </footer>
 </div>
 
 <style>
   main {
-    display: flex;
-    align-items: stretch;
-    justify-content: space-between;
-    padding: 1rem 8rem 0 8rem;
+    padding: 0 7.5rem;
   }
   .selects {
-    flex: 1 1 40%;
-    max-width: 36rem;
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-start;
-  }
-  .selects :global(button) {
-    margin-top: auto;
-  }
-  .selects :global(.radio-group) {
-    margin-top: 2rem;
-  }
-  .chart {
-    flex: 1 1 60%;
-    max-width: 50rem;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--gutter-width);
   }
   canvas {
     width: 100%;
     height: 100%;
   }
   footer {
-    padding: var(--gutter-width) 8rem;
+    padding: var(--gutter-width) 7.5rem;
   }
 </style>

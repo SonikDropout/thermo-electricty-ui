@@ -18,7 +18,7 @@
 
   const slideCol = slide(pos);
 
-  let isActive = data[`state${name}`].value;
+  let isActive = $data[`state${name}`].value;
 
   const modeOptions = [
     {
@@ -58,7 +58,7 @@
 
 <div
   class={name}
-  style="background-image:url(./icons/{name.toLowerCase()}.svg"
+  style="background-image:url(./icons/bg-{name.toLowerCase()}.svg"
   transition:slideCol>
   <h2>{title}</h2>
   <span class="label">Состояние</span>

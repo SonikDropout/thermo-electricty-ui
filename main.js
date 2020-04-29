@@ -28,7 +28,7 @@ function reloadOnChange(win) {
 }
 
 function initPeripherals(win) {
-  const serial = require(`./src/utils/serial${isPi ? '' : '.mock'}`);
+  const serial = require(`./src/utils/serial${isPi ? '' : ''}`);
   usbPort.on('add', (path) => {
     usbPath = path;
     win.webContents.send('usbConnected', usbPath);

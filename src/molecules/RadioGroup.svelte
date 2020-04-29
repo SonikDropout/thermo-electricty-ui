@@ -1,50 +1,29 @@
 <script>
   export let group;
-  export let type;
-  export let onChange;
+  export let value = group.elements[0].value;
+  $: checkedIndex = group.elements.findIndex(el => el.value == value);
+  $: longestLabel = Math.max.apply(
+    null,
+    group.elements.map(el => el.label.length + (el.icon ? 2 : 0))
+  ) + 3.2;
 </script>
 
-<style>
-  .radio-group.horizontal {
-    display: flex;
-  }
-  input:checked + span {
-    transform: scaleX(1.05);
-    opacity: 1;
-    border-radius: 4px;
-  }
-  span {
-    display: block;
-    padding: 1rem 2rem;
-    color: var(--bg-color);
-    font-weight: 500;
-    background-color: var(--corporate-blue);
-    opacity: 0.6;
-  }
-  .icon {
-    height: 1.6rem;
-    vertical-align: middle;
-    filter: invert(100%);
-  }
-  label:first-child span {
-    border-radius: 4px 4px 0 0;
-  }
-  label:last-child span {
-    border-radius: 0 0 4px 4px;
-  }
-</style>
-
-<div class="radio-group {type}">
+<div class="radio-group">
+  <div
+    class="marker"
+    style="width: {longestLabel}rem; transform: translateX({checkedIndex * 100}%)
+    " />
   {#each group.elements as element}
-    <label>
+    <label style="width: {longestLabel}rem">
       <input
         class="hidden"
         type="radio"
         name={group.name}
-        on:change={onChange}
+        on:change
+        bind:group={value}
         value={element.value}
         disabled={element.disabled} />
-      <span>
+      <span class="label">
         {#if element.icon}
           <img
             src="../static/icons/{element.icon}.svg"
@@ -56,3 +35,36 @@
     </label>
   {/each}
 </div>
+
+<style>
+  .radio-group {
+    display: flex;
+    position: relative;
+  }
+  .marker {
+    position: absolute;
+    height: 100%;
+    border-radius: 1.6rem;
+    background-color: var(--corporate-blue);
+    transition: 0.3s;
+  }
+  input:checked + .label {
+    filter: invert(100%);
+    color: black;
+  }
+  .label {
+    position: relative;
+    display: block;
+    height: 3.2rem;
+    line-height: 3.2rem;
+    padding: 0 1.6rem;
+    text-align: center;
+    font-weight: 500;
+    white-space: nowrap;
+    border-radius: 1.6rem;
+  }
+  .icon {
+    height: 1.6rem;
+    vertical-align: middle;
+  }
+</style>

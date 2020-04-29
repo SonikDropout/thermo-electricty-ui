@@ -2,7 +2,7 @@ const { PELTIER_STATES, PELTIER_PARAMS, SEPARATOR } = require('../constants');
 const { clone } = require('./others');
 
 function validate(buf) {
-  if (!buf.indexOf(SEPARATOR) == 0) throw new Error('No separator in buffer');
+  if (buf.indexOf(SEPARATOR) !== 0) throw new Error('No separator in buffer');
 }
 
 const pp = clone(PELTIER_PARAMS);
