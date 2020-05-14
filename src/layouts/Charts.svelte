@@ -11,9 +11,11 @@
   import Zoom from 'chartjs-plugin-zoom';
   import { onMount, onDestroy } from 'svelte';
   import configureChart from './chart.config';
+  import PointsStorage from '../utils/PointsStorage';
   export let goBack;
 
   const xCaption = 'T, ' + PELTIER_PARAMS.temperatureHot.units;
+  const pointsStorage = new PointsStorage();
 
   let logCreated,
     width = 500,
@@ -30,7 +32,7 @@
   function createChart() {
     chart = new Chart(
       document.getElementById('measures-chart').getContext('2d'),
-      configureChart(points, { x: xCaption, y: yCaption })
+      configureChart(pointsStorage.points, { x: xCaption, y: selectedSensor.caption })
     );
     chart.options.onClick = chart.resetZoom;
   }
@@ -50,29 +52,47 @@
         value: 0,
         label: 'Терморезистор',
         name: 'thermoresistor',
+        caption:
+          $data.thermoresistorCool.symbol +
+          ', ' +
+          $data.thermoresistorCool.units,
       },
       {
         value: 1,
         label: 'Термопара',
         name: 'thermocouple',
+        caption:
+          $data.thermocoupleCool.symbol + ', ' + $data.thermocoupleCool.units,
       },
-      { value: 2, label: 'Термистор', name: 'thermistor' },
+      {
+        value: 2,
+        label: 'Термистор',
+        name: 'thermistor',
+        caption:
+          $data.thermistorCool.symbol + ', ' + $data.thermistorCool.units,
+      },
     ],
   };
+
+  const storedValues = faceOptions.elements
+    .map(face =>
+      ['temperature' + face.value].concat(
+        sensorsOptions.elements.map(sensor => sensor.name + face.value)
+      )
+    )
+    .flat();
 
   let selectedFace = 'Cool',
     selectedSensor = sensorsOptions.elements[0];
 
-  $: sensorEntry = selectedSensor.name + selectedFace;
-  $: yCaption = $data[sensorEntry].symbol + ', ' + $data[sensorEntry].units;
-  $: updateYAxis(yCaption);
-
   function selectFace(e) {
     selectedFace = e.target.value;
+    updateXAxis();
   }
 
   function selectSensor(e) {
     selectedSensor = sensorsOptions.elements[e.target.value];
+    updateYAxis();
   }
 
   function toggleDrawing() {
@@ -82,13 +102,25 @@
 
   function stopDrawing() {
     unsubscribeData();
-    points = [];
+    pointsStorage.drain();
     isDrawing = false;
   }
 
-  function updateYAxis(caption) {
+  function updateXAxis() {
+    pointsStorage.setX(
+      storedValues.indexOf('temperature' + selectedFace.value)
+    );
+    chart.data.datasets[0].data = pointsStorage.points;
+    chart.update();
+  }
+
+  function updateYAxis() {
     if (!chart) return;
-    chart.options.scales.yAxes[0].scaleLabel.labelString = caption;
+    pointsStorage.setY(
+      storedValues.indexOf(selectedSensor.name + selectedFace.value)
+    );
+    chart.data.datasets[0].data = pointsStorage.points;
+    chart.options.scales.yAxes[0].scaleLabel.labelString = selectedSensor.caption;
     chart.update();
   }
 
@@ -96,28 +128,25 @@
     isDrawing = true;
     ipcRenderer.send(
       'createFile',
-      `TE-${selectedFace}-${capitalize(selectedSensor.name)}}`,
-      [xCaption, yCaption]
+      `Thermo-Electricity-Sensors`,
+      storedValues.map(key => $data[key].symbol + ', ' + $data[key].units)
     );
     logCreated = true;
-    unsubscribeData = data.subscribe(addPoint);
+    unsubscribeData = data.subscribe(addRow);
   }
 
-  function addPoint(data) {
-    const point = {
-      x: data['temperature' + selectedFace].value,
-      y: data[selectedSensor.name + selectedFace].value,
-    };
-    writeExcel(point);
-    updateChartData(point);
+  function addRow(data) {
+    const row = storedValues.map(key => data[key].value);
+    writeExcel(row);
+    updateChartData();
   }
 
-  function writeExcel(point) {
-    ipcRenderer.send('excelRow', [point.x, point.y]);
+  function writeExcel(row) {
+    ipcRenderer.send('excelRow', row);
   }
 
-  function updateChartData(point) {
-    points.push(point);
+  function updateChartData() {
+    chart.data.datasets[0].data = pointsStorage.points;
     chart.update();
   }
 </script>
