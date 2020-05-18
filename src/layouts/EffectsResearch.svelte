@@ -99,7 +99,7 @@
   function stopDrawing() {
     stopResearch();
     unsubscribeData();
-    points = [];
+    points.length = 0;
     isDrawing = false;
   }
 

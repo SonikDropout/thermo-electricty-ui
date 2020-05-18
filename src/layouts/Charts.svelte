@@ -113,6 +113,9 @@
     pointsStorage.setX(
       storedValues.indexOf('temperature' + selectedFace)
     );
+    pointsStorage.setY(
+      storedValues.indexOf(selectedSensor.name + selectedFace)
+    );
     chart.data.datasets[0].data = pointsStorage.points;
     chart.update();
   }
