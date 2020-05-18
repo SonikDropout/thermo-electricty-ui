@@ -32,7 +32,10 @@
   function createChart() {
     chart = new Chart(
       document.getElementById('measures-chart').getContext('2d'),
-      configureChart(pointsStorage.points, { x: xCaption, y: selectedSensor.caption })
+      configureChart(pointsStorage.points, {
+        x: xCaption,
+        y: selectedSensor.caption,
+      })
     );
     chart.options.onClick = chart.resetZoom;
   }
@@ -108,7 +111,7 @@
 
   function updateXAxis() {
     pointsStorage.setX(
-      storedValues.indexOf('temperature' + selectedFace.value)
+      storedValues.indexOf('temperature' + selectedFace)
     );
     chart.data.datasets[0].data = pointsStorage.points;
     chart.update();
@@ -117,26 +120,32 @@
   function updateYAxis() {
     if (!chart) return;
     pointsStorage.setY(
-      storedValues.indexOf(selectedSensor.name + selectedFace.value)
+      storedValues.indexOf(selectedSensor.name + selectedFace)
     );
     chart.data.datasets[0].data = pointsStorage.points;
-    chart.options.scales.yAxes[0].scaleLabel.labelString = selectedSensor.caption;
+    chart.options.scales.yAxes[0].scaleLabel.labelString =
+      selectedSensor.caption;
     chart.update();
   }
 
   function startDrawing() {
     isDrawing = true;
+    startLogging();
+    unsubscribeData = data.subscribe(addRow);
+  }
+
+  function startLogging() {
     ipcRenderer.send(
       'createFile',
       `Thermo-Electricity-Sensors`,
       storedValues.map(key => $data[key].symbol + ', ' + $data[key].units)
     );
     logCreated = true;
-    unsubscribeData = data.subscribe(addRow);
   }
 
   function addRow(data) {
     const row = storedValues.map(key => data[key].value);
+    pointsStorage.addRow(row);
     writeExcel(row);
     updateChartData();
   }

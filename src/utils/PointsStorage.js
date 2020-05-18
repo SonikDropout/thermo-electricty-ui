@@ -7,7 +7,8 @@ module.exports = class {
   }
   addRow(row) {
     this.rows.push(row);
-    this.points.push({x: row[this.xIdx], y: row[this.yIdx]})
+    this.points.push({ x: row[this.xIdx], y: row[this.yIdx] });
+    this.sortPoints();
   }
   setX(i) {
     this.xIdx = i;
@@ -18,7 +19,14 @@ module.exports = class {
     this.updatePoints();
   }
   updatePoints() {
-    this.points = this.rows.map(row => ({x: row[this.xIdx], y: row[this.yIdx]}))
+    this.points = this.rows.map((row) => ({
+      x: row[this.xIdx],
+      y: row[this.yIdx],
+    }));
+    this.sortPoints();
+  }
+  sortPoints() {
+    this.points.sort((p1, p2) => p1.x - p2.x);
   }
   drain() {
     this.rows = [];
