@@ -40,11 +40,12 @@
     { label: 'Эффект Пельтье', value: 1 },
   ];
 
-  const voltageCaption = 'U, B';
   const deltaTCaption = '\u0394T, \u02daC';
+  const voltageCaption = 'U, B';
+  const currentCaption = 'I, A';
 
-  $: xCaption = selectedEffect.value ? deltaTCaption : voltageCaption;
-  $: yCaption = selectedEffect.value ? voltageCaption : deltaTCaption;
+  $: yCaption = selectedEffect.value ? deltaTCaption : voltageCaption;
+  $: xCaption = selectedEffect.value ? currentCaption : deltaTCaption;
 
   $: updateAxis('x', xCaption);
   $: updateAxis('y', yCaption);
@@ -79,7 +80,7 @@
 
   function changePower(P) {
     setPower = P;
-    if (selectedEffect.value) {
+    if (!selectedEffect.value) {
       ipcRenderer.send('serialCommand', ...COMMANDS.setPowerHotPeltier(P));
       ipcRenderer.send('serialCommand', ...COMMANDS.setPowerCoolPeltier(P));
     } else {
@@ -106,14 +107,15 @@
   function startDrawing() {
     isDrawing = true;
     startLog();
-    if (selectedEffect.value) startSeebeckResearch();
+    if (!selectedEffect.value) startSeebeckResearch();
     else startPeltierResearch();
     unsubscribeData = data.subscribe(addPoint);
   }
 
   function startLog() {
-    let headers = [deltaTCaption, voltageCaption];
-    if (!selectedEffect.value) headers = headers.reverse();
+    let headers
+    if (selectedEffect.value) headers = [currentCaption, deltaTCaption];
+    else headers = [deltaTCaption, voltageCaption];
     ipcRenderer.send(
       'createFile',
       `TE-${selectedEffect.label.replace(' ', '-')}`,
@@ -123,11 +125,10 @@
   }
 
   function addPoint(data) {
-    const voltage = data.voltageProbe.value;
     const deltaTemp = data.deltaTemp.value;
     const point = {
-      x: selectedEffect.value ? deltaTemp : voltage,
-      y: !selectedEffect.value ? deltaTemp : voltage,
+      y: selectedEffect.value ? deltaTemp : data.voltageProbe.value,
+      x: !selectedEffect.value ? deltaTemp : data.currentProbe.value,
     };
     writeExcel(point);
     updateChart(point);
@@ -166,7 +167,7 @@
       </div>
       <div class="range">
         <span class="range-label">
-          Мощность {selectedEffect.value ? 'модулей' : 'модуля'} <br> Пельтье, % от
+          Мощность {!selectedEffect.value ? 'модулей' : 'модуля'} <br> Пельтье, % от
           макс
         </span>
         <RangeInput
@@ -174,7 +175,7 @@
           defaultValue={setPower}
           range={PELTIER_CONSTRAINTS.PowerHot} />
       </div>
-      {#if selectedEffect.value}
+      {#if !selectedEffect.value}
         <div class="range">
           <span class="range-label">
             Установка тока, {$data.currentProbe.units}
