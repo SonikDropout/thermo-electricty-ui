@@ -4,8 +4,8 @@
   import Button from '../atoms/Button';
   import SaveButton from '../organisms/SaveButton';
   import { ipcRenderer } from 'electron';
-  import { COMMANDS, PELTIER_CONSTRAINTS } from '../constants';
-  import { data } from '../stores';
+  import { COMMANDS, PELTIER_CONSTRAINTS, MODES } from '../constants';
+  import { data, getStoreValue } from '../stores';
   import Chart from 'chart.js';
   import Zoom from 'chartjs-plugin-zoom';
   import configureChart from './chart.config';
@@ -113,7 +113,7 @@
   }
 
   function startLog() {
-    let headers
+    let headers;
     if (selectedEffect.value) headers = [currentCaption, deltaTCaption];
     else headers = [deltaTCaption, voltageCaption];
     ipcRenderer.send(
@@ -142,6 +142,45 @@
     points.push(point);
     chart.update();
   }
+
+  const modeOptions = [
+    {
+      label: 'по мощности',
+      value: 0,
+      inputLabel: 'Задание Мощности, % от макс',
+    },
+    { label: 'по температуре', value: 1, inputLabel: 'Задание T, \u2103' },
+  ];
+
+  let selectedMode = $data.modeCool.value;
+
+  $: variableParams = {
+    Cool: getStoreValue(data)[
+      (selectedMode ? 'setTemperature' : 'load') + 'Cool'
+    ].value,
+
+    Hot: getStoreValue(data)[(selectedMode ? 'setTemperature' : 'load') + 'Hot']
+      .value,
+  };
+
+  function switchPeltierMode(mode) {
+    selectedMode = +mode;
+    ipcRenderer.send(
+      'serialCommand',
+      COMMANDS[`constant${MODES[selectedMode]}CoolPeltier`]
+    );
+    ipcRenderer.send(
+      'serialCommand',
+      COMMANDS[`constant${MODES[selectedMode]}HotPeltier`]
+    );
+  }
+
+  function changeVariableParam(v, name) {
+    ipcRenderer.send(
+      'serialCommand',
+      ...COMMANDS[`set${MODES[selectedMode]}${name}Peltier`](v)
+    );
+  }
 </script>
 
 <div class="layout">
@@ -165,17 +204,21 @@
           {$data.temperatureCool.value}{$data.temperatureCool.units}
         </strong>
       </div>
-      <div class="range">
-        <span class="range-label">
-          Мощность {!selectedEffect.value ? 'модулей' : 'модуля'} <br> Пельтье, % от
-          макс
-        </span>
-        <RangeInput
-          onChange={changePower}
-          defaultValue={setPower}
-          range={PELTIER_CONSTRAINTS.PowerHot} />
-      </div>
       {#if !selectedEffect.value}
+        {#each ['Cool', 'Hot'] as name}
+          <div class="range-label">Режим работы {name} пластины</div>
+          <div class="range">
+            <Select
+              onChange={switchPeltierMode}
+              defaultValue={selectedMode}
+              options={modeOptions} />
+            <RangeInput
+              {name}
+              defaultValue={variableParams[name]}
+              onChange={changeVariableParam}
+              range={PELTIER_CONSTRAINTS[MODES[selectedMode] + name]} />
+          </div>
+        {/each}
         <div class="range">
           <span class="range-label">
             Установка тока, {$data.currentProbe.units}
@@ -186,6 +229,17 @@
             range={PELTIER_CONSTRAINTS.CurrentProbe} />
         </div>
       {:else}
+        <div class="range">
+          <span class="range-label">
+            Мощность модуля
+            <br />
+            Пельтье, % от макс
+          </span>
+          <RangeInput
+            onChange={changePower}
+            defaultValue={setPower}
+            range={PELTIER_CONSTRAINTS.PowerHot} />
+        </div>
         <div class="range-spacer" />
       {/if}
       <h3>Результаты измерений</h3>
@@ -199,10 +253,12 @@
           <strong class="value">{$data[param].value}</strong>
         </div>
       {/each}
-      <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
     </div>
     <div class="chart">
-      <canvas id="effects-chart" width="500" height="350" />
+      <div>
+        <canvas id="effects-chart" width="500" height="350" />
+      </div>
+      <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
     </div>
   </main>
   <footer>
