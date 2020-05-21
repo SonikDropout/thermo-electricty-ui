@@ -20,4 +20,11 @@ function setTempDelta(data) {
   return data;
 }
 
-module.exports = { data };
+module.exports = {
+  data,
+  getStoreValue: (store) => {
+    let val;
+    store.subscribe(($) => (val = $))();
+    return val;
+  },
+};

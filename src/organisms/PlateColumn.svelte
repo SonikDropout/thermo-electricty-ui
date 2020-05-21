@@ -4,7 +4,7 @@
   import RangeInput from '../molecules/RangeInput';
   import Value from '../atoms/Value';
   import { slide } from '../transitions';
-  import { data } from '../stores';
+  import { data, getStoreValue } from '../stores';
   import {
     INTERGRATED_PELTIER_PARAMS,
     COMMANDS,
@@ -31,6 +31,8 @@
 
   let selectedMode = $data[`mode${name}`].value;
 
+  $: variableParam = getStoreValue(data)[(selectedMode ? 'setTemperature' : 'load') + name].value
+
   function togglePeltier(e) {
     const { checked } = e.target;
     ipcRenderer.send(
@@ -41,7 +43,7 @@
   }
 
   function switchPeltierMode(mode) {
-    selectedMode = mode;
+    selectedMode = +mode;
     ipcRenderer.send(
       'serialCommand',
       COMMANDS[`constant${MODES[selectedMode]}${name}Peltier`]
@@ -71,9 +73,9 @@
     disabled={!isActive}
     defaultValue={selectedMode}
     options={modeOptions} />
-  <span class="label">{modeOptions[selectedMode].inputLabel}</span>
+  <span class="label" class:tall={selectedMode}>{modeOptions[selectedMode].inputLabel}</span>
   <RangeInput
-    defaultValue={$data[(selectedMode ? 'setTemperature' : 'load') + name].value}
+    defaultValue={variableParam}
     onChange={changeVariableParam}
     disabled={!isActive}
     range={PELTIER_CONSTRAINTS[MODES[selectedMode] + name]} />
@@ -108,6 +110,12 @@
   }
   .label {
     grid-column-start: 1;
+    display: inline-block;
+    align-self: center;
+  }
+  .label.tall {
+    height: 3.8rem;
+    line-height: 3.8rem;
   }
   h2,
   h3 {
