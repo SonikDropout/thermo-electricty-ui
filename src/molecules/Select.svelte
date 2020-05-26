@@ -5,6 +5,8 @@
   export let options;
   export let disabled;
   export let defaultValue;
+  export let order;
+  export let style;
 
   onMount(() => document.addEventListener('click', handleClickOutside));
   onDestroy(() => document.removeEventListener('click', handleClickOutside));
@@ -65,7 +67,7 @@
     position: relative;
     height: 3.2rem;
     line-height: 3.2rem;
-    width: 100%;
+    min-width: 16rem;
   }
 
   .select {
@@ -114,7 +116,7 @@
 
   .curr-value,
   li {
-    padding: 0 2rem;
+    padding: 0 0.8rem;
     line-height: 3.2rem;
     cursor: pointer;
   }
@@ -126,6 +128,9 @@
   }
 
   li {
-    padding: 0 2rem;
+    padding: 0 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 </style>

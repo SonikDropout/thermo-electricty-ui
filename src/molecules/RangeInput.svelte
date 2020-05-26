@@ -84,7 +84,7 @@
 
 <style>
   .input-wrapper {
-    width: 16rem;
+    width: 14rem;
     border-radius: 4px;
     border: 1px solid var(--corporate-blue);
     height: 3.2rem;

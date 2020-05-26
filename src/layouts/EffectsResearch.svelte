@@ -40,6 +40,11 @@
     { label: 'Эффект Пельтье', value: 1 },
   ];
 
+  const plates = [
+    { name: 'Cool', label: 'охлаждающей' },
+    { name: 'Hot', label: 'нагревающей' },
+  ];
+
   const deltaTCaption = '\u0394T, \u02daC';
   const voltageCaption = 'U, B';
   const currentCaption = 'I, A';
@@ -192,31 +197,30 @@
         disabled={isDrawing}
         options={effectsOptions}
         defaultValue={selectedEffect.value} />
-      <div class="param-temp">
-        <span class="temp-label">Температура нагревающейся пластины:</span>
-        <strong class="temp-value hot">
-          {$data.temperatureHot.value}{$data.temperatureHot.units}
-        </strong>
-      </div>
-      <div class="param-temp">
-        <span class="temp-label">Температура охлаждающейся пластины:</span>
-        <strong class="temp-value cool">
-          {$data.temperatureCool.value}{$data.temperatureCool.units}
-        </strong>
-      </div>
+      {#each plates as { name, label }}
+        <div class="param-temp">
+          <span class="temp-label">Температура {label} пластины:</span>
+          <strong class="temp-value {name}">
+            {$data['temperature' + name].value}{$data['temperature' + name].units}
+          </strong>
+        </div>
+      {/each}
       {#if !selectedEffect.value}
-        {#each ['Cool', 'Hot'] as name}
-          <div class="range-label">Режим работы {name} пластины</div>
-          <div class="range">
-            <Select
-              onChange={switchPeltierMode}
-              defaultValue={selectedMode}
-              options={modeOptions} />
-            <RangeInput
-              {name}
-              defaultValue={variableParams[name]}
-              onChange={changeVariableParam}
-              range={PELTIER_CONSTRAINTS[MODES[selectedMode] + name]} />
+        {#each plates as {name, label}, i}
+          <div class="mode">
+            <div class="mode-label">Режим работы {label} пластины</div>
+            <div class="mode-controls">
+              <Select
+                order={i}
+                onChange={switchPeltierMode}
+                defaultValue={selectedMode}
+                options={modeOptions} />
+              <RangeInput
+                {name}
+                defaultValue={variableParams[name]}
+                onChange={changeVariableParam}
+                range={PELTIER_CONSTRAINTS[MODES[selectedMode] + name]} />
+            </div>
           </div>
         {/each}
         <div class="range">
@@ -240,7 +244,6 @@
             defaultValue={setPower}
             range={PELTIER_CONSTRAINTS.PowerHot} />
         </div>
-        <div class="range-spacer" />
       {/if}
       <h3>Результаты измерений</h3>
       {#each ['voltageProbe', 'currentProbe', 'deltaTemp'] as param}
@@ -255,27 +258,27 @@
       {/each}
     </div>
     <div class="chart">
-      <div>
-        <canvas id="effects-chart" width="500" height="350" />
+      <canvas id="effects-chart" width="500" height="350" />
+      <Button style="width: 9rem" on:click={toggleDrawing}>
+        {isDrawing ? 'Стоп' : 'Старт'}
+      </Button>
+      <div class="buttons">
+        <SaveButton disabled={!logCreated} />
+        <Button style="width: 9rem" on:click={goBack}>Назад</Button>
       </div>
-      <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
     </div>
   </main>
-  <footer>
-    <Button on:click={goBack}>Назад</Button>
-    <SaveButton disabled={!logCreated} />
-  </footer>
 </div>
 
 <style>
   main {
     display: flex;
     justify-content: space-between;
-    padding: 0 8rem;
+    padding: 0 6.4rem 2.4rem;
   }
   .controls {
     flex: 1 1 40%;
-    max-width: 36rem;
+    max-width: 32rem;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -285,9 +288,10 @@
     margin-top: auto;
     align-self: flex-start;
   }
-  main :global(.chart) {
-    max-width: 50rem;
+  .chart {
+    max-width: 54rem;
     flex: 1 1 60%;
+    text-align: right;
   }
   .symbol {
     display: inline-block;
@@ -303,10 +307,10 @@
     min-width: 8rem;
     text-align: center;
   }
-  .temp-value.hot {
+  .temp-value.Hot {
     background-color: var(--corporate-orange);
   }
-  .temp-value.cool {
+  .temp-value.Cool {
     background-color: var(--corporate-blue);
   }
   .param-temp,
@@ -316,18 +320,24 @@
     align-items: center;
     justify-content: space-between;
   }
-  .range-spacer {
-    margin-top: 1rem;
-    height: 3.2rem;
-  }
   .result {
     margin-bottom: 0.8rem;
-  }
-  footer {
-    padding: var(--gutter-width) 8rem;
   }
   h3 {
     text-align: center;
     font-size: 2rem;
+    margin-top: 3rem;
+  }
+  .buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.6rem;
+  }
+  .mode {
+    margin-top: auto;
+  }
+  .mode-controls {
+    display: flex;
+    justify-content: space-between;
   }
 </style>

@@ -2,6 +2,7 @@
   export let className;
   export let disabled;
   export let name;
+  export let style;
 </script>
 
 <style>
@@ -10,7 +11,8 @@
     color: var(--bg-color);
     border: none;
     border-radius: 0.4rem;
-    padding: 1.2rem 3.2rem;
+    padding: 1.2rem 1.6rem;
+    white-space: nowrap;
     font-size: 2rem;
     box-shadow: 0 3px 0 var(--corporate-grey-darken);
   }
@@ -34,6 +36,6 @@
   }
 </style>
 
-<button {disabled} class={className} {name} on:click>
+<button {disabled} {style} class={className} {name} on:click>
   <slot />
 </button>
