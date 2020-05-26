@@ -177,7 +177,7 @@
         type="horizontal" />
     </div>
     <div class="chart">
-      <canvas id="measures-chart" height="130" />
+      <canvas id="measures-chart" height="120" />
     </div>
   </main>
   <footer>
@@ -189,7 +189,7 @@
 
 <style>
   main {
-    padding: 0 7.5rem;
+    padding: 0 6.4rem;
   }
   .selects {
     display: flex;
@@ -202,6 +202,6 @@
     height: 100%;
   }
   footer {
-    padding: var(--gutter-width) 7.5rem;
+    padding: var(--gutter-width) 6.4rem;
   }
 </style>

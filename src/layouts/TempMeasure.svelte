@@ -23,7 +23,7 @@
     flex-grow: 1;
   }
   footer {
-    padding: var(--gutter-width) 7.5rem;
+    padding: var(--gutter-width) 6.4rem;
   }
 </style>
 
