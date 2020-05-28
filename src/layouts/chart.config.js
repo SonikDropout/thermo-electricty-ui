@@ -1,6 +1,6 @@
 module.exports = function config(points, axesLabels) {
   return {
-    type: "line",
+    type: 'scatter',
     data: {
       datasets: [
         {
@@ -14,9 +14,6 @@ module.exports = function config(points, axesLabels) {
       elements: {
         point: {
           radius: 1
-        },
-        line: {
-          tension: 0 // disables bezier curves
         }
       },
       legend: {

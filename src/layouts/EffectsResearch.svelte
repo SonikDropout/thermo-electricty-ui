@@ -1,6 +1,7 @@
 <script>
   import RangeInput from '../molecules/RangeInput';
   import Select from '../molecules/Select';
+  import ModeSelector from '../organisms/ModeSelector';
   import Button from '../atoms/Button';
   import SaveButton from '../organisms/SaveButton';
   import { ipcRenderer } from 'electron';
@@ -147,45 +148,6 @@
     points.push(point);
     chart.update();
   }
-
-  const modeOptions = [
-    {
-      label: 'по мощности',
-      value: 0,
-      inputLabel: 'Задание Мощности, % от макс',
-    },
-    { label: 'по температуре', value: 1, inputLabel: 'Задание T, \u2103' },
-  ];
-
-  let selectedMode = $data.modeCool.value;
-
-  $: variableParams = {
-    Cool: getStoreValue(data)[
-      (selectedMode ? 'setTemperature' : 'load') + 'Cool'
-    ].value,
-
-    Hot: getStoreValue(data)[(selectedMode ? 'setTemperature' : 'load') + 'Hot']
-      .value,
-  };
-
-  function switchPeltierMode(mode) {
-    selectedMode = +mode;
-    ipcRenderer.send(
-      'serialCommand',
-      COMMANDS[`constant${MODES[selectedMode]}CoolPeltier`]
-    );
-    ipcRenderer.send(
-      'serialCommand',
-      COMMANDS[`constant${MODES[selectedMode]}HotPeltier`]
-    );
-  }
-
-  function changeVariableParam(v, name) {
-    ipcRenderer.send(
-      'serialCommand',
-      ...COMMANDS[`set${MODES[selectedMode]}${name}Peltier`](v)
-    );
-  }
 </script>
 
 <div class="layout">
@@ -201,25 +163,16 @@
         <div class="param-temp">
           <span class="temp-label">Температура {label} пластины:</span>
           <strong class="temp-value {name}">
-            {$data['temperature' + name].value}{$data['temperature' + name].units}
+            {$data['temperature' + name].value.toFixed(1)}{$data['temperature' + name].units}
           </strong>
         </div>
       {/each}
       {#if !selectedEffect.value}
         {#each plates as {name, label}, i}
           <div class="mode">
-            <div class="mode-label">Режим работы {label} пластины</div>
+            <div class="mode-label">Режим работы {label} пластины:</div>
             <div class="mode-controls">
-              <Select
-                order={i}
-                onChange={switchPeltierMode}
-                defaultValue={selectedMode}
-                options={modeOptions} />
-              <RangeInput
-                {name}
-                defaultValue={variableParams[name]}
-                onChange={changeVariableParam}
-                range={PELTIER_CONSTRAINTS[MODES[selectedMode] + name]} />
+             <ModeSelector order={i} {name}/>
             </div>
           </div>
         {/each}

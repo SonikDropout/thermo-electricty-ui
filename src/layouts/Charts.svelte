@@ -24,6 +24,7 @@
     points = [],
     unsubscribeData,
     yCaption,
+    timeStart,
     isDrawing;
 
   onMount(createChart);
@@ -133,6 +134,7 @@
 
   function startDrawing() {
     isDrawing = true;
+    timeStart = 0;
     startLogging();
     unsubscribeData = data.subscribe(addRow);
   }
@@ -141,7 +143,7 @@
     ipcRenderer.send(
       'createFile',
       `Thermo-Electricity-Sensors`,
-      storedValues.map(key => $data[key].symbol + ', ' + $data[key].units)
+      ['Время, с'].concat(storedValues.map(key => $data[key].symbol + ', ' + $data[key].units))
     );
     logCreated = true;
   }
@@ -149,7 +151,7 @@
   function addRow(data) {
     const row = storedValues.map(key => data[key].value);
     pointsStorage.addRow(row);
-    writeExcel(row);
+    writeExcel([timeStart++].concat(row));
     updateChartData();
   }
 

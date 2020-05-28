@@ -5,7 +5,7 @@
   export let options;
   export let disabled;
   export let defaultValue;
-  export let order;
+  export let order = 0;
   export let style;
 
   onMount(() => document.addEventListener('click', handleClickOutside));
@@ -39,9 +39,10 @@
   }
 </script>
 
-<div class="select-wrapper">
+<div class="select-wrapper" {style}>
   <div
     class="select"
+    style="z-index:{2000 - order}"
     bind:this={select}
     class:disabled
     class:active
@@ -78,7 +79,6 @@
     border: 1px solid var(--corporate-blue-darken);
     border-radius: 4px;
     background-color: var(--bg-color);
-    z-index: 9999;
   }
 
   .select.disabled {

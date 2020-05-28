@@ -1,6 +1,7 @@
 <script>
   import Toggle from '../atoms/Toggle';
   import Select from '../molecules/Select';
+  import ModeSelector from './ModeSelector';
   import RangeInput from '../molecules/RangeInput';
   import Value from '../atoms/Value';
   import { slide } from '../transitions';
@@ -20,18 +21,12 @@
 
   let isActive = $data[`state${name}`].value;
 
-  const modeOptions = [
-    {
-      label: 'по мощности',
-      value: 0,
-      inputLabel: 'Задание Мощности, % от макс',
-    },
-    { label: 'по температуре', value: 1, inputLabel: 'Задание T, \u2103' },
-  ];
+  data.subscribe(d => {
+    if (d['state' + name].value != isActive) {
+      isActive = d['state' + name];
+    }
+  })
 
-  let selectedMode = $data[`mode${name}`].value;
-
-  $: variableParam = getStoreValue(data)[(selectedMode ? 'setTemperature' : 'load') + name].value
 
   function togglePeltier(e) {
     const { checked } = e.target;
@@ -42,20 +37,7 @@
     isActive = checked;  
   }
 
-  function switchPeltierMode(mode) {
-    selectedMode = +mode;
-    ipcRenderer.send(
-      'serialCommand',
-      COMMANDS[`constant${MODES[selectedMode]}${name}Peltier`]
-    );
-  }
 
-  function changeVariableParam(v) {
-    ipcRenderer.send(
-      'serialCommand',
-      ...COMMANDS[`set${MODES[selectedMode]}${name}Peltier`](v)
-    );
-  }
 </script>
 
 <div
@@ -66,19 +48,8 @@
   <span class="label">Состояние</span>
   <Toggle on:change={togglePeltier} checked={isActive} />
   <span class="label">Температура</span>
-  <strong class="value">{$data['temperature' + name].value}</strong>
-  <span class="label">Режим работы</span>
-  <Select
-    onChange={switchPeltierMode}
-    disabled={!isActive}
-    defaultValue={selectedMode}
-    options={modeOptions} />
-  <span class="label" class:tall={selectedMode}>{modeOptions[selectedMode].inputLabel}</span>
-  <RangeInput
-    defaultValue={variableParam}
-    onChange={changeVariableParam}
-    disabled={!isActive}
-    range={PELTIER_CONSTRAINTS[MODES[selectedMode] + name]} />
+  <strong class="value">{$data['temperature' + name].value.toFixed(1)}</strong>
+  <ModeSelector disabled={!isActive}  {name} labeled={true} />
   <h3>Характеристики</h3>
   {#each ['voltage', 'current'] as param}
     <span class="label">
