@@ -70,12 +70,12 @@
   }
 
   function startPeltierResearch() {
+    ipcRenderer.send('serialCommand', COMMANDS.consumeElectricityProbePeltier);
     ipcRenderer.send('serialCommand', COMMANDS.turnOnProbePeltier);
-    ipcRenderer.send('serialCommand', COMMANDS.constantTempProbePeltier);
   }
 
   function startSeebeckResearch() {
-    ipcRenderer.send('serialCommand', COMMANDS.constantPowerProbePeltier);
+    ipcRenderer.send('serialCommand', COMMANDS.consumeHeatProbePeltier);
     ipcRenderer.send('serialCommand', COMMANDS.turnOnHotPeltier);
     ipcRenderer.send('serialCommand', COMMANDS.turnOnCoolPeltier);
   }
