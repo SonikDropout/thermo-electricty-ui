@@ -4,7 +4,6 @@
   import ModeSelector from './ModeSelector';
   import RangeInput from '../molecules/RangeInput';
   import Value from '../atoms/Value';
-  import { slide } from '../transitions';
   import { data, getStoreValue } from '../stores';
   import {
     INTERGRATED_PELTIER_PARAMS,
@@ -12,21 +11,20 @@
     PELTIER_CONSTRAINTS,
     MODES,
   } from '../constants';
+  import {debounce} from '../utils/others'
   import { ipcRenderer } from 'electron';
-  export let pos;
   export let name;
   export let title;
 
-  const slideCol = slide(pos);
-
   let isActive = $data[`state${name}`].value;
 
-  data.subscribe(d => {
+  const debouncedToggleReset = debounce((d) => {
     if (d['state' + name].value != isActive) {
-      isActive = d['state' + name];
+      isActive = d['state' + name].value;
     }
-  })
+  }, 1000)
 
+  data.subscribe(debouncedToggleReset);
 
   function togglePeltier(e) {
     const { checked } = e.target;
@@ -34,22 +32,19 @@
       'serialCommand',
       COMMANDS[`turn${checked ? 'On' : 'Off'}${name}Peltier`]
     );
-    isActive = checked;  
+    isActive = checked;
   }
-
-
 </script>
 
 <div
   class={name}
-  style="background-image:url(./icons/bg-{name.toLowerCase()}.svg"
-  transition:slideCol>
+  style="background-image:url(./icons/bg-{name.toLowerCase()}.svg">
   <h2>{title}</h2>
   <span class="label">Состояние</span>
   <Toggle on:change={togglePeltier} checked={isActive} />
   <span class="label">Температура</span>
   <strong class="value">{$data['temperature' + name].value.toFixed(1)}</strong>
-  <ModeSelector disabled={!isActive}  {name} labeled={true} />
+  <ModeSelector disabled={!isActive} {name} labeled={true} />
   <h3>Характеристики</h3>
   {#each ['voltage', 'current'] as param}
     <span class="label">

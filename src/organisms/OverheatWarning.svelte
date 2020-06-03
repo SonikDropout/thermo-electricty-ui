@@ -7,7 +7,7 @@
 {#if isOverheat}
   <div class="warning">
     <img src="./icons/warning.svg" alt="warning" />
-    <span>Перегрев модуля Пельте!</span>
+    <span>Перегрев модуля Пельтье!</span>
   </div>
 {/if}
 
