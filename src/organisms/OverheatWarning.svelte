@@ -1,7 +1,15 @@
 <script>
   import { data } from '../stores';
   import { CRITICAL_TEMP } from '../constants';
-  $: isOverheat = $data.temperatureHot.value > CRITICAL_TEMP;
+  let isOverheat, unsetTimeout;
+  data.subscribe(d => {
+    if (d.temperatureHot.value > CRITICAL_TEMP) {
+      clearTimeout(unsetTimeout);
+      isOverheat = true;
+    } else if (isOverheat) {
+      unsetTimeout = setTimeout(() => (isOverheat = false), 10000);
+    }
+  });
 </script>
 
 {#if isOverheat}

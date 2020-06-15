@@ -143,7 +143,7 @@ const COMMANDS = {
 
 const PELTIER_CONSTRAINTS = {
   TempCool: [20, -5],
-  TempHot: [20, 50],
+  TempHot: [20, 80],
   CurrentProbe: [0.1, 2],
   PowerProbe: [0, 30],
   PowerCool: [0, 100],

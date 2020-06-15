@@ -30,6 +30,7 @@
     points = [],
     setPower = 0,
     unsubscribeData,
+    elapsedTime,
     isDrawing;
 
   ipcRenderer
@@ -49,9 +50,10 @@
   const deltaTCaption = '\u0394T, \u02daC';
   const voltageCaption = 'U, B';
   const currentCaption = 'I, A';
+  const timeCaption = 't, c';
 
   $: yCaption = selectedEffect.value ? deltaTCaption : voltageCaption;
-  $: xCaption = selectedEffect.value ? currentCaption : deltaTCaption;
+  $: xCaption = selectedEffect.value ? timeCaption : deltaTCaption;
 
   $: updateAxis('x', xCaption);
   $: updateAxis('y', yCaption);
@@ -86,10 +88,7 @@
 
   function changePower(P) {
     setPower = P;
-    if (!selectedEffect.value) {
-      ipcRenderer.send('serialCommand', ...COMMANDS.setPowerHotPeltier(P));
-      ipcRenderer.send('serialCommand', ...COMMANDS.setPowerCoolPeltier(P));
-    } else {
+    if (selectedEffect.value) {
       ipcRenderer.send('serialCommand', ...COMMANDS.setPowerProbePeltier(P));
     }
   }
@@ -112,6 +111,7 @@
 
   function startDrawing() {
     isDrawing = true;
+    elapsedTime = 0;
     startLog();
     if (!selectedEffect.value) startSeebeckResearch();
     else startPeltierResearch();
@@ -120,7 +120,7 @@
 
   function startLog() {
     let headers;
-    if (selectedEffect.value) headers = [currentCaption, deltaTCaption];
+    if (selectedEffect.value) headers = [timeCaption, deltaTCaption];
     else headers = [deltaTCaption, voltageCaption];
     ipcRenderer.send(
       'createFile',
@@ -134,7 +134,7 @@
     const deltaTemp = data.deltaTemp.value;
     const point = {
       y: selectedEffect.value ? deltaTemp : data.voltageProbe.value,
-      x: !selectedEffect.value ? deltaTemp : data.currentProbe.value,
+      x: !selectedEffect.value ? deltaTemp : elapsedTime++,
     };
     writeExcel(point);
     updateChart(point);
