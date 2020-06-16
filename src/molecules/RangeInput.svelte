@@ -5,6 +5,7 @@
   export let name;
   export let step = 1;
   export let defaultValue = range[0];
+  export let skippedValues = [];
 
   $: min = Math.min.apply(null, range);
   $: max = Math.max.apply(null, range);
@@ -18,7 +19,9 @@
 
   function increment() {
     if (value + step <= max) {
-      value = +(value + step).toFixed(precision);
+      do {
+        value = +(value + step).toFixed(precision);
+      } while (skippedValues.includes(value));
     } else {
       clearTimers();
     }
@@ -26,7 +29,9 @@
 
   function decrement() {
     if (value - step >= min) {
-      value = +(value - step).toFixed(precision);
+      do {
+        value = +(value - step).toFixed(precision);
+      } while (skippedValues.includes(value));
     } else {
       clearTimers();
     }

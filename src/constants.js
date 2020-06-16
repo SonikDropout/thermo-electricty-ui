@@ -135,7 +135,7 @@ const COMMANDS = {
   turnOffAllPeltier: 148,
   setTempCoolPeltier: (v) => [200, 100 + v],
   setTempHotPeltier: (v) => [208, v],
-  setCurrentProbePeltier: (v) => [204, v * 10],
+  setCurrentProbePeltier: (v) => [204, v * 100 | 0],
   setPowerCoolPeltier: (v) => [212, v],
   setPowerHotPeltier: (v) => [216, v],
   setPowerProbePeltier: (v) => [220, v],
@@ -143,8 +143,8 @@ const COMMANDS = {
 
 const PELTIER_CONSTRAINTS = {
   TempCool: [20, -5],
-  TempHot: [20, 80],
-  CurrentProbe: [0.1, 2],
+  TempHot: [20, 75],
+  CurrentProbe: [0, 2],
   PowerProbe: [0, 30],
   PowerCool: [0, 100],
   PowerHot: [0, 100],

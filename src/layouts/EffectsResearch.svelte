@@ -181,7 +181,8 @@
             Установка тока, {$data.currentProbe.units}
           </span>
           <RangeInput
-            step={0.1}
+            step={0.01}
+            skippedValues={[0.01, 0.02]}
             onChange={changeCurrent}
             range={PELTIER_CONSTRAINTS.CurrentProbe} />
         </div>
