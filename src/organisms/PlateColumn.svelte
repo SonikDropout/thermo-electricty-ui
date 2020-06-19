@@ -11,22 +11,26 @@
     PELTIER_CONSTRAINTS,
     MODES,
   } from '../constants';
-  import { debounce } from '../utils/others';
   import { ipcRenderer } from 'electron';
   export let name;
   export let title;
 
-  let isActive = $data[`state${name}`].value;
+  let isActive = $data[`state${name}`].value,
+    timeout;
 
   const initialData = $data;
 
-  const debouncedToggleReset = debounce(d => {
-    isActive = d['state' + name].value;
-  }, 1000);
-
   data.subscribe(d => {
     if (d['state' + name].value != isActive) {
-      debouncedToggleReset(d);
+      if (!timeout) {
+        timeout = setTimeout(() => {
+          isActive = d['state' + name].value;
+          timeout = 0;
+        }, 1000);
+      }
+    } else if (timeout) {
+      clearTimeout(timeout);
+      timeout = 0;
     }
   });
 
