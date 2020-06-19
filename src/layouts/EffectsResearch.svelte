@@ -4,6 +4,7 @@
   import ModeSelector from '../organisms/ModeSelector';
   import Button from '../atoms/Button';
   import SaveButton from '../organisms/SaveButton';
+  import RadioGroup from '../molecules/RadioGroup';
   import { ipcRenderer } from 'electron';
   import { COMMANDS, PELTIER_CONSTRAINTS, MODES } from '../constants';
   import { data, getStoreValue } from '../stores';
@@ -24,10 +25,14 @@
     chart.options.onClick = chart.resetZoom();
   }
 
+  const initialData = $data;
+
   let logCreated,
     startDisabled = true,
+    selectedXAxis = 0,
     chart,
     points = [],
+    rows = [],
     setPower = 0,
     unsubscribeData,
     elapsedTime,
@@ -46,6 +51,24 @@
     { name: 'Cool', label: 'охлаждающей' },
     { name: 'Hot', label: 'нагревающей' },
   ];
+
+  const xAxisPeltierOptions = {
+    name: 'xAxis',
+    elements: [
+      {
+        value: 0,
+        label: 'Время',
+        caption: 't, c',
+        name: 'time',
+      },
+      {
+        value: 1,
+        label: 'Ток',
+        caption: 'I, A',
+        name: 'currentProbe',
+      },
+    ],
+  };
 
   const deltaTCaption = '\u0394T, \u02daC';
   const voltageCaption = 'U, B';
@@ -132,9 +155,10 @@
 
   function addPoint(data) {
     const deltaTemp = data.deltaTemp.value;
+    rows.push([++elapsedTime, data.currnetProbe.value, deltaTemp]);
     const point = {
       y: selectedEffect.value ? deltaTemp : data.voltageProbe.value,
-      x: !selectedEffect.value ? deltaTemp : elapsedTime++,
+      x: !selectedEffect.value ? deltaTemp : rows[selectedXAxis],
     };
     writeExcel(point);
     updateChart(point);
@@ -147,6 +171,18 @@
   function updateChart(point) {
     points.push(point);
     chart.update();
+  }
+
+  function changeXAxis(e) {
+    if (e.target.value != selectedXAxis) {
+      selectedXAxis = +e.target.value;
+      points = rows.map(row => ({
+        x: row[selectedXAxis],
+        y: row[row.length - 1],
+      }));
+      chart.data.datasets[0].data = points;
+      updateAxis('x', xAxisPeltierOptions.elements[selectedXAxis].caption);
+    }
   }
 </script>
 
@@ -168,11 +204,11 @@
         </div>
       {/each}
       {#if !selectedEffect.value}
-        {#each plates as {name, label}, i}
+        {#each plates as { name, label }, i}
           <div class="mode">
             <div class="mode-label">Режим работы {label} пластины:</div>
             <div class="mode-controls">
-             <ModeSelector order={i} {name}/>
+              <ModeSelector order={i} {name} />
             </div>
           </div>
         {/each}
@@ -198,6 +234,13 @@
             defaultValue={setPower}
             range={PELTIER_CONSTRAINTS.PowerHot} />
         </div>
+        <div class="range">
+        <span class="range-label">Ось x: </span>
+        <RadioGroup
+          group={xAxisPeltierOptions}
+          on:change={changeXAxis}
+          type="horizontal" />
+        </div>
       {/if}
       <h3>Результаты измерений</h3>
       {#each ['voltageProbe', 'currentProbe', 'deltaTemp'] as param}
@@ -207,7 +250,11 @@
             <em class="units">{$data[param].units}</em>
             :
           </span>
-          <strong class="value">{$data[param].value}</strong>
+          <strong class="value">
+            {$data[param].value.toFixed(+initialData[param].divider
+                .toExponential()
+                .split('e')[1])}
+          </strong>
         </div>
       {/each}
     </div>

@@ -39,6 +39,7 @@ const INTEGRATED_PELTIER_PARAMS = {
   load: {
     label: 'Нагрузка',
     units: '%',
+    divider: 1,
   },
   thermistor: {
     label: 'Термистор',
@@ -51,6 +52,7 @@ const INTEGRATED_PELTIER_PARAMS = {
     symbol: 'U',
     units: 'мкВ',
     signed: true,
+    divider: 1,
   },
   thermoresistor: {
     label: 'Терморезистор',
@@ -77,6 +79,7 @@ const PROBE_PELTIER_PARAMS = {
   load: {
     label: 'Нагрузка',
     units: '%',
+    divider: 1,
   },
   setCurrent: {
     symbol: 'I',

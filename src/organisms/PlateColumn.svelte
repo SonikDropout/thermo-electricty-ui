@@ -11,18 +11,20 @@
     PELTIER_CONSTRAINTS,
     MODES,
   } from '../constants';
-  import {debounce} from '../utils/others'
+  import { debounce } from '../utils/others';
   import { ipcRenderer } from 'electron';
   export let name;
   export let title;
 
   let isActive = $data[`state${name}`].value;
 
-  const debouncedToggleReset = debounce((d) => {
+  const initialData = $data;
+
+  const debouncedToggleReset = debounce(d => {
     if (d['state' + name].value != isActive) {
       isActive = d['state' + name].value;
     }
-  }, 1000)
+  }, 1000);
 
   data.subscribe(debouncedToggleReset);
 
@@ -50,14 +52,26 @@
     <span class="label">
       {$data[param + name].label}, {$data[param + name].units}
     </span>
-    <strong class="value">{$data[param + name].value || 0}</strong>
+    <strong class="value">
+      {$data[param + name].value.toFixed(+initialData[
+          param + name
+        ].divider
+          .toExponential()
+          .split('e')[1])}
+    </strong>
   {/each}
   <h3>Результаты измерений</h3>
   {#each ['thermoresistor', 'thermocouple', 'thermistor'] as sensor}
     <span class="label">
       {$data[sensor + name].label}, {$data[sensor + name].units}
     </span>
-    <strong class="value">{$data[sensor + name].value || 0}</strong>
+    <strong class="value">
+      {$data[sensor + name].value.toFixed(+initialData[
+          sensor + name
+        ].divider
+          .toExponential()
+          .split('e')[1])}
+    </strong>
   {/each}
 </div>
 
