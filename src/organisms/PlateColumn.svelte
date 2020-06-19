@@ -18,17 +18,17 @@
 
   let isActive = $data[`state${name}`].value;
 
-  $: console.log(isActive, name);
-
   const initialData = $data;
 
   const debouncedToggleReset = debounce(d => {
-    if (d['state' + name].value != isActive) {
-      isActive = d['state' + name].value;
-    }
+    isActive = d['state' + name].value;
   }, 1000);
 
-  data.subscribe(debouncedToggleReset);
+  data.subscribe(d => {
+    if (d['state' + name].value != isActive) {
+      debouncedToggleReset(d);
+    }
+  });
 
   function togglePeltier(e) {
     const { checked } = e.target;
@@ -55,9 +55,7 @@
       {$data[param + name].label}, {$data[param + name].units}
     </span>
     <strong class="value">
-      {$data[param + name].value.toFixed(+initialData[
-          param + name
-        ].divider
+      {$data[param + name].value.toFixed(+initialData[param + name].divider
           .toExponential()
           .split('e')[1])}
     </strong>
@@ -68,9 +66,7 @@
       {$data[sensor + name].label}, {$data[sensor + name].units}
     </span>
     <strong class="value">
-      {$data[sensor + name].value.toFixed(+initialData[
-          sensor + name
-        ].divider
+      {$data[sensor + name].value.toFixed(+initialData[sensor + name].divider
           .toExponential()
           .split('e')[1])}
     </strong>
