@@ -155,7 +155,7 @@
 
   function addPoint(data) {
     const deltaTemp = data.deltaTemp.value;
-    rows.push([++elapsedTime, data.currnetProbe.value, deltaTemp]);
+    rows.push([++elapsedTime, data.currentProbe.value, deltaTemp]);
     const point = {
       y: selectedEffect.value ? deltaTemp : data.voltageProbe.value,
       x: !selectedEffect.value ? deltaTemp : rows[selectedXAxis],
