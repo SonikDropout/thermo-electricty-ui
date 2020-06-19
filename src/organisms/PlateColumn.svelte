@@ -18,6 +18,8 @@
 
   let isActive = $data[`state${name}`].value;
 
+  $: console.log(isActive, name);
+
   const initialData = $data;
 
   const debouncedToggleReset = debounce(d => {
