@@ -40,9 +40,6 @@
     "usb-detection": "^4.7.0"
   },
   "build": {
-    "directories": {
-      "output": "/opt/thermo-electricity"
-    },
     "linux": {
       "executableName": "thermo-electicity-ui",
       "category": "education"
