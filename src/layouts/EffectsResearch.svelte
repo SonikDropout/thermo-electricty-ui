@@ -142,24 +142,31 @@
   }
 
   function startLog() {
-    let headers;
-    if (selectedEffect.value) headers = [timeCaption, selectedEffect.value ? currentCaption : voltageCaption, deltaTCaption];
     ipcRenderer.send(
       'createFile',
       `TE-${selectedEffect.label.replace(' ', '-')}`,
-      headers
+      [
+        timeCaption,
+        selectedEffect.value ? currentCaption : voltageCaption,
+        deltaTCaption,
+      ]
     );
     logCreated = true;
   }
 
   function addPoint(data) {
     const deltaTemp = data.deltaTemp.value;
-    rows.push([++elapsedTime, selectedEffect.value ? data.currentProbe.value : data.voltageProbe, deltaTemp]);
+    const row = [
+      ++elapsedTime,
+      selectedEffect.value ? data.currentProbe.value : data.voltageProbe.value,
+      deltaTemp,
+    ];
+    rows.push(row);
     const point = {
       y: selectedEffect.value ? deltaTemp : data.voltageProbe.value,
-      x: !selectedEffect.value ? deltaTemp : rows[selectedXAxis],
+      x: !selectedEffect.value ? deltaTemp : row[selectedXAxis],
     };
-    writeExcel(rows[rows.length - 1]);
+    writeExcel(row);
     updateChart(point);
   }
 
@@ -234,11 +241,11 @@
             range={PELTIER_CONSTRAINTS.PowerHot} />
         </div>
         <div class="range">
-        <span class="range-label">Ось x: </span>
-        <RadioGroup
-          group={xAxisPeltierOptions}
-          on:change={changeXAxis}
-          type="horizontal" />
+          <span class="range-label">Ось x:</span>
+          <RadioGroup
+            group={xAxisPeltierOptions}
+            on:change={changeXAxis}
+            type="horizontal" />
         </div>
       {/if}
       <h3>Результаты измерений</h3>
