@@ -67,6 +67,8 @@
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     border-radius: 8px;
     padding: 2.4rem;
+    z-index: 9001;
+    background-color: var(--bg-color);
   }
   .popup-close {
     position: absolute;

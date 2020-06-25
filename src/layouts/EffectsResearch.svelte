@@ -143,8 +143,7 @@
 
   function startLog() {
     let headers;
-    if (selectedEffect.value) headers = [timeCaption, deltaTCaption];
-    else headers = [deltaTCaption, voltageCaption];
+    if (selectedEffect.value) headers = [timeCaption, selectedEffect.value ? currentCaption : voltageCaption, deltaTCaption];
     ipcRenderer.send(
       'createFile',
       `TE-${selectedEffect.label.replace(' ', '-')}`,
@@ -155,17 +154,17 @@
 
   function addPoint(data) {
     const deltaTemp = data.deltaTemp.value;
-    rows.push([++elapsedTime, data.currentProbe.value, deltaTemp]);
+    rows.push([++elapsedTime, selectedEffect.value ? data.currentProbe.value : data.voltageProbe, deltaTemp]);
     const point = {
       y: selectedEffect.value ? deltaTemp : data.voltageProbe.value,
       x: !selectedEffect.value ? deltaTemp : rows[selectedXAxis],
     };
-    writeExcel(point);
+    writeExcel(rows[rows.length - 1]);
     updateChart(point);
   }
 
-  function writeExcel(point) {
-    ipcRenderer.send('excelRow', [point.x, point.y]);
+  function writeExcel(row) {
+    ipcRenderer.send('excelRow', row);
   }
 
   function updateChart(point) {
