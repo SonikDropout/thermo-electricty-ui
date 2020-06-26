@@ -185,7 +185,7 @@
   <footer>
     <Button on:click={goBack}>Назад</Button>
     <SaveButton disabled={!logCreated} />
-    <Button on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
+    <Button style="width:8rem" on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
   </footer>
 </div>
 

@@ -23,7 +23,7 @@
   </main>
   <footer transition:slideBottom>
     <Button on:click={goBack}>Назад</Button>
-    <Button on:click={goForward}>Постоение графиков</Button>
+    <Button on:click={goForward}>Построение графиков</Button>
   </footer>
 </div>
 

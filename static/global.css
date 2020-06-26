@@ -19,6 +19,7 @@
 
 html {
   font-size: 62.5%;
+  scroll-behavior: smooth;
 }
 
 html,
@@ -26,7 +27,10 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+}
+
+body::-webkit-scrollbar {
+  display: none;
 }
 
 body {

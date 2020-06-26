@@ -43,7 +43,7 @@
 </Button>
 {#if saveMessage}
   <div class="popup" transition:fly={{ y: -200 }}>
-    <span class="popup-close">x</span>
+    <span on:click={closePopup} class="popup-close">x</span>
     <p>{saveMessage}</p>
     <Button on:click={ejectUSB} size="sm">извлечь</Button>
   </div>
