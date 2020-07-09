@@ -22,7 +22,7 @@
       document.getElementById('effects-chart').getContext('2d'),
       configureChart(points, { x: xCaption, y: yCaption })
     );
-    chart.options.onClick = chart.resetZoom();
+    chart.options.onClick = chart.resetZoom;
   }
 
   const initialData = $data;
@@ -134,11 +134,18 @@
 
   function startDrawing() {
     isDrawing = true;
-    elapsedTime = 0;
+    clearStored();
     startLog();
     if (!selectedEffect.value) startSeebeckResearch();
     else startPeltierResearch();
     unsubscribeData = data.subscribe(addPoint);
+  }
+
+  function clearStored() {
+    points = [];
+    rows = [];
+    timeStart = 0;
+    chart.data.datasets[0].data = points;
   }
 
   function startLog() {
