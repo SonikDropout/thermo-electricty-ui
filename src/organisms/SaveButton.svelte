@@ -3,13 +3,19 @@
   export let disabled;
   import { ipcRenderer } from 'electron';
   import { fly } from 'svelte/transition';
-  
-  let isSaving, isSaveFailed, saveMessage, isActive = ipcRenderer.sendSync('usbStatusRequest');
+
+  let isSaving,
+    isSaveFailed,
+    saveMessage,
+    isActive = ipcRenderer.sendSync('usbStatusRequest');
 
   ipcRenderer
     .on('usbConnected', () => (isActive = true))
-    .on('usbDisconnected', () => (isActive = false));
-    
+    .on('usbDisconnected', () => {
+      isActive = false;
+      saveMessage = '';
+    });
+
   function handleClick() {
     disabled = true;
     isSaving = true;
@@ -66,9 +72,10 @@
     width: 30rem;
     box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
     border-radius: 8px;
-    padding: 2.4rem;
+    padding: 1.6rem;
     z-index: 9001;
     background-color: var(--bg-color);
+    text-align: left;
   }
   .popup-close {
     position: absolute;

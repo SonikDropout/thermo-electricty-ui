@@ -45,9 +45,10 @@ function initPeripherals(win) {
   ipcMain.on('createFile', (_, ...args) => logger.createFile(...args));
   ipcMain.on('excelRow', (_, ...args) => logger.writeRow(...args));
   ipcMain.on('serialCommand', (_, ...args) => serial.sendCommand(...args));
+  ipcMain.on('ejectUSB', usbPort.eject);
   ipcMain.on('saveFile', () => {
     logger.saveFile(usbPath, (...args) =>
-      win.webContents.send('fileSaved', ...args)
+      setTimeout(() => win.webContents.send('fileSaved', ...args), 40000)
     );
   });
   return {
