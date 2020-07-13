@@ -5,6 +5,7 @@
   import { STATES } from './constants';
   import EffectsResearch from './layouts/EffectsResearch';
   import OverheatWarning from './organisms/OverheatWarning';
+  import Version from './atoms/Version';
   let state = STATES.initial;
   const setState = newState => () => (state = newState);
   const changeState = e => {
@@ -13,6 +14,7 @@
 </script>
 
 <OverheatWarning />
+<Version />
 <div class="content {state}">
   {#if state == STATES.initial}
     <SelectMode on:change={changeState} />
