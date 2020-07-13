@@ -144,7 +144,7 @@
   function clearStored() {
     points = [];
     rows = [];
-    timeStart = 0;
+    elapsedTime = 0;
     chart.data.datasets[0].data = points;
   }
 

@@ -44,8 +44,8 @@
   const faceOptions = {
     name: 'face',
     elements: [
-      { label: '', value: 'Cool', icon: 'cool' },
       { label: '', value: 'Hot', icon: 'hot' },
+      { label: '', value: 'Cool', icon: 'cool' },
     ],
   };
 
