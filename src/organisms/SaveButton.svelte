@@ -41,11 +41,15 @@
   }
 </script>
 
-<Button on:click={handleClick} disabled={disabled || !isActive}>
+<Button
+  style="width:39rem"
+  on:click={handleClick}
+  disabled={disabled || !isActive}>
   {#if isSaving}
     <span class="spinner" />
-  {/if}
-  Сохранить данные на usb-устройство
+    Идет сохранение
+  {:else}Сохранить данные{/if}
+  на usb-устройство
 </Button>
 {#if saveMessage}
   <div class="popup" transition:fly={{ y: -200 }}>
@@ -58,8 +62,8 @@
 <style>
   .spinner {
     display: inline-block;
-    width: 2rem;
-    height: 2rem;
+    width: 1.8rem;
+    height: 1.8rem;
     border: 2px solid var(--bg-color);
     clip-path: polygon(0 0, 50% 0, 50% 50%, 100% 50%, 100% 100%, 0 100%);
     border-radius: 50%;

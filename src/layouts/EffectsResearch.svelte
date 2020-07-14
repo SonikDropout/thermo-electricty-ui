@@ -133,7 +133,6 @@
 
   function startDrawing() {
     isDrawing = true;
-    points.length = 0;
     clearStored();
     startLog();
     if (!selectedEffect.value) startSeebeckResearch();
