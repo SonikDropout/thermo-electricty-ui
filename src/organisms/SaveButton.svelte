@@ -42,14 +42,14 @@
 </script>
 
 <Button
-  style="width:40rem"
+  style="width:42rem"
   on:click={handleClick}
   disabled={disabled || !isActive}>
   {#if isSaving}
     <span class="spinner" />
-    Идет сохранение
-  {:else}Сохранить данные{/if}
-  на usb-устройство
+    Сохранение файла
+  {:else}Сохранить данные на usb-устройство{/if}
+
 </Button>
 {#if saveMessage}
   <div class="popup" transition:fly={{ y: -200 }}>
