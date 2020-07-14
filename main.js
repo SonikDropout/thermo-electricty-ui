@@ -47,9 +47,10 @@ function initPeripherals(win) {
   ipcMain.on('serialCommand', (_, ...args) => serial.sendCommand(...args));
   ipcMain.on('ejectUSB', usbPort.eject);
   ipcMain.on('saveFile', () => {
-    logger.saveFile(usbPath, (...args) =>
-      setTimeout(() => win.webContents.send('fileSaved', ...args), 40000)
-    );
+    logger.saveFile(usbPath, (err) => {
+      if (err) console.log(err);
+      setTimeout(() => win.webContents.send('fileSaved', err), 4000);
+    });
   });
   return {
     removeAllListeners() {

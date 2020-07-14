@@ -128,12 +128,12 @@
   function stopDrawing() {
     stopResearch();
     unsubscribeData();
-    points.length = 0;
     isDrawing = false;
   }
 
   function startDrawing() {
     isDrawing = true;
+    points.length = 0;
     clearStored();
     startLog();
     if (!selectedEffect.value) startSeebeckResearch();
