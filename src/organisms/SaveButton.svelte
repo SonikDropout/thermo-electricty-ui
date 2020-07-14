@@ -42,7 +42,7 @@
 </script>
 
 <Button
-  style="width:39rem"
+  style="width:40rem"
   on:click={handleClick}
   disabled={disabled || !isActive}>
   {#if isSaving}

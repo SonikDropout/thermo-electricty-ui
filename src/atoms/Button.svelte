@@ -19,6 +19,7 @@
     padding: 1.2rem;
     font-size: 2rem;
     box-shadow: 0 3px 0 var(--corporate-grey-darken);
+    white-space: nowrap;
   }
 
   button.sm {

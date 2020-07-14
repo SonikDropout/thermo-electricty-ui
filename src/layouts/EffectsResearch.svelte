@@ -43,8 +43,8 @@
     .on('usbDisconnect', () => (saveDisabled = true));
 
   const effectsOptions = [
-    { label: 'Эффект Зеебека', value: 0 },
-    { label: 'Эффект Пельтье', value: 1 },
+    { label: 'Эффект Зеебека', name: 'Seebeck', value: 0 },
+    { label: 'Эффект Пельтье', name: 'Peltier', value: 1 },
   ];
 
   const plates = [
@@ -150,7 +150,7 @@
   function startLog() {
     ipcRenderer.send(
       'createFile',
-      `TE-${selectedEffect.label.replace(' ', '-')}`,
+      `TE-${selectedEffect.name.replace(' ', '-')}`,
       [
         timeCaption,
         selectedEffect.value ? currentCaption : voltageCaption,
