@@ -1,26 +1,27 @@
 <script>
   import Button from '../atoms/Button';
-  export let disabled;
+  export let logId;
   import { ipcRenderer } from 'electron';
   import { fly } from 'svelte/transition';
 
   let isSaving,
     isSaveFailed,
     saveMessage,
-    isActive = ipcRenderer.sendSync('usbStatusRequest');
+    isActive = true,
+    usbConnected = ipcRenderer.sendSync('usbStatusRequest');
 
   ipcRenderer
-    .on('usbConnected', () => (isActive = true))
+    .on('usbConnected', () => (usbConnected = true))
     .on('usbDisconnected', () => {
-      isActive = false;
+      usbConnected = false;
       saveMessage = '';
     });
 
   function handleClick() {
-    disabled = true;
+    isActive = false;
     isSaving = true;
-    ipcRenderer.send('saveFile');
-    ipcRenderer.on('fileSaved', handleSaved);
+    ipcRenderer.send('saveFile', logId);
+    ipcRenderer.on(logId + 'Saved', handleSaved);
   }
   function handleSaved(e, err) {
     if (err) {
@@ -29,7 +30,7 @@
     } else {
       saveMessage = 'Файл успешно сохранен';
     }
-    disabled = false;
+    isActive = true;
     isSaving = false;
   }
   function closePopup() {
@@ -44,7 +45,7 @@
 <Button
   style="width:42rem"
   on:click={handleClick}
-  disabled={disabled || !isActive}>
+  disabled={!logId || !isActive || !usbConnected}>
   {#if isSaving}
     <span class="spinner" />
     Сохранение файла

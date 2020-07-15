@@ -46,10 +46,10 @@ function initPeripherals(win) {
   ipcMain.on('excelRow', (_, ...args) => logger.writeRow(...args));
   ipcMain.on('serialCommand', (_, ...args) => serial.sendCommand(...args));
   ipcMain.on('ejectUSB', usbPort.eject);
-  ipcMain.on('saveFile', () => {
-    logger.saveFile(usbPath, (err) => {
+  ipcMain.on('saveFile', (e, fId) => {
+    logger.saveFile(fId, usbPath, (err) => {
       if (err) console.log(err);
-      setTimeout(() => win.webContents.send('fileSaved', err), 4000);
+      setTimeout(() => e.reply(fId + 'Saved', err), 4000);
     });
   });
   return {

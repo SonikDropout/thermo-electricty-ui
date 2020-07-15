@@ -17,7 +17,7 @@
   const xCaption = 'T, ' + PELTIER_PARAMS.temperatureHot.units;
   const pointsStorage = new PointsStorage();
 
-  let logCreated,
+  let logId,
     width = 500,
     height = 350,
     chart,
@@ -111,9 +111,7 @@
   }
 
   function updateXAxis() {
-    pointsStorage.setX(
-      storedValues.indexOf('temperature' + selectedFace)
-    );
+    pointsStorage.setX(storedValues.indexOf('temperature' + selectedFace));
     pointsStorage.setY(
       storedValues.indexOf(selectedSensor.name + selectedFace)
     );
@@ -140,12 +138,19 @@
   }
 
   function startLogging() {
+    logId = `Thermo-Electricity-Sensors`,
     ipcRenderer.send(
       'createFile',
-      `Thermo-Electricity-Sensors`,
-      ['Время, с'].concat(storedValues.map(key => `${$data[key].symbol}(${key.endsWith('Cool') ? 'хол.' : 'гор.'}), ${$data[key].units}`))
+      logId,
+      ['Время, с'].concat(
+        storedValues.map(
+          key =>
+            `${$data[key].symbol}(${key.endsWith('Cool') ? 'хол.' : 'гор.'}), ${
+              $data[key].units
+            }`
+        )
+      )
     );
-    logCreated = true;
   }
 
   function addRow(data) {
@@ -156,7 +161,7 @@
   }
 
   function writeExcel(row) {
-    ipcRenderer.send('excelRow', row);
+    ipcRenderer.send('excelRow', logId, row);
   }
 
   function updateChartData() {
@@ -184,8 +189,10 @@
   </main>
   <footer>
     <Button on:click={goBack}>Назад</Button>
-    <SaveButton disabled={!logCreated} />
-    <Button style="width:8rem" on:click={toggleDrawing}>{isDrawing ? 'Стоп' : 'Старт'}</Button>
+    <SaveButton  {logId} />
+    <Button style="width:8rem" on:click={toggleDrawing}>
+      {isDrawing ? 'Стоп' : 'Старт'}
+    </Button>
   </footer>
 </div>
 

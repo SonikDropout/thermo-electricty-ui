@@ -2,41 +2,11 @@ const { Workbook } = require('excel4node');
 const { getFileDate } = require('./others');
 const path = require('path');
 
-let wb,
-  ws,
-  fileName,
-  headerStyle,
-  dataStyle,
-  row = 2;
+const files = {};
 
-function createFile(fn, headers) {
-  fileName = fn + '_';
-  wb = new Workbook();
-  ws = wb.addWorksheet('Результаты');
-  if (!headerStyle) createStyles();
-  for (let i = 0; i < headers.length; i++) {
-    ws.cell(1, i + 1)
-      .string(headers[i])
-      .style(headerStyle);
-  }
-  row = 2;
-}
+let wb = new Workbook();
 
-function writeRow(entries) {
-  for (let i = 0; i < entries.length; i++) {
-    ws.cell(row, i + 1)
-      .number(entries[i])
-      .style(dataStyle);
-  }
-  row++;
-}
-
-function saveFile(dir, cb) {
-  wb.write(path.join(dir, fileName + getFileDate()) + '.xlsx', cb);
-}
-
-function createStyles() {
-  headerStyle = wb.createStyle({
+let headerStyle = wb.createStyle({
     font: {
       bold: true,
       color: 'ffffff',
@@ -47,13 +17,45 @@ function createStyles() {
       fgColor: '8bc041',
     },
   });
-  headerStyle.border = generateBorders();
-  dataStyle = wb.createStyle({
-    alignment: {
-      horizontal: 'right',
-    },
-  });
-  dataStyle.border = generateBorders();
+headerStyle.border = generateBorders();
+
+let dataStyle = wb.createStyle({
+  alignment: {
+    horizontal: 'right',
+  },
+});
+dataStyle.border = generateBorders();
+
+function createFile(fId, headers) {
+  if (!files[fId]) files[fId] = {};
+  files[fId].fileName = fId;
+  files[fId].wb = new Workbook();
+  files[fId].ws = files[fId].wb.addWorksheet('Результаты');
+  if (!headerStyle) createStyles();
+  for (let i = 0; i < headers.length; i++) {
+    files[fId].ws
+      .cell(1, i + 1)
+      .string(headers[i])
+      .style(headerStyle);
+  }
+  files[fId].row = 2;
+}
+
+function writeRow(fId, entries) {
+  for (let i = 0; i < entries.length; i++) {
+    files[fId].ws
+      .cell(files[fId].row, i + 1)
+      .number(entries[i])
+      .style(dataStyle);
+  }
+  files[fId].row++;
+}
+
+function saveFile(fId, dir, cb) {
+  files[fId].wb.write(
+    path.join(dir, `${files[fId].fileName}_${getFileDate()}.xlsx`),
+    cb
+  );
 }
 
 function generateBorders() {

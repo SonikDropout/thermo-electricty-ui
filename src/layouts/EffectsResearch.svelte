@@ -7,7 +7,7 @@
   import RadioGroup from '../molecules/RadioGroup';
   import { ipcRenderer } from 'electron';
   import { COMMANDS, PELTIER_CONSTRAINTS, MODES } from '../constants';
-  import { data, getStoreValue } from '../stores';
+  import { data } from '../stores';
   import Chart from 'chart.js';
   import Zoom from 'chartjs-plugin-zoom';
   import configureChart from './chart.config';
@@ -27,7 +27,7 @@
 
   const initialData = $data;
 
-  let logCreated,
+  let logId,
     startDisabled = true,
     selectedXAxis = 0,
     chart,
@@ -148,12 +148,12 @@
   }
 
   function startLog() {
+    logId = `TE-${selectedEffect.name}`;
     ipcRenderer.send(
       'createFile',
-      `TE-${selectedEffect.name.replace(' ', '-')}`,
+      logId,
       [timeCaption, currentCaption, voltageCaption, deltaTCaption]
     );
-    logCreated = true;
   }
 
   function addPoint(data) {
@@ -174,7 +174,7 @@
   }
 
   function writeExcel(row) {
-    ipcRenderer.send('excelRow', row);
+    ipcRenderer.send('excelRow', logId, row);
   }
 
   function updateChart(point) {
@@ -273,7 +273,7 @@
         {isDrawing ? 'Стоп' : 'Старт'}
       </Button>
       <div class="buttons">
-        <SaveButton disabled={!logCreated} />
+        <SaveButton {logId} />
         <Button style="width: 9rem" on:click={goBack}>Назад</Button>
       </div>
     </div>
