@@ -20,6 +20,7 @@ function setTempDelta(data) {
   return data;
 }
 
+
 module.exports = {
   data,
   getStoreValue: (store) => {
