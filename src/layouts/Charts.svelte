@@ -143,7 +143,7 @@
     ipcRenderer.send(
       'createFile',
       `Thermo-Electricity-Sensors`,
-      ['Время, с'].concat(storedValues.map(key => $data[key].symbol + ', ' + $data[key].units))
+      ['Время, с'].concat(storedValues.map(key => `${$data[key].symbol}(${key.endsWith('Cool') ? 'хол.' : 'гор.'}), ${$data[key].units}`))
     );
     logCreated = true;
   }

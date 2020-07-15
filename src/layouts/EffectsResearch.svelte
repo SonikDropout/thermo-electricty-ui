@@ -151,11 +151,7 @@
     ipcRenderer.send(
       'createFile',
       `TE-${selectedEffect.name.replace(' ', '-')}`,
-      [
-        timeCaption,
-        selectedEffect.value ? currentCaption : voltageCaption,
-        deltaTCaption,
-      ]
+      [timeCaption, currentCaption, voltageCaption, deltaTCaption]
     );
     logCreated = true;
   }
@@ -164,7 +160,8 @@
     const deltaTemp = data.deltaTemp.value;
     const row = [
       ++elapsedTime,
-      selectedEffect.value ? data.currentProbe.value : data.voltageProbe.value,
+      data.currentProbe.value,
+      data.voltageProbe.value,
       deltaTemp,
     ];
     rows.push(row);
