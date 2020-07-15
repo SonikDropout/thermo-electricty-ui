@@ -41,7 +41,7 @@
   },
   "build": {
     "linux": {
-      "executableName": "thermo-electicity-ui",
+      "executableName": "thermo-electricity-ui",
       "category": "education"
     }
   },

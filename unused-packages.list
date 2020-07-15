@@ -6,3 +6,5 @@ triggerhappy.service
 avahi-daemon.service
 systemd-timesyncd.service
 wpa-supplicant.service
+bluetooth.service
+hciuart.service
