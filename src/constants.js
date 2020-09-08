@@ -148,9 +148,9 @@ const PELTIER_CONSTRAINTS = {
   TempCool: [20, -5],
   TempHot: [20, 75],
   CurrentProbe: [0, 2],
-  PowerProbe: [0, 30],
-  PowerCool: [0, 100],
-  PowerHot: [0, 100],
+  PowerProbe: [1, 30],
+  PowerCool: [1, 100],
+  PowerHot: [1, 100],
 };
 
 const IS_RPI = process.platform === 'linux' && process.arch === 'arm';
