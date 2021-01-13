@@ -1,8 +1,15 @@
 <script>
   import uuid from 'uuid';
+  import { __ } from '../utils/translations';
   export let checked;
   const id = uuid();
 </script>
+
+<input type="checkbox" {id} on:change bind:checked />
+<label for={id}>
+  <slot />
+  <span class:checked>{checked ? $__('on') : $__('off')}</span>
+</label>
 
 <style>
   input {
@@ -22,7 +29,7 @@
     text-align: right;
     font-size: 1rem;
     line-height: 2rem;
-    padding: 0 .4rem;
+    padding: 0 0.4rem;
   }
   span.checked {
     text-align: left;
@@ -36,15 +43,12 @@
     height: calc(2rem - 4px);
     width: calc(2rem - 4px);
     background-color: var(--bg-color);
-    transition: .2s ease;
+    transition: 0.2s ease;
   }
-  input:checked + label>span {
+  input:checked + label > span {
     background-color: var(--corporate-blue);
   }
-  input:checked + label>span::after {
+  input:checked + label > span::after {
     transform: translateX(3rem);
   }
 </style>
-
-<input type="checkbox" id="{id}" on:change bind:checked>
-<label for="{id}"><slot></slot> <span class:checked>{checked ? 'вкл' : 'выкл'}</span></label>

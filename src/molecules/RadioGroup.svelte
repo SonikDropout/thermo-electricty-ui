@@ -1,11 +1,13 @@
 <script>
+  import { __ } from '../utils/translations';
   export let group;
   export let value = group.elements[0].value;
   $: checkedIndex = group.elements.findIndex(el => el.value == value);
-  $: longestLabel = Math.max.apply(
-    null,
-    group.elements.map(el => el.label.length + (el.icon ? 2 : 0))
-  ) + 3.2;
+  $: longestLabel =
+    Math.max.apply(
+      null,
+      group.elements.map(el => el.label.length + (el.icon ? 2 : 0))
+    ) + 3.2;
 </script>
 
 <div class="radio-group">
@@ -30,7 +32,7 @@
             alt={element.icon}
             class="icon" />
         {/if}
-        {@html element.label}
+        {$__(element.label)}
       </span>
     </label>
   {/each}

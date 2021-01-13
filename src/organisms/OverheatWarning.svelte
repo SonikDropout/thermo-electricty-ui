@@ -1,5 +1,6 @@
 <script>
   import { data } from '../stores';
+  import { __ } from '../utils/translations';
   import { CRITICAL_TEMP } from '../constants';
   let isOverheat, unsetTimeout;
   data.subscribe(d => {
@@ -15,7 +16,7 @@
 {#if isOverheat}
   <div class="warning">
     <img src="./icons/warning.svg" alt="warning" />
-    <span>Перегрев модуля Пельтье!</span>
+    <span>{$__('peltier overheat')}</span>
   </div>
 {/if}
 

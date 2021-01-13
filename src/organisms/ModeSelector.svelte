@@ -8,14 +8,19 @@
   import { COMMANDS, MODES, PELTIER_CONSTRAINTS } from '../constants';
   import Select from '../molecules/Select';
   import RangeInput from '../molecules/RangeInput';
+  import { __ } from '../utils/translations';
 
   const modeOptions = [
     {
-      label: 'по мощности',
+      label: 'constant power',
       value: 0,
-      inputLabel: 'Задание Мощности,<br/> % от макс',
+      inputLabel: 'power setting',
     },
-    { label: 'по температуре', value: 1, inputLabel: 'Задание T, \u02daC' },
+    {
+      label: 'constant temperature',
+      value: 1,
+      inputLabel: 'temperature setting',
+    },
   ];
 
   let selectedMode = $data['mode' + name].value;
@@ -40,7 +45,7 @@
 </script>
 
 {#if labeled}
-  <span class="label">Режим работы</span>
+  <span class="label">{$__('operating mode')}</span>
 {/if}
 <Select
   {order}
@@ -51,7 +56,7 @@
 
 {#if labeled}
   <span class="label" class:tall={selectedMode}>
-    {@html modeOptions[selectedMode].inputLabel}
+    {$__(modeOptions[selectedMode].inputLabel)}
   </span>
 {/if}
 <RangeInput

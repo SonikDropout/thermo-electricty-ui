@@ -12,6 +12,7 @@
   import Zoom from 'chartjs-plugin-zoom';
   import configureChart from './chart.config';
   import { onMount, onDestroy } from 'svelte';
+  import { __ } from '../utils/translations';
   export let goBack;
 
   onMount(createChart);
@@ -43,13 +44,13 @@
     .on('usbDisconnect', () => (saveDisabled = true));
 
   const effectsOptions = [
-    { label: 'Эффект Зеебека', name: 'Seebeck', value: 0 },
-    { label: 'Эффект Пельтье', name: 'Peltier', value: 1 },
+    { label: 'Seebeck', name: 'Seebeck', value: 0 },
+    { label: 'Peltier', name: 'Peltier', value: 1 },
   ];
 
   const plates = [
-    { name: 'Cool', label: 'охлаждающей' },
-    { name: 'Hot', label: 'нагревающей' },
+    { name: 'Cool', label: 'of cooling' },
+    { name: 'Hot', label: 'of heating' },
   ];
 
   const xAxisPeltierOptions = {
@@ -57,13 +58,13 @@
     elements: [
       {
         value: 0,
-        label: 'Время',
+        label: 'time',
         caption: 't, c',
         name: 'time',
       },
       {
         value: 1,
-        label: 'Ток',
+        label: 'current',
         caption: 'I, A',
         name: 'currentProbe',
       },
@@ -149,11 +150,12 @@
 
   function startLog() {
     logId = `TE-${selectedEffect.name}`;
-    ipcRenderer.send(
-      'createFile',
-      logId,
-      [timeCaption, currentCaption, voltageCaption, deltaTCaption]
-    );
+    ipcRenderer.send('createFile', logId, [
+      timeCaption,
+      currentCaption,
+      voltageCaption,
+      deltaTCaption,
+    ]);
   }
 
   function addPoint(data) {
@@ -196,7 +198,7 @@
 </script>
 
 <div class="layout">
-  <header>Исследование эффектов Пельтье и Зеебека</header>
+  <header>{$__('study of peltier and seebeck effects')}</header>
   <main>
     <div class="controls">
       <Select
@@ -206,7 +208,9 @@
         defaultValue={selectedEffect.value} />
       {#each plates as { name, label }}
         <div class="param-temp">
-          <span class="temp-label">Температура {label} пластины:</span>
+          <span class="temp-label">
+            {$__('temperature')} {$__(label)} {$__('plate')}:
+          </span>
           <strong class="temp-value {name}">
             {$data['temperature' + name].value.toFixed(1)}{$data['temperature' + name].units}
           </strong>
@@ -215,7 +219,9 @@
       {#if !selectedEffect.value}
         {#each plates as { name, label }, i}
           <div class="mode">
-            <div class="mode-label">Режим работы {label} пластины:</div>
+            <div class="mode-label">
+              {$__('operating mode')} {$__(label)} {$__('plate')}:
+            </div>
             <div class="mode-controls">
               <ModeSelector order={i} {name} />
             </div>
@@ -223,7 +229,7 @@
         {/each}
         <div class="range">
           <span class="range-label">
-            Установка тока, {$data.currentProbe.units}
+            {$__('set current')} {$data.currentProbe.units}
           </span>
           <RangeInput
             step={0.01}
@@ -233,30 +239,26 @@
         </div>
       {:else}
         <div class="range">
-          <span class="range-label">
-            Мощность модуля
-            <br />
-            Пельтье, % от макс
-          </span>
+          <span class="range-label">{$__('peltier power')}</span>
           <RangeInput
             onChange={changePower}
             defaultValue={setPower}
             range={PELTIER_CONSTRAINTS.PowerHot} />
         </div>
         <div class="range">
-          <span class="range-label">Ось x:</span>
+          <span class="range-label">{$__('x axis')}</span>
           <RadioGroup
             group={xAxisPeltierOptions}
             on:change={changeXAxis}
             type="horizontal" />
         </div>
       {/if}
-      <h3>Результаты измерений</h3>
+      <h3>{$__('measurement results')}</h3>
       {#each ['voltageProbe', 'currentProbe', 'deltaTemp'] as param}
         <div class="result">
           <span class="symbol">
             {$data[param].symbol},
-            <em class="units">{$data[param].units}</em>
+            <em class="units">{$__(initialData[param].units)}</em>
             :
           </span>
           <strong class="value">
@@ -270,11 +272,11 @@
     <div class="chart">
       <canvas id="effects-chart" width="500" height="350" />
       <Button style="width: 9rem" on:click={toggleDrawing}>
-        {isDrawing ? 'Стоп' : 'Старт'}
+        {isDrawing ? $__('stop') : $__('start')}
       </Button>
       <div class="buttons">
         <SaveButton {logId} />
-        <Button style="width: 9rem" on:click={goBack}>Назад</Button>
+        <Button style="width: 9rem" on:click={goBack}>{$__('back')}</Button>
       </div>
     </div>
   </main>

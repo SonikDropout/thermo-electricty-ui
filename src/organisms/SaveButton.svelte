@@ -1,6 +1,7 @@
 <script>
   import Button from '../atoms/Button';
   export let logId;
+  import { __ } from '../utils/translations';
   import { ipcRenderer } from 'electron';
   import { fly } from 'svelte/transition';
 
@@ -25,10 +26,10 @@
   }
   function handleSaved(e, err) {
     if (err) {
-      saveMessage = 'Не удалось сохранить файл';
+      saveMessage = 'save failed';
       isSaveFailed = true;
     } else {
-      saveMessage = 'Файл успешно сохранен';
+      saveMessage = 'file saved';
     }
     isActive = true;
     isSaving = false;
@@ -48,15 +49,15 @@
   disabled={!logId || !isActive || !usbConnected}>
   {#if isSaving}
     <span class="spinner" />
-    Сохранение файла
-  {:else}Сохранить данные на usb-устройство{/if}
+    {$__('saving file')}
+  {:else}{$__('save file')}{/if}
 
 </Button>
 {#if saveMessage}
   <div class="popup" transition:fly={{ y: -200 }}>
     <span on:click={closePopup} class="popup-close">x</span>
-    <p>{saveMessage}</p>
-    <Button on:click={ejectUSB} size="sm">извлечь</Button>
+    <p>{$__(saveMessage)}</p>
+    <Button on:click={ejectUSB} size="sm">{$__('eject')}</Button>
   </div>
 {/if}
 

@@ -4,6 +4,7 @@
   import ModeSelector from './ModeSelector';
   import RangeInput from '../molecules/RangeInput';
   import Value from '../atoms/Value';
+  import { __ } from '../utils/translations';
   import { data, getStoreValue } from '../stores';
   import {
     INTERGRATED_PELTIER_PARAMS,
@@ -47,16 +48,16 @@
 <div
   class={name}
   style="background-image:url(./icons/bg-{name.toLowerCase()}.svg">
-  <h2>{title}</h2>
-  <span class="label">Состояние</span>
+  <h2>{$__(title)}</h2>
+  <span class="label">{$__('state')}</span>
   <Toggle on:change={togglePeltier} checked={isActive} />
-  <span class="label">Температура</span>
+  <span class="label">{$__('temperature')}</span>
   <strong class="value">{$data['temperature' + name].value.toFixed(1)}</strong>
   <ModeSelector disabled={!isActive} {name} labeled={true} />
-  <h3>Характеристики</h3>
+  <h3>{$__('characteristics')}</h3>
   {#each ['voltage', 'current'] as param}
     <span class="label">
-      {$data[param + name].label}, {$data[param + name].units}
+      {$__(param)}, {$__(initialData[param + name].units)}
     </span>
     <strong class="value">
       {$data[param + name].value.toFixed(+initialData[param + name].divider
@@ -64,10 +65,10 @@
           .split('e')[1])}
     </strong>
   {/each}
-  <h3>Результаты измерений</h3>
+  <h3>{$__('measurement results')}</h3>
   {#each ['thermoresistor', 'thermocouple', 'thermistor'] as sensor}
     <span class="label">
-      {$data[sensor + name].label}, {$data[sensor + name].units}
+      {$__(sensor)}, {$__(initialData[sensor + name].units)}
     </span>
     <strong class="value">
       {$data[sensor + name].value.toFixed(+initialData[sensor + name].divider

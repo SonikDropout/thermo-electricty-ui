@@ -1,5 +1,6 @@
 <script>
   import { slide } from 'svelte/transition';
+  import { __ } from '../utils/translations';
   import { onMount, onDestroy } from 'svelte';
   export let onChange;
   export let options;
@@ -18,7 +19,7 @@
   }
 
   let selected = options.find(o => o.value === defaultValue) || {
-    label: '-- не выбран --',
+    label: '-- select --',
   };
 
   let optionsVisible = false;
@@ -47,7 +48,7 @@
     class:disabled
     class:active
     class:expand={optionsVisible}>
-    <div class="curr-value" on:click={toggleOptions}>{selected.label}</div>
+    <div class="curr-value" on:click={toggleOptions}>{$__(selected.label)}</div>
     {#if optionsVisible}
       <ul transition:slide>
         {#each options as { icon, label, value }}
@@ -55,7 +56,7 @@
             {#if icon}
               <i class="icon icon-{icon}" />
             {/if}
-            {label}
+            {$__(label)}
           </li>
         {/each}
       </ul>

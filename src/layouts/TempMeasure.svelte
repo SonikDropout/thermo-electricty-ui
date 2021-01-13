@@ -2,6 +2,7 @@
   import PlateColumn from '../organisms/PlateColumn';
   import Button from '../atoms/Button';
   import { slide } from '../transitions';
+  import { __ } from '../utils/translations';
   export let goBack;
   export let goForward;
 
@@ -9,21 +10,21 @@
   const slideBottom = slide('bottom');
 
   const plateColumns = [
-    { title: 'Нагревающая пластина', name: 'Hot', pos: 'right' },
-    { title: 'Охлаждающая пластина', name: 'Cool', pos: 'left' },
+    { title: 'heating plate', name: 'Hot', pos: 'right' },
+    { title: 'cooling plate', name: 'Cool', pos: 'left' },
   ];
 </script>
 
 <div class="layout">
-  <header transition:slideTop>Измерение и контроль температуры</header>
+  <header transition:slideTop>{$__('temperature measurement and control')}</header>
   <main>
     {#each plateColumns as column}
       <PlateColumn {...column} />
     {/each}
   </main>
   <footer transition:slideBottom>
-    <Button on:click={goBack}>Назад</Button>
-    <Button on:click={goForward}>Построение графиков</Button>
+    <Button on:click={goBack}>{$__('back')}</Button>
+    <Button on:click={goForward}>{$__('charts')}</Button>
   </footer>
 </div>
 

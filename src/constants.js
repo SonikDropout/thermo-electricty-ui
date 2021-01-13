@@ -13,88 +13,88 @@ SEPARATOR.writeUInt16BE(42105, 2);
 
 const INTEGRATED_PELTIER_PARAMS = {
   voltage: {
-    label: 'Напряжение',
-    units: 'В',
+    label: 'voltage',
+    units: 'V',
     symbol: 'U',
     divider: 1000,
   },
   current: {
-    label: 'Ток',
-    units: 'А',
+    label: 'current',
+    units: 'A',
     symbol: 'I',
     divider: 1000,
   },
   temperature: {
-    label: 'Температура',
+    label: 'temperature',
     units: '\u02daC',
     symbol: 'T',
     divider: 10,
     signed: true,
   },
   setTemperature: {
-    label: 'Установленная температура',
+    label: 'set temperature',
     units: '\u02daC',
     divider: 10,
   },
   load: {
-    label: 'Нагрузка',
+    label: 'load',
     units: '%',
     divider: 1,
   },
   thermistor: {
-    label: 'Термистор',
+    label: 'thermistor',
     symbol: 'R',
-    units: 'кОм',
+    units: 'kOhm',
     divider: 1000,
   },
   thermocouple: {
-    label: 'Термопара',
+    label: 'thermocouple',
     symbol: 'U',
-    units: 'мкВ',
+    units: 'uV',
     signed: true,
     divider: 1,
   },
   thermoresistor: {
-    label: 'Терморезистор',
+    label: 'thermoresistor',
     symbol: 'R',
-    units: 'Ом',
+    units: 'Ohm',
     divider: 10,
   },
 };
 
 const PROBE_PELTIER_PARAMS = {
   voltage: {
-    label: 'Напряжение',
-    units: 'В',
+    label: 'voltage',
+    units: 'V',
     symbol: 'U',
     divider: 1000,
   },
   current: {
-    label: 'Ток',
+    label: 'current',
     symbol: 'I',
-    units: 'А',
+    units: 'A',
     divider: 1000,
     signed: true,
   },
   load: {
-    label: 'Нагрузка',
+    label: 'load',
     units: '%',
     divider: 1,
   },
   setCurrent: {
     symbol: 'I',
-    label: 'Установленный ток',
-    units: 'А',
+    label: 'set current',
+    units: 'A',
     divider: 1000,
   },
 };
 
 const PELTIER_STATE = {
   state: {
-    label: 'Состояние',
+    label: 'state',
   },
   mode: {
-    label: 'Режим работы',
+    label: 'operating mode',
   },
 };
 
@@ -104,7 +104,7 @@ const PELTIER_PARAMS = concat(
 );
 
 PELTIER_PARAMS.flipSideTemp = {
-  label: 'Температура',
+  label: 'temperature',
   units: '\u02daC',
   symbol: 'T',
   divider: 10,

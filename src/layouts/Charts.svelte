@@ -12,6 +12,7 @@
   import { onMount, onDestroy } from 'svelte';
   import configureChart from './chart.config';
   import PointsStorage from '../utils/PointsStorage';
+  import { __ } from '../utils/translations';
   export let goBack;
 
   const xCaption = 'T, ' + PELTIER_PARAMS.temperatureHot.units;
@@ -54,7 +55,7 @@
     elements: [
       {
         value: 0,
-        label: 'Терморезистор',
+        label: 'thermoresistor',
         name: 'thermoresistor',
         caption:
           $data.thermoresistorCool.symbol +
@@ -63,14 +64,14 @@
       },
       {
         value: 1,
-        label: 'Термопара',
+        label: 'thermocouple',
         name: 'thermocouple',
         caption:
           $data.thermocoupleCool.symbol + ', ' + $data.thermocoupleCool.units,
       },
       {
         value: 2,
-        label: 'Термистор',
+        label: 'thermistor',
         name: 'thermistor',
         caption:
           $data.thermistorCool.symbol + ', ' + $data.thermistorCool.units,
@@ -142,10 +143,10 @@
     ipcRenderer.send(
       'createFile',
       logId,
-      ['Время, с'].concat(
+      ['Time, s'].concat(
         storedValues.map(
           key =>
-            `${$data[key].symbol}(${key.endsWith('Cool') ? 'хол.' : 'гор.'}), ${
+            `${$data[key].symbol}(${key.endsWith('Cool') ? 'cold' : 'hot'}), ${
               $data[key].units
             }`
         )
@@ -171,7 +172,7 @@
 </script>
 
 <div class="layout">
-  <header>Построение графиков</header>
+  <header>{$__('charts')}</header>
   <main>
     <div class="selects">
       <RadioGroup
@@ -188,10 +189,10 @@
     </div>
   </main>
   <footer>
-    <Button on:click={goBack}>Назад</Button>
+    <Button on:click={goBack}>{$__('back')}</Button>
     <SaveButton  {logId} />
     <Button style="width:8rem" on:click={toggleDrawing}>
-      {isDrawing ? 'Стоп' : 'Старт'}
+      {isDrawing ? $__('stop') : $__('start')}
     </Button>
   </footer>
 </div>

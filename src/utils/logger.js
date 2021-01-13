@@ -30,7 +30,7 @@ function createFile(fId, headers) {
   if (!files[fId]) files[fId] = {};
   files[fId].fileName = fId;
   files[fId].wb = new Workbook();
-  files[fId].ws = files[fId].wb.addWorksheet('Результаты');
+  files[fId].ws = files[fId].wb.addWorksheet('Results');
   if (!headerStyle) createStyles();
   for (let i = 0; i < headers.length; i++) {
     files[fId].ws
