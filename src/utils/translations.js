@@ -40,6 +40,6 @@ class Translator {
 const translator = new Translator();
 translator.addMessages('ru', require('../../locale/ru.json'));
 translator.addMessages('en', require('../../locale/en.json'));
-translator.setLocale('en');
+translator.setLocale('ru');
 
 module.exports = translator;
