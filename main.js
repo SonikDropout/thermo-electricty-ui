@@ -49,7 +49,7 @@ function initPeripherals(win) {
   ipcMain.on('saveFile', (e, fId) => {
     logger.saveFile(fId, usbPath, (err) => {
       if (err) console.log(err);
-      setTimeout(() => e.reply(fId + 'Saved', err), 4000);
+      e.reply(fId + 'Saved', err);
     });
   });
   return {
