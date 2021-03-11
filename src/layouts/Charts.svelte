@@ -1,14 +1,12 @@
 <script>
-  import Select from '../molecules/Select';
   import Button from '../atoms/Button';
   import RadioGroup from '../molecules/RadioGroup';
   import SaveButton from '../organisms/SaveButton';
   import { data } from '../stores';
   import { ipcRenderer } from 'electron';
-  import { capitalize } from '../utils/others';
   import { PELTIER_PARAMS } from '../constants';
   import Chart from 'chart.js';
-  import Zoom from 'chartjs-plugin-zoom';
+  import 'chartjs-plugin-zoom';
   import { onMount, onDestroy } from 'svelte';
   import configureChart from './chart.config';
   import PointsStorage from '../utils/PointsStorage';
@@ -19,12 +17,8 @@
   const pointsStorage = new PointsStorage();
 
   let logId,
-    width = 500,
-    height = 350,
     chart,
-    points = [],
     unsubscribeData,
-    yCaption,
     timeStart,
     isDrawing;
 
@@ -143,11 +137,11 @@
     ipcRenderer.send(
       'createFile',
       logId,
-      ['Time, s'].concat(
+      [`${$__('time')}, ${$__('s')}`].concat(
         storedValues.map(
           key =>
-            `${$data[key].symbol}(${key.endsWith('Cool') ? 'cold' : 'hot'}), ${
-              $data[key].units
+            `${PELTIER_PARAMS[key].symbol}(${$__(key.endsWith('Cool') ? 'cold' : 'hot')}), ${
+              $__(PELTIER_PARAMS[key].units)
             }`
         )
       )

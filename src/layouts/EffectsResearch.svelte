@@ -9,7 +9,7 @@
   import { COMMANDS, PELTIER_CONSTRAINTS, MODES } from '../constants';
   import { data } from '../stores';
   import Chart from 'chart.js';
-  import Zoom from 'chartjs-plugin-zoom';
+  import 'chartjs-plugin-zoom';
   import configureChart from './chart.config';
   import { onMount, onDestroy } from 'svelte';
   import { __ } from '../utils/translations';
@@ -29,7 +29,6 @@
   const initialData = $data;
 
   let logId,
-    startDisabled = true,
     selectedXAxis = 0,
     chart,
     points = [],
@@ -72,9 +71,9 @@
   };
 
   const deltaTCaption = '\u0394T, \u02daC';
-  const voltageCaption = 'U, B';
-  const currentCaption = 'I, A';
-  const timeCaption = 't, c';
+  const voltageCaption = `U, ${$__('V')}`;
+  const currentCaption = `I, ${$__('A')}`;
+  const timeCaption = `t, ${$__('s')}`;
 
   $: yCaption = selectedEffect.value ? deltaTCaption : voltageCaption;
   $: xCaption = selectedEffect.value ? timeCaption : deltaTCaption;
@@ -187,7 +186,7 @@
   function changeXAxis(e) {
     if (e.target.value != selectedXAxis) {
       selectedXAxis = +e.target.value;
-      points = rows.map(row => ({
+      points = rows.map((row) => ({
         x: row[selectedXAxis],
         y: row[row.length - 1],
       }));
@@ -205,14 +204,19 @@
         onChange={selectEffect}
         disabled={isDrawing}
         options={effectsOptions}
-        defaultValue={selectedEffect.value} />
+        defaultValue={selectedEffect.value}
+      />
       {#each plates as { name, label }}
         <div class="param-temp">
           <span class="temp-label">
-            {$__('temperature')} {$__(label)} {$__('plate')}:
+            {$__('temperature')}
+            {$__(label)}
+            {$__('plate')}:
           </span>
           <strong class="temp-value {name}">
-            {$data['temperature' + name].value.toFixed(1)}{$data['temperature' + name].units}
+            {$data['temperature' + name].value.toFixed(1)}{$data[
+              'temperature' + name
+            ].units}
           </strong>
         </div>
       {/each}
@@ -220,7 +224,9 @@
         {#each plates as { name, label }, i}
           <div class="mode">
             <div class="mode-label">
-              {$__('operating mode')} {$__(label)} {$__('plate')}:
+              {$__('operating mode')}
+              {$__(label)}
+              {$__('plate')}:
             </div>
             <div class="mode-controls">
               <ModeSelector order={i} {name} />
@@ -229,13 +235,15 @@
         {/each}
         <div class="range">
           <span class="range-label">
-            {$__('set current')} {$data.currentProbe.units}
+            {$__('set current')}
+            {$data.currentProbe.units}
           </span>
           <RangeInput
             step={0.01}
             skippedValues={[0.01, 0.02]}
             onChange={changeCurrent}
-            range={PELTIER_CONSTRAINTS.CurrentProbe} />
+            range={PELTIER_CONSTRAINTS.CurrentProbe}
+          />
         </div>
       {:else}
         <div class="range">
@@ -243,14 +251,16 @@
           <RangeInput
             onChange={changePower}
             defaultValue={setPower}
-            range={PELTIER_CONSTRAINTS.PowerHot} />
+            range={PELTIER_CONSTRAINTS.PowerHot}
+          />
         </div>
         <div class="range">
           <span class="range-label">{$__('x axis')}</span>
           <RadioGroup
             group={xAxisPeltierOptions}
             on:change={changeXAxis}
-            type="horizontal" />
+            type="horizontal"
+          />
         </div>
       {/if}
       <h3>{$__('measurement results')}</h3>
@@ -262,9 +272,9 @@
             :
           </span>
           <strong class="value">
-            {$data[param].value.toFixed(+initialData[param].divider
-                .toExponential()
-                .split('e')[1])}
+            {$data[param].value.toFixed(
+              +initialData[param].divider.toExponential().split('e')[1]
+            )}
           </strong>
         </div>
       {/each}
