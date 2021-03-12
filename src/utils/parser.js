@@ -25,7 +25,7 @@ module.exports = function parse(buf) {
   for (const key in ps) {
     ps[key].value = buf[i++];
   }
-  for (let key in ['Cool', 'Hot', 'Probe']) {
+  for (let key in ['Cool', 'Hot']) {
     pp['thermocouple' + key].value *= THERMOCOUPLE_COEFFICIENT;
   }
   return { ...pp, ...ps };
