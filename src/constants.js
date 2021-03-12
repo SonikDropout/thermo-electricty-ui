@@ -109,7 +109,7 @@ PELTIER_PARAMS.flipSideTemp = {
   symbol: 'T',
   divider: 10,
   signed: true,
-}
+};
 
 const PELTIER_STATES = concat(Array(3).fill(PELTIER_STATE), [
   'Cool',
@@ -138,7 +138,7 @@ const COMMANDS = {
   turnOffAllPeltier: 148,
   setTempCoolPeltier: (v) => [200, 100 + v],
   setTempHotPeltier: (v) => [208, v],
-  setCurrentProbePeltier: (v) => [204, v * 100 | 0],
+  setCurrentProbePeltier: (v) => [204, (v * 100) | 0],
   setPowerCoolPeltier: (v) => [212, v],
   setPowerHotPeltier: (v) => [216, v],
   setPowerProbePeltier: (v) => [220, v],
@@ -178,4 +178,5 @@ module.exports = {
   MODES,
   CRITICAL_TEMP: 80,
   BUFFER_LENGTH,
+  THERMOCOUPLE_COEFFICIENT: 0.8782,
 };

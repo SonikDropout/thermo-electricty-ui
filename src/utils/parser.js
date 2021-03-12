@@ -1,4 +1,9 @@
-const { PELTIER_STATES, PELTIER_PARAMS, SEPARATOR } = require('../constants');
+const {
+  PELTIER_STATES,
+  PELTIER_PARAMS,
+  SEPARATOR,
+  THERMOCOUPLE_COEFFICIENT,
+} = require('../constants');
 const { clone } = require('./others');
 
 function validate(buf) {
@@ -19,6 +24,9 @@ module.exports = function parse(buf) {
   }
   for (const key in ps) {
     ps[key].value = buf[i++];
+  }
+  for (let key in ['Cool', 'Hot', 'Probe']) {
+    pp['thermocouple' + key].value *= THERMOCOUPLE_COEFFICIENT;
   }
   return { ...pp, ...ps };
 };
